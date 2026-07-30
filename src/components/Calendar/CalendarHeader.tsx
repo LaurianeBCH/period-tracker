@@ -1,11 +1,11 @@
-import React from 'react';
+import { FC } from 'react';
 import styles from './Calendar.module.css';
 
 interface CalendarHeaderProps {
   onOpenSettings: () => void;
 }
 
-export const CalendarHeader: React.FC<CalendarHeaderProps> = ({ onOpenSettings }) => {
+export const CalendarHeader: FC<CalendarHeaderProps> = ({ onOpenSettings }) => {
   return (
     <>
       <header className={styles.header}>

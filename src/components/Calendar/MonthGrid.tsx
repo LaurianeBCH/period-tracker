@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, ReactNode } from 'react';
 import { UserSettings, CycleLog } from '../../types/cycle';
 import { getDayStatus, formatDateISO } from '../../utils/cycleEngine';
 import { DayCell } from './DayCell';
@@ -12,7 +12,7 @@ interface MonthGridProps {
   onSelectDate: (dateStr: string) => void;
 }
 
-export const MonthGrid: React.FC<MonthGridProps> = ({
+export const MonthGrid: FC<MonthGridProps> = ({
   year,
   month,
   settings,
@@ -28,7 +28,7 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  const cells: React.ReactNode[] = [];
+  const cells: ReactNode[] = [];
 
   // Empty leading cells
   for (let i = 0; i < firstDayIndex; i++) {

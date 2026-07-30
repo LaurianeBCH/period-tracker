@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { DayStatus } from '../../types/cycle';
 import { parseDateISO } from '../../utils/cycleEngine';
 import styles from './BottomSheet.module.css';
@@ -12,7 +12,7 @@ interface BottomSheetProps {
   onClose: () => void;
 }
 
-export const BottomSheet: React.FC<BottomSheetProps> = ({
+export const BottomSheet: FC<BottomSheetProps> = ({
   selectedDateStr,
   dayStatus,
   onLogPeriodStart,

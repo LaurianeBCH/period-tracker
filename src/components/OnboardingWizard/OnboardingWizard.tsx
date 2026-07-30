@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, FC } from 'react';
 import { UserSettings } from '../../types/cycle';
 import { getTodayISO } from '../../utils/cycleEngine';
 import theme from '../../styles/theme.module.css';
@@ -8,7 +8,7 @@ interface OnboardingWizardProps {
   onComplete: (settings: UserSettings, initialPeriodStartDate?: string) => void;
 }
 
-export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }) => {
+export const OnboardingWizard: FC<OnboardingWizardProps> = ({ onComplete }) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [cycleLength, setCycleLength] = useState<number>(28);
   const [periodLength, setPeriodLength] = useState<number>(5);

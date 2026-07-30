@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { DayStatus } from '../../types/cycle';
 import styles from './Calendar.module.css';
 
@@ -8,7 +8,7 @@ interface DayCellProps {
   onClick?: () => void;
 }
 
-export const DayCell: React.FC<DayCellProps> = ({ dayNumber, status, onClick }) => {
+export const DayCell: FC<DayCellProps> = ({ dayNumber, status, onClick }) => {
   if (!dayNumber || !status) {
     return <div className={`${styles.dayCell} ${styles.dayCellEmpty}`} />;
   }

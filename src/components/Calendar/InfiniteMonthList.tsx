@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, FC } from 'react';
 import { UserSettings, CycleLog } from '../../types/cycle';
 import { MonthGrid } from './MonthGrid';
 import styles from './Calendar.module.css';
@@ -14,7 +14,7 @@ interface MonthItem {
   month: number; // 0-11
 }
 
-export const InfiniteMonthList: React.FC<InfiniteMonthListProps> = ({
+export const InfiniteMonthList: FC<InfiniteMonthListProps> = ({
   settings,
   logs,
   onSelectDate
