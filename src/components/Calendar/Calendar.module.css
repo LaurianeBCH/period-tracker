@@ -1,0 +1,151 @@
+.calendarWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  background: var(--bg-gradient);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface-color);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--surface-border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.headerBtn {
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  border: 1px solid var(--surface-border);
+}
+
+.weekdayHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  padding: 8px 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--surface-color);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.monthListContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 12px 100px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  scroll-behavior: smooth;
+}
+
+.monthCard {
+  background: var(--surface-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.monthName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  padding-left: 6px;
+  text-transform: capitalize;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.dayCell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, background 0.2s ease;
+  color: var(--text-main);
+}
+
+.dayCell:hover {
+  transform: scale(1.06);
+}
+
+.dayCellEmpty {
+  visibility: hidden;
+}
+
+/* Daycell status variations */
+
+.isToday {
+  border: 2px solid var(--color-primary);
+  font-weight: 800;
+}
+
+.isActualPeriod {
+  background: var(--color-actual-period) !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.isPredictedPeriod {
+  background: var(--color-predicted-period-bg) !important;
+  border: 1.5px dashed var(--color-predicted-period);
+  color: var(--color-primary) !important;
+}
+
+.isFertileWindow {
+  background: var(--color-fertile-bg);
+}
+
+.isOvulationDay {
+  background: var(--color-ovulation-bg) !important;
+  color: var(--color-ovulation) !important;
+  font-weight: 700;
+}
+
+.ovulationDot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: var(--color-ovulation);
+  position: absolute;
+  bottom: 4px;
+}
