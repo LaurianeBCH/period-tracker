@@ -1,57 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap');
+
 :root {
-  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  
-  /* Palette pastel douce et chaleureuse */
-  --bg-gradient: linear-gradient(180deg, #fff5f7 0%, #fff0f3 50%, #fce7eb 100%);
-  --bg-color: #fff0f3;
-  --surface-color: rgba(255, 255, 255, 0.85);
-  --surface-border: rgba(255, 204, 213, 0.4);
-  
-  --text-main: #2d1820;
-  --text-muted: #8c6a75;
-  --text-light: #b3929e;
+  /* Design Tokens from Figma (node 106:8343) */
+  --font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  --color-primary: #e63956;
-  --color-primary-hover: #cf2d49;
+  /* Text Colors */
+  --text-primary: #2b2a36;
+  --text-secondary: #433946;
+  --text-on-dark: #ffffff;
 
-  /* Statuts du cycle */
-  --color-actual-period: #e63956;
-  --color-actual-period-bg: #ffe4e8;
-  
-  --color-predicted-period: #ff758f;
-  --color-predicted-period-bg: #fff0f3;
+  /* Surfaces & Backgrounds */
+  --background-phase-1: #d2ecff;
+  --background-white: #ffffff;
+  --surface-primary: #2b2a36;
 
-  --color-ovulation: #8a4fff;
-  --color-ovulation-bg: #f3ebff;
+  /* 4-Phase Ovulation Cycle Colors */
+  --surface-phase-1: #d2ecff;
+  /* Phase 1: Follicular */
+  --surface-phase-2: #e5f4ef;
+  /* Phase 2: Ovulation */
+  --surface-phase-3: #ffefd9;
+  /* Phase 3: Luteal */
+  --surface-phase-4: #b54f54;
+  /* Phase 4: Menstrual */
 
-  --color-fertile-bg: #f8f0fe;
+  /* Strokes */
+  --stroke-phase-4: #b54f54;
 
-  --shadow-sm: 0 2px 8px rgba(230, 57, 86, 0.06);
-  --shadow-md: 0 4px 16px rgba(230, 57, 86, 0.1);
-  --shadow-lg: 0 8px 32px rgba(230, 57, 86, 0.15);
-
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-full: 9999px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-gradient: linear-gradient(180deg, #1f1216 0%, #170d10 50%, #12090c 100%);
-    --bg-color: #170d10;
-    --surface-color: rgba(36, 21, 27, 0.85);
-    --surface-border: rgba(90, 45, 58, 0.4);
-    
-    --text-main: #fff0f3;
-    --text-muted: #d9b3be;
-    --text-light: #8c6a75;
-
-    --color-actual-period-bg: #4a1320;
-    --color-predicted-period-bg: #381621;
-    --color-ovulation-bg: #2d164d;
-    --color-fertile-bg: #25133d;
-  }
+  /* Component Dimensions & Spacing */
+  --size-calendar-cell: 64px;
+  --radius-full: 20px;
+  --radius-sm: 8px;
+  --spacing-lg: 16px;
+  --spacing-sm: 8px;
 }
 
 * {
@@ -61,13 +42,13 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   font-family: var(--font-family);
-  background: var(--bg-gradient);
-  background-attachment: fixed;
-  color: var(--text-main);
+  background-color: var(--background-phase-1);
+  color: var(--text-primary);
   overflow-x: hidden;
 }
 
@@ -77,15 +58,10 @@ html, body {
   flex-direction: column;
 }
 
-/* Utilities */
 button {
   font-family: inherit;
   border: none;
+  background: transparent;
   cursor: pointer;
   outline: none;
-  transition: all 0.2s ease;
-}
-
-input[type="range"] {
-  accent-color: var(--color-primary);
 }

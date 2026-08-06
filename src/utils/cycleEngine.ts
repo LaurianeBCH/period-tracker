@@ -1,4 +1,4 @@
-import { UserSettings, CycleLog, DayStatus } from '../types/cycle';
+import { UserSettings, CycleLog, DayStatus, CyclePhase } from '../types/cycle';
 
 export function formatDateISO(date: Date): string {
   const year = date.getFullYear();
@@ -29,7 +29,7 @@ export function getTodayISO(): string {
 }
 
 /**
- * Calculates the day status for any date based on user logs & cycle settings.
+ * Calculates the day status and ovulation cycle phase for any date based on user logs & cycle settings.
  */
 export function getDayStatus(
   dateStr: string,
@@ -38,30 +38,28 @@ export function getDayStatus(
   todayISO: string = getTodayISO()
 ): DayStatus {
   const isToday = dateStr === todayISO;
-
-  // Check explicit logs
   const logForDate = logs.find((l) => l.date === dateStr);
-  
-  // Find all actual period start logs sorted chronologically
+
   const periodStartLogs = logs
     .filter((l) => l.type === 'period_start')
     .map((l) => l.date)
     .sort((a, b) => a.localeCompare(b));
 
-  // Determine actual period days:
-  // For each period_start, if there's a period_end after it, span is [start, end].
-  // Otherwise, default to [start, start + averagePeriodLength - 1].
+  // Determine actual logged period days
   let isActualPeriod = false;
 
   for (let i = 0; i < periodStartLogs.length; i++) {
     const start = periodStartLogs[i];
     const matchingEndLog = logs.find(
-      (l) => l.type === 'period_end' && l.date >= start && (i === periodStartLogs.length - 1 || l.date < periodStartLogs[i + 1])
+      (l) =>
+        l.type === 'period_end' &&
+        l.date >= start &&
+        (i === periodStartLogs.length - 1 || l.date < periodStartLogs[i + 1])
     );
 
     const end = matchingEndLog
       ? matchingEndLog.date
-      : addDays(start, settings.averagePeriodLength - 1);
+      : addDays(start, (settings.averagePeriodLength || 4) - 1);
 
     if (dateStr >= start && dateStr <= end) {
       isActualPeriod = true;
@@ -69,73 +67,51 @@ export function getDayStatus(
     }
   }
 
-  // If date has actual period logged, return early with predicted = false
-  if (isActualPeriod) {
-    return {
-      dateStr,
-      isToday,
-      isActualPeriod: true,
-      isPredictedPeriod: false,
-      isOvulationDay: false,
-      isFertileWindow: false,
-      log: logForDate
-    };
-  }
-
-  // Calculate predicted cycles:
-  // Anchor is the latest period_start log on or before dateStr, or the earliest period_start log if dateStr is in the future.
-  const anchorDateStr = periodStartLogs.length > 0 ? periodStartLogs[periodStartLogs.length - 1] : null;
-
-  if (!anchorDateStr) {
-    // No logs available yet
-    return {
-      dateStr,
-      isToday,
-      isActualPeriod: false,
-      isPredictedPeriod: false,
-      isOvulationDay: false,
-      isFertileWindow: false,
-      log: logForDate
-    };
-  }
+  // Anchor date: default to latest period_start, or 2026-08-01 if no logs
+  const anchorDateStr =
+    periodStartLogs.length > 0
+      ? periodStartLogs[periodStartLogs.length - 1]
+      : '2026-08-01';
 
   const cycleLen = settings.averageCycleLength || 28;
-  const periodLen = settings.averagePeriodLength || 5;
+  const periodLen = settings.averagePeriodLength || 4;
   const lutealLen = settings.lutealPhaseLength || 14;
 
   const daysSinceAnchor = diffDays(anchorDateStr, dateStr);
 
+  // Normalize day index in cycle (works for past and future)
+  const dayInCycle = ((daysSinceAnchor % cycleLen) + cycleLen) % cycleLen;
+
+  const ovulationDayInCycle = cycleLen - lutealLen; // e.g. 14 for 28-day cycle with 14-day luteal
+  const fertileStartInCycle = ovulationDayInCycle - 3; // e.g. 11
+  const fertileEndInCycle = ovulationDayInCycle + 1; // e.g. 15
+
+  const isOvulationDay = dayInCycle === ovulationDayInCycle;
+  const isFertileWindow =
+    dayInCycle >= fertileStartInCycle && dayInCycle <= fertileEndInCycle;
+
   let isPredictedPeriod = false;
-  let isOvulationDay = false;
-  let isFertileWindow = false;
+  let phase: CyclePhase = 'Default';
 
-  // We project forward (and backward if dateStr > anchorDateStr)
-  if (daysSinceAnchor >= 0) {
-    const cycleIndex = Math.floor(daysSinceAnchor / cycleLen);
-    const dayInCycle = daysSinceAnchor % cycleLen;
-
-    // Predicted Period: Days 0 to (periodLen - 1) of the cycle
-    // Note: Cycle 0 is actual period if anchorDateStr was logged, so we only predict cycleIndex > 0 or after actual period end
-    if (cycleIndex > 0 && dayInCycle < periodLen) {
-      isPredictedPeriod = true;
-    }
-
-    // Ovulation Day: Estimated 14 days before next period start (cycleLen - lutealLen)
-    const ovulationDayInCycle = cycleLen - lutealLen;
-    if (dayInCycle === ovulationDayInCycle) {
-      isOvulationDay = true;
-    }
-
-    // Fertile Window: 5 days prior to ovulation up to 1 day after ovulation
-    if (dayInCycle >= ovulationDayInCycle - 5 && dayInCycle <= ovulationDayInCycle + 1) {
-      isFertileWindow = true;
-    }
+  if (isActualPeriod) {
+    phase = 'Phase4-Menstrual';
+  } else if (dayInCycle < periodLen) {
+    // Menstrual phase but not confirmed by explicit log
+    phase = 'Phase4-Menstrual-Unconfirmed';
+    isPredictedPeriod = true;
+  } else if (dayInCycle >= periodLen && dayInCycle < fertileStartInCycle) {
+    phase = 'Phase1-Follicular';
+  } else if (dayInCycle >= fertileStartInCycle && dayInCycle <= fertileEndInCycle) {
+    phase = 'Phase2-Ovulation';
+  } else {
+    phase = 'Phase3-Luteal';
   }
 
   return {
     dateStr,
     isToday,
-    isActualPeriod: false,
+    phase,
+    isActualPeriod,
     isPredictedPeriod,
     isOvulationDay,
     isFertileWindow,

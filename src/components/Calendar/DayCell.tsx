@@ -10,20 +10,38 @@ interface DayCellProps {
 
 export const DayCell: FC<DayCellProps> = ({ dayNumber, status, onClick }) => {
   if (!dayNumber || !status) {
-    return <div className={`${styles.dayCell} ${styles.dayCellEmpty}`} />;
+    return <div className={`${styles.dayCell} ${styles.emptyCell}`} />;
   }
 
-  const classNames = [styles.dayCell];
-  if (status.isToday) classNames.push(styles.isToday);
-  if (status.isActualPeriod) classNames.push(styles.isActualPeriod);
-  if (status.isPredictedPeriod) classNames.push(styles.isPredictedPeriod);
-  if (status.isFertileWindow) classNames.push(styles.isFertileWindow);
-  if (status.isOvulationDay) classNames.push(styles.isOvulationDay);
+  const phaseClass = (() => {
+    switch (status.phase) {
+      case 'Phase1-Follicular':
+        return styles.phaseFollicular;
+      case 'Phase2-Ovulation':
+        return styles.phaseOvulation;
+      case 'Phase3-Luteal':
+        return styles.phaseLuteal;
+      case 'Phase4-Menstrual':
+        return styles.phaseMenstrual;
+      case 'Phase4-Menstrual-Unconfirmed':
+        return styles.phaseMenstrualUnconfirmed;
+      default:
+        return styles.phaseDefault;
+    }
+  })();
+
+  const isDarkPhase = status.phase === 'Phase4-Menstrual';
 
   return (
-    <div className={classNames.join(' ')} onClick={onClick}>
+    <div className={`${styles.dayCell} ${phaseClass}`} onClick={onClick}>
       <span>{dayNumber}</span>
-      {status.isOvulationDay && <div className={styles.ovulationDot} />}
+      {status.isToday && (
+        <div
+          className={`${styles.indicatorDot} ${
+            isDarkPhase ? styles.indicatorDotOnDark : ''
+          }`}
+        />
+      )}
     </div>
   );
 };

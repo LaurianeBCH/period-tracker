@@ -1,151 +1,189 @@
 .calendarWrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  align-items: center;
+  position: relative;
+  width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  width: 100%;
-  position: relative;
-  background: var(--bg-gradient);
+  height: 100vh;
+  background-color: var(--background-phase-1);
+  overflow: hidden;
 }
 
-.header {
+.headerContainer {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--surface-color);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--surface-border);
-  padding: 12px 16px;
+  width: 100%;
+  max-width: 480px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 16px var(--spacing-lg);
+  background-color: var(--background-phase-1);
+  /*box-shadow: 0 2px 8px rgba(43, 42, 54, 0.04);*/
 }
 
 .headerTitle {
-  font-size: 1.15rem;
+  font-family: var(--font-family);
+  font-size: 20px;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
-.headerBtn {
-  background: transparent;
-  padding: 8px 12px;
+.settingsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
   border-radius: var(--radius-full);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  border: 1px solid var(--surface-border);
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
 }
 
-.weekdayHeader {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  padding: 8px 0;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: var(--surface-color);
-  border-bottom: 1px solid var(--surface-border);
+.settingsButton:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+
+.settingsButton svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--text-primary);
 }
 
 .monthListContainer {
+  width: 100%;
+  max-width: 480px;
   flex: 1;
-  overflow-y: auto;
-  padding: 16px 12px 100px 12px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: var(--spacing-lg);
+  padding: 16px var(--spacing-lg) 100px var(--spacing-lg);
+  overflow-y: auto;
   scroll-behavior: smooth;
 }
 
 .monthCard {
-  background: var(--surface-color);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--radius-lg);
-  padding: 16px 12px;
-  box-shadow: var(--shadow-sm);
+  background-color: var(--background-white);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-lg);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(43, 42, 54, 0.04);
 }
 
-.monthName {
-  font-size: 1.1rem;
+.monthTitle {
+  font-family: var(--font-family);
+  font-size: 18px;
   font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 14px;
-  padding-left: 6px;
+  color: var(--text-primary);
   text-transform: capitalize;
+  margin-bottom: 4px;
+}
+
+.weekdaysStrip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(43, 42, 54, 0.2);
+}
+
+.weekdayHeaderCell {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
 .daysGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
 }
 
 .dayCell {
+  width: 100%;
   aspect-ratio: 1;
+  height: auto;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  font-size: 0.95rem;
-  font-weight: 600;
   position: relative;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.15s ease, background 0.2s ease;
-  color: var(--text-main);
+  margin: 0 auto;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .dayCell:hover {
   transform: scale(1.06);
 }
 
-.dayCellEmpty {
+.emptyCell {
   visibility: hidden;
 }
 
-/* Daycell status variations */
-
-.isToday {
-  border: 2px solid var(--color-primary);
-  font-weight: 800;
+/* Phase styling matching Figma tokens */
+.phaseFollicular {
+  background-color: var(--surface-phase-1);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
 }
 
-.isActualPeriod {
-  background: var(--color-actual-period) !important;
-  color: #ffffff !important;
-  box-shadow: var(--shadow-sm);
+.phaseOvulation {
+  background-color: var(--surface-phase-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
 }
 
-.isPredictedPeriod {
-  background: var(--color-predicted-period-bg) !important;
-  border: 1.5px dashed var(--color-predicted-period);
-  color: var(--color-primary) !important;
+.phaseLuteal {
+  background-color: var(--surface-phase-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
 }
 
-.isFertileWindow {
-  background: var(--color-fertile-bg);
+.phaseMenstrual {
+  background-color: var(--surface-phase-4);
+  border: 2px solid var(--stroke-phase-4);
+  border-radius: var(--radius-full);
+  color: var(--text-on-dark);
 }
 
-.isOvulationDay {
-  background: var(--color-ovulation-bg) !important;
-  color: var(--color-ovulation) !important;
-  font-weight: 700;
+.phaseMenstrualUnconfirmed {
+  background-color: transparent;
+  border: 2px dashed var(--stroke-phase-4);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
 }
 
-.ovulationDot {
+.phaseDefault {
+  background-color: var(--background-white);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+/* Indicator dot for current day */
+.indicatorDot {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 5px;
   height: 5px;
-  border-radius: var(--radius-full);
-  background: var(--color-ovulation);
-  position: absolute;
-  bottom: 4px;
+  border-radius: 50%;
+  background-color: var(--text-primary);
+}
+
+.indicatorDotOnDark {
+  background-color: var(--text-on-dark);
 }

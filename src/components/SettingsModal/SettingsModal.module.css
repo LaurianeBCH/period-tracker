@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(43, 42, 54, 0.4);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 1000;
@@ -12,24 +12,22 @@
 }
 
 .modal {
-  background: var(--surface-color);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--radius-lg);
+  background: var(--background-white);
+  border-radius: var(--radius-full);
   padding: 28px 24px;
   width: 100%;
   max-width: 420px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 32px rgba(43, 42, 54, 0.15);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  font-family: var(--font-family);
 }
 
 .title {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -42,13 +40,13 @@
 .label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .valueDisplay {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--surface-phase-4);
   text-align: center;
 }
 
