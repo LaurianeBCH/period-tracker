@@ -12,9 +12,18 @@ export interface CycleLog {
   type: LogType;
 }
 
+export type CyclePhase =
+  | 'Phase1-Follicular'
+  | 'Phase2-Ovulation'
+  | 'Phase3-Luteal'
+  | 'Phase4-Menstrual'
+  | 'Phase4-Menstrual-Unconfirmed'
+  | 'Default';
+
 export interface DayStatus {
   dateStr: string; // 'YYYY-MM-DD'
   isToday: boolean;
+  phase: CyclePhase;
   isActualPeriod: boolean;
   isPredictedPeriod: boolean;
   isOvulationDay: boolean;

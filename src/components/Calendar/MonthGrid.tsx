@@ -12,6 +12,8 @@ interface MonthGridProps {
   onSelectDate: (dateStr: string) => void;
 }
 
+const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+
 export const MonthGrid: FC<MonthGridProps> = ({
   year,
   month,
@@ -20,7 +22,12 @@ export const MonthGrid: FC<MonthGridProps> = ({
   onSelectDate
 }) => {
   const date = new Date(year, month, 1);
-  const monthName = date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  const rawMonthName = date.toLocaleDateString('fr-FR', {
+    month: 'long',
+    year: 'numeric'
+  });
+  // Capitalize first letter of month (e.g., "Août 2026")
+  const monthName = rawMonthName.charAt(0).toUpperCase() + rawMonthName.slice(1);
 
   // First day of month offset (0 = Mon, 6 = Sun)
   let firstDayIndex = date.getDay() - 1;
@@ -53,7 +60,14 @@ export const MonthGrid: FC<MonthGridProps> = ({
 
   return (
     <div className={styles.monthCard}>
-      <div className={styles.monthName}>{monthName}</div>
+      <h2 className={styles.monthTitle}>{monthName}</h2>
+      <div className={styles.weekdaysStrip}>
+        {WEEKDAYS.map((wd) => (
+          <div key={wd} className={styles.weekdayHeaderCell}>
+            {wd}
+          </div>
+        ))}
+      </div>
       <div className={styles.daysGrid}>{cells}</div>
     </div>
   );
