@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, RefObject } from 'react';
 import { UserSettings, CycleLog } from '../../types/cycle';
 import { getDayStatus, formatDateISO } from '../../utils/cycleEngine';
 import { DayCell } from './DayCell';
@@ -10,6 +10,9 @@ interface MonthGridProps {
   settings: UserSettings;
   logs: CycleLog[];
   onSelectDate: (dateStr: string) => void;
+  footerButton?: ReactNode;
+  className?: string;
+  innerRef?: RefObject<HTMLDivElement | null>;
 }
 
 const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -19,7 +22,10 @@ export const MonthGrid: FC<MonthGridProps> = ({
   month,
   settings,
   logs,
-  onSelectDate
+  onSelectDate,
+  footerButton,
+  className,
+  innerRef
 }) => {
   const date = new Date(year, month, 1);
   const rawMonthName = date.toLocaleDateString('fr-FR', {
@@ -59,7 +65,11 @@ export const MonthGrid: FC<MonthGridProps> = ({
   }
 
   return (
-    <div className={styles.monthCard}>
+    <div
+      ref={innerRef}
+      className={className || styles.monthCard}
+      data-year-month={`${year}-${month}`}
+    >
       <h2 className={styles.monthTitle}>{monthName}</h2>
       <div className={styles.weekdaysStrip}>
         {WEEKDAYS.map((wd) => (
@@ -69,6 +79,7 @@ export const MonthGrid: FC<MonthGridProps> = ({
         ))}
       </div>
       <div className={styles.daysGrid}>{cells}</div>
+      {footerButton && <div className={styles.cardFooter}>{footerButton}</div>}
     </div>
   );
 };
