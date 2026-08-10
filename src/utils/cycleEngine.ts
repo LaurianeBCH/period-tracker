@@ -30,6 +30,7 @@ export function getTodayISO(): string {
 
 /**
  * Calculates the day status and ovulation cycle phase for any date based on user logs & cycle settings.
+ * Phase 1 (Follicular) starts immediately on the day after the declared period end date.
  */
 export function getDayStatus(
   dateStr: string,
@@ -45,7 +46,7 @@ export function getDayStatus(
     .map((l) => l.date)
     .sort((a, b) => a.localeCompare(b));
 
-  // Determine actual logged period days
+  // Determine actual logged period days across all logs
   let isActualPeriod = false;
 
   for (let i = 0; i < periodStartLogs.length; i++) {
@@ -73,8 +74,13 @@ export function getDayStatus(
       ? periodStartLogs[periodStartLogs.length - 1]
       : '2026-08-01';
 
+  // Find declared period_end for anchorDateStr if present
+  const anchorEndLog = logs.find(
+    (l) => l.type === 'period_end' && l.date >= anchorDateStr
+  );
+
   const cycleLen = settings.averageCycleLength || 28;
-  const periodLen = settings.averagePeriodLength || 4;
+  const defaultPeriodLen = settings.averagePeriodLength || 4;
   const lutealLen = settings.lutealPhaseLength || 14;
 
   const daysSinceAnchor = diffDays(anchorDateStr, dateStr);
@@ -82,7 +88,7 @@ export function getDayStatus(
   // Normalize day index in cycle (works for past and future)
   const dayInCycle = ((daysSinceAnchor % cycleLen) + cycleLen) % cycleLen;
 
-  const ovulationDayInCycle = cycleLen - lutealLen; // e.g. 14 for 28-day cycle with 14-day luteal
+  const ovulationDayInCycle = cycleLen - lutealLen; // e.g. 14 for 28-day cycle
   const fertileStartInCycle = ovulationDayInCycle - 3; // e.g. 11
   const fertileEndInCycle = ovulationDayInCycle + 1; // e.g. 15
 
@@ -95,12 +101,26 @@ export function getDayStatus(
 
   if (isActualPeriod) {
     phase = 'Phase4-Menstrual';
-  } else if (dayInCycle < periodLen) {
-    // Menstrual phase but not confirmed by explicit log
-    phase = 'Phase4-Menstrual-Unconfirmed';
-    isPredictedPeriod = true;
-  } else if (dayInCycle >= periodLen && dayInCycle < fertileStartInCycle) {
-    phase = 'Phase1-Follicular';
+  } else if (dayInCycle < fertileStartInCycle) {
+    // Check if within anchor cycle or subsequent cycles
+    if (daysSinceAnchor >= 0 && daysSinceAnchor < cycleLen && anchorEndLog) {
+      // User declared an explicit end date for anchor cycle
+      const declaredEndDayInCycle = diffDays(anchorDateStr, anchorEndLog.date);
+      if (dayInCycle > declaredEndDayInCycle) {
+        // Phase 1 starts immediately after declared end date
+        phase = 'Phase1-Follicular';
+      } else {
+        phase = 'Phase4-Menstrual';
+        isActualPeriod = true;
+      }
+    } else if (dayInCycle < defaultPeriodLen) {
+      // Future predicted cycle period or cycle without explicit end log
+      phase = 'Phase4-Menstrual-Unconfirmed';
+      isPredictedPeriod = true;
+    } else {
+      // After period, before fertile window -> Follicular phase
+      phase = 'Phase1-Follicular';
+    }
   } else if (dayInCycle >= fertileStartInCycle && dayInCycle <= fertileEndInCycle) {
     phase = 'Phase2-Ovulation';
   } else {

@@ -1,0 +1,145 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 42, 54, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalCard {
+  background: var(--background-white);
+  border-radius: var(--radius-full);
+  padding: 24px;
+  width: 100%;
+  max-width: 342px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-family);
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e1e1e;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.inputFrame {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 12px 16px;
+  border: 1.5px solid #d5d4d7;
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  transition: border-color 0.2s ease;
+}
+
+.inputFrame:focus-within {
+  border-color: var(--surface-phase-4);
+}
+
+.dateInput {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btnSave {
+  height: 44px;
+  width: 100%;
+  background-color: var(--surface-phase-4);
+  color: var(--text-on-dark);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.btnSave:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btnCancel {
+  height: 44px;
+  width: 100%;
+  background-color: var(--background-white);
+  border: 1px solid var(--text-secondary);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.btnCancel:hover {
+  background-color: rgba(67, 57, 70, 0.05);
+}

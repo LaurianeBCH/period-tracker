@@ -1,38 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lora:ital,wght@0,600;0,700;1,600;1,700&display=swap');
 
 :root {
-  /* Design Tokens from Figma (node 106:8343) */
+  /* Design Tokens from Figma */
   --font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Lora', Georgia, serif; /* Figma "Display" font token */
 
   /* Text Colors */
   --text-primary: #2b2a36;
   --text-secondary: #433946;
+  --text-muted: #6b6b6b;
   --text-on-dark: #ffffff;
 
-  /* Surfaces & Backgrounds */
+  /* Background Tokens */
   --background-phase-1: #d2ecff;
+  --background-phase-2: #e5f4ef;
+  --background-phase-3: #ffefd9;
+  --background-phase-4: #fce7eb;
   --background-white: #ffffff;
   --surface-primary: #2b2a36;
 
-  /* 4-Phase Ovulation Cycle Colors */
-  --surface-phase-1: #d2ecff;
-  /* Phase 1: Follicular */
-  --surface-phase-2: #e5f4ef;
-  /* Phase 2: Ovulation */
-  --surface-phase-3: #ffefd9;
-  /* Phase 3: Luteal */
-  --surface-phase-4: #b54f54;
-  /* Phase 4: Menstrual */
+  /* Active dynamic phase background token */
+  --current-phase-bg: var(--background-phase-1);
+
+  /* 4-Phase Ovulation Cycle Surface Tokens */
+  --surface-phase-1: #d2ecff; /* Phase 1: Follicular */
+  --surface-phase-2: #e5f4ef; /* Phase 2: Ovulation */
+  --surface-phase-3: #ffefd9; /* Phase 3: Luteal */
+  --surface-phase-4: #b54f54; /* Phase 4: Menstrual */
 
   /* Strokes */
   --stroke-phase-4: #b54f54;
 
   /* Component Dimensions & Spacing */
-  --size-calendar-cell: 64px;
+  --size-calendar-cell: 44px;
   --radius-full: 20px;
   --radius-sm: 8px;
   --spacing-lg: 16px;
   --spacing-sm: 8px;
+  --spacing-xl: 24px;
 }
 
 * {
@@ -47,9 +52,10 @@ body {
   width: 100%;
   height: 100%;
   font-family: var(--font-family);
-  background-color: var(--background-phase-1);
+  background-color: var(--current-phase-bg);
   color: var(--text-primary);
   overflow-x: hidden;
+  transition: background-color 0.3s ease;
 }
 
 #root {
