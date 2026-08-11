@@ -12,6 +12,11 @@ export interface PhaseInsight {
   imageSrc: string;
 }
 
+const BASE_PATH = import.meta.env.BASE_URL || '/period-tracker/';
+const FULL_BASE = BASE_PATH.startsWith('http')
+  ? BASE_PATH
+  : `https://laurianebch.github.io${BASE_PATH.endsWith('/') ? BASE_PATH : BASE_PATH + '/'}`;
+
 export const PHASE_INSIGHTS: Record<string, PhaseInsight> = {
   'Phase1-Follicular': {
     phaseKey: 'Phase1-Follicular',
@@ -25,7 +30,7 @@ export const PHASE_INSIGHTS: Record<string, PhaseInsight> = {
       'Profitons de cette remontée d’énergie pour passer à l\'action avec des objectifs clairs pour ne pas s’épuiser. C’est le moment idéal pour sortir de notre zone de confort et relever de nouveaux défis.',
     bgTokenClass: 'bgPhase1',
     surfaceTokenClass: 'surfacePhase1',
-    imageSrc: '/illustrations/phase1-follicular.png'
+    imageSrc: `${FULL_BASE}illustrations/phase1-follicular.png`
   },
   'Phase2-Ovulation': {
     phaseKey: 'Phase2-Ovulation',
@@ -39,7 +44,7 @@ export const PHASE_INSIGHTS: Record<string, PhaseInsight> = {
       'Profitons de ce moment pour créer des liens forts avec notre entourage ou faire de nouvelles rencontres. C’est le moment idéal pour se mettre en avant, aller réseauter, charmer et convaincre.',
     bgTokenClass: 'bgPhase2',
     surfaceTokenClass: 'surfacePhase2',
-    imageSrc: '/illustrations/phase2-ovulation.png'
+    imageSrc: `${FULL_BASE}illustrations/phase2-ovulation.png`
   },
   'Phase3-Luteal': {
     phaseKey: 'Phase3-Luteal',
@@ -53,7 +58,7 @@ export const PHASE_INSIGHTS: Record<string, PhaseInsight> = {
       'C’est le bon moment pour noter ses idées et exprimer ses émotions par l’écriture ou une activité artistique afin d\'éviter de prendre une décision sous le coup de l’émotion. Faisons le tri dans nos affaires comme dans nos idées !',
     bgTokenClass: 'bgPhase3',
     surfaceTokenClass: 'surfacePhase3',
-    imageSrc: '/illustrations/phase3-luteal.png'
+    imageSrc: `${FULL_BASE}illustrations/phase3-luteal.png`
   },
   'Phase4-Menstrual': {
     phaseKey: 'Phase4-Menstrual',
@@ -67,7 +72,7 @@ export const PHASE_INSIGHTS: Record<string, PhaseInsight> = {
       'Ralentissons notre rythme de vie. C’est le moment idéal pour se poser les bonnes questions sur nos projets en cours et concevoir un plan d’action.',
     bgTokenClass: 'bgPhase4',
     surfaceTokenClass: 'surfacePhase4',
-    imageSrc: '/illustrations/phase4-menstrual.png'
+    imageSrc: `${FULL_BASE}illustrations/phase4-menstrual.png`
   }
 };
 
