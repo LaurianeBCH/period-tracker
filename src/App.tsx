@@ -1,30 +1,30 @@
 import { useState, useEffect } from 'react';
-import { UserSettings, CycleLog } from './types/cycle';
+import { UserSettings } from './types/cycle';
 import {
   getSettings,
   saveSettings,
-  getLogs,
-  logPeriodStart,
-  logPeriodEnd,
-  removeLogForDate
+  getPeriodDates,
+  savePeriodDates,
+  togglePeriodDate
 } from './services/storage';
-import { getDayStatus, getTodayISO } from './utils/cycleEngine';
+import {
+  getDayStatus,
+  getTodayISO,
+  extractPeriodBlocks,
+  computeCycleMetrics
+} from './utils/cycleEngine';
 import { getPhaseInsight } from './data/phaseInsights';
 import { OnboardingWizard } from './components/OnboardingWizard/OnboardingWizard';
 import { CalendarHeader } from './components/Calendar/CalendarHeader';
-import { InfiniteMonthList } from './components/Calendar/InfiniteMonthList';
+import { HomeMonthlyCalendar } from './components/Calendar/HomeMonthlyCalendar';
+import { YearCalendarView } from './components/Calendar/YearCalendarView';
 import { PhaseInsightsCard } from './components/Calendar/PhaseInsightsCard';
-import { BottomSheet } from './components/BottomSheet/BottomSheet';
-import { SettingsModal } from './components/SettingsModal/SettingsModal';
-import { LogPeriodModal } from './components/LogPeriodModal/LogPeriodModal';
+import { PhaseAnimationView } from './components/PhaseAnimation';
 import styles from './components/Calendar/Calendar.module.css';
 
 export default function App() {
   const [settings, setSettings] = useState<UserSettings>(() => getSettings());
-  const [logs, setLogs] = useState<CycleLog[]>(() => getLogs());
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
-  const [isLogPeriodModalOpen, setIsLogPeriodModalOpen] = useState<boolean>(false);
+  const [periodDates, setPeriodDates] = useState<string[]>(() => getPeriodDates());
   const [currentView, setCurrentView] = useState<'home' | 'full_calendar'>('home');
 
   useEffect(() => {
@@ -32,149 +32,94 @@ export default function App() {
   }, [settings]);
 
   const todayISO = getTodayISO();
-  const todayStatus = getDayStatus(todayISO, settings, logs);
+  const todayStatus = getDayStatus(todayISO, settings, periodDates);
   const todayInsight = getPhaseInsight(todayStatus.phase);
 
-  // Centralized effect updating --current-phase-bg across body, app wrapper, header, calendar page, & bottom bar
+  // Apply phase linear-gradient on body
   useEffect(() => {
     if (!settings.isOnboarded) return;
-    const phaseNum =
-      todayInsight.phaseKey === 'Phase1-Follicular'
-        ? '1'
-        : todayInsight.phaseKey === 'Phase2-Ovulation'
-        ? '2'
-        : todayInsight.phaseKey === 'Phase3-Luteal'
-        ? '3'
-        : '4';
-    const bgVar = `var(--background-phase-${phaseNum})`;
-    document.documentElement.style.setProperty('--current-phase-bg', bgVar);
-    document.body.style.backgroundColor = bgVar;
-  }, [settings.isOnboarded, todayInsight]);
+
+    if (currentView === 'full_calendar') {
+      document.body.style.background = '#ffffff';
+      return;
+    }
+
+    const phaseKey = todayInsight.phaseKey;
+    const gradient =
+      phaseKey === 'Phase1-Follicular'
+        ? 'linear-gradient(180deg, rgba(252, 255, 234, 1) 0%, rgba(238, 241, 226, 1) 100%)'
+        : phaseKey === 'Phase2-Ovulation'
+        ? 'linear-gradient(180deg, rgba(255, 231, 192, 0) 0%, rgba(255, 231, 192, 1) 100%)'
+        : phaseKey === 'Phase3-Luteal'
+        ? 'linear-gradient(180deg, rgba(223, 208, 241, 0) 0%, rgba(223, 208, 241, 1) 100%)'
+        : 'linear-gradient(180deg, rgba(232, 196, 196, 0) 0%, rgba(250, 157, 173, 1) 100%)';
+
+    document.documentElement.style.setProperty('--current-phase-gradient', gradient);
+    document.body.style.background = gradient;
+    document.body.style.backgroundAttachment = 'fixed';
+  }, [settings.isOnboarded, currentView, todayInsight.phaseKey]);
 
   const handleOnboardingComplete = (
     newSettings: UserSettings,
-    initialPeriodStartDate?: string
+    initialDates: string[] = []
   ) => {
-    let updatedLogs = logs;
-    if (initialPeriodStartDate) {
-      updatedLogs = logPeriodStart(initialPeriodStartDate);
-      setLogs(updatedLogs);
+    if (initialDates && initialDates.length > 0) {
+      savePeriodDates(initialDates);
+      setPeriodDates([...initialDates]);
     }
     setSettings(newSettings);
   };
 
-  const handleLogPeriodStart = (dateStr: string) => {
-    const updated = logPeriodStart(dateStr);
-    setLogs([...updated]);
-  };
-
-  const handleLogPeriodEnd = (dateStr: string) => {
-    const updated = logPeriodEnd(dateStr);
-    setLogs([...updated]);
-  };
-
-  const handleRemoveLog = (dateStr: string) => {
-    const updated = removeLogForDate(dateStr);
-    setLogs([...updated]);
-  };
-
-  const handleSavePeriodFromModal = (startDateStr: string, endDateStr?: string) => {
-    let updated = logPeriodStart(startDateStr);
-    if (endDateStr) {
-      updated = logPeriodEnd(endDateStr);
-    }
-    setLogs([...updated]);
+  /**
+   * Direct calendar click:
+   * - If date already in periodDates: toggles it off.
+   * - If date is free: autofills current periodLength days (if new period) or adds single day.
+   */
+  const handleSelectDate = (dateStr: string) => {
+    const blocks = extractPeriodBlocks(periodDates);
+    const metrics = computeCycleMetrics(blocks, settings);
+    const updated = togglePeriodDate(dateStr, metrics.periodLength);
+    setPeriodDates([...updated]);
   };
 
   if (!settings.isOnboarded) {
     return <OnboardingWizard onComplete={handleOnboardingComplete} />;
   }
 
-  const selectedDayStatus = selectedDate
-    ? getDayStatus(selectedDate, settings, logs)
-    : null;
+  const isYearView = currentView === 'full_calendar';
 
   return (
-    <div className={styles.calendarWrapper}>
-      <CalendarHeader
-        title={currentView === 'home' ? 'Period Tracker' : 'Calendrier'}
-        onBack={
-          currentView === 'full_calendar'
-            ? () => setCurrentView('home')
-            : undefined
-        }
-        onOpenSettings={() => setIsSettingsOpen(true)}
-      />
+    <div
+      className={`${styles.appLayout} ${
+        isYearView ? styles.yearViewWrapper : ''
+      }`}
+    >
+      <CalendarHeader title="Period Tracker" />
 
       {currentView === 'home' ? (
-        <div className={styles.monthListContainer}>
-          {/* Hero Banner with illustration & phase title */}
-          <div className={styles.heroBanner}>
-            <div className={styles.heroImageFrame}>
-              <img
-                src={todayInsight.imageSrc}
-                alt={todayInsight.title}
-                className={styles.heroImage}
-              />
-            </div>
-            <h2 className={styles.heroPhaseTitle}>{todayInsight.title}</h2>
-          </div>
-
-          {/* 2-month Calendar preview */}
-          <InfiniteMonthList
-            key={currentView}
+        <div className={styles.homeContainer}>
+          {/* Monthly Calendar card with horizontal slide, legend & annual button */}
+          <HomeMonthlyCalendar
             settings={settings}
-            logs={logs}
-            maxMonths={2}
+            periodDates={periodDates}
+            onSelectDate={handleSelectDate}
             onViewFullCalendar={() => setCurrentView('full_calendar')}
-            onSelectDate={(dateStr) => setSelectedDate(dateStr)}
           />
 
-          {/* Phase Insights Section (Emotions, Nutrition, Recommendations) */}
+          {/* "Votre phase du moment" Card */}
           <PhaseInsightsCard insight={todayInsight} />
+
+          {/* Animation illustrée de la phase en cours */}
+          <PhaseAnimationView phase={todayInsight.phaseKey} />
         </div>
       ) : (
-        <InfiniteMonthList
-          key={currentView}
+        <YearCalendarView
           settings={settings}
-          logs={logs}
-          onSelectDate={(dateStr) => setSelectedDate(dateStr)}
+          periodDates={periodDates}
+          onSelectDate={handleSelectDate}
+          onBack={() => setCurrentView('home')}
         />
       )}
-
-      {/* Floating Bottom Action Bar */}
-      <div className={styles.bottomActionBar}>
-        <button
-          type="button"
-          className={styles.btnDeclarePeriod}
-          onClick={() => setIsLogPeriodModalOpen(true)}
-        >
-          Déclarer mes règles
-        </button>
-      </div>
-
-      <BottomSheet
-        selectedDateStr={selectedDate}
-        dayStatus={selectedDayStatus}
-        onLogPeriodStart={handleLogPeriodStart}
-        onLogPeriodEnd={handleLogPeriodEnd}
-        onRemoveLog={handleRemoveLog}
-        onClose={() => setSelectedDate(null)}
-      />
-
-      {isSettingsOpen && (
-        <SettingsModal
-          settings={settings}
-          onSave={(newSettings) => setSettings(newSettings)}
-          onClose={() => setIsSettingsOpen(false)}
-        />
-      )}
-
-      <LogPeriodModal
-        isOpen={isLogPeriodModalOpen}
-        onClose={() => setIsLogPeriodModalOpen(false)}
-        onSave={handleSavePeriodFromModal}
-      />
     </div>
   );
 }

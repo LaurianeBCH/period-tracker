@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "playbackStyle": "loop",
+  "nodes": [
+    {
+      "node": "2047:3085",
+      "timelineDurationMs": 5000,
+      "fields": [
+        {
+          "field": "motionTranslationX@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": -1238.5537109375,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.42,
+                  "p1y": 0,
+                  "p2x": 0.58,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 4400.589,
+              "value": -314.5135498046875,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 5000,
+              "value": -314.5135498046875
+            }
+          ]
+        },
+        {
+          "field": "motionTranslationY@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 27.804763793945312,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.42,
+                  "p1y": 0,
+                  "p2x": 0.58,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 4400.589,
+              "value": 27.804763793945312,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 5000,
+              "value": 27.804763793945312
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "2047:3086",
+      "timelineDurationMs": 5000,
+      "fields": [
+        {
+          "field": "motionTranslationX@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": -1088.5537109375,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.42,
+                  "p1y": 0,
+                  "p2x": 0.58,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 4039.15,
+              "value": -164.5135498046875,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 5000,
+              "value": -164.5135498046875
+            }
+          ]
+        },
+        {
+          "field": "motionTranslationY@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 98.57595825195312,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.42,
+                  "p1y": 0,
+                  "p2x": 0.58,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 4039.15,
+              "value": 98.57595825195312,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 5000,
+              "value": 98.57595825195312
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "2047:3370",
+      "timelineDurationMs": 5000,
+      "fields": [
+        {
+          "field": "motionRotation@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 0,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 1544.673,
+              "value": 0.1745329201221466,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 2814.661,
+              "value": 0,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 5000,
+              "value": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "2047:3088",
+      "timelineDurationMs": 5000,
+      "fields": [
+        {
+          "field": "motionTranslationX@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": -1148.5537109375,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.42,
+                  "p1y": 0,
+                  "p2x": 0.58,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 5000.987,
+              "value": -224.51361083984375
+            }
+          ]
+        },
+        {
+          "field": "motionTranslationY@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 157.0399169921875,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.42,
+                  "p1y": 0,
+                  "p2x": 0.58,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 5000.987,
+              "value": 157.0399169921875
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
