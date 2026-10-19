@@ -106,91 +106,57 @@
   overflow-y: auto;
 }
 
-/* Monthly Calendar Card ("Pointer mes règles") */
-.monthlyCalendarCard {
-  background-color: var(--color-background-white);
-  border-radius: var(--radius-radius-full);
-  padding: var(--spacing-spacing-lg);
+/* Home Monthly Calendar Card (V3 Node 4230:12234) */
+.homeCalendarCard {
+  background-color: var(--background-level-2);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-2xl) var(--spacing-lg);
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-spacing-md);
-  box-shadow: 0 4px 16px rgba(34, 34, 34, 0.05);
-}
-
-.cardHeading {
-  font-family: var(--typo-h2-family);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  text-align: center;
-  margin-top: 4px;
+  gap: var(--spacing-2xl);
+  box-sizing: border-box;
 }
 
 /* Month Navigation (< Août 2026 >) */
-.monthNavHeader {
+.monthHeaderRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 4px 0;
 }
 
 .monthNavButton {
-  width: 40px;
-  height: 40px;
-  border-radius: 100px;
-  border: 1px solid var(--color-stroke-primary);
-  background-color: var(--color-background-white);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: all 0.15s ease;
+  color: var(--text-dark-primary);
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
 .monthNavButton:hover {
-  background-color: var(--color-background-actived);
-  color: var(--color-text-primary);
-  transform: scale(1.04);
+  opacity: 0.75;
+  transform: scale(1.08);
 }
 
-.monthNavButton svg {
-  fill: currentColor;
-}
-
-.monthNavTitle {
-  font-family: var(--typo-h3-family);
-  font-size: 18px;
+.monthTitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-h2-size);
   font-weight: 700;
-  color: var(--color-text-secondary);
+  color: var(--text-dark-primary);
   text-align: center;
-  text-transform: capitalize;
+  margin: 0;
+  flex: 1;
 }
 
-.monthNavTitleBtn {
-  font-family: var(--typo-h3-family);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  text-align: center;
-  text-transform: capitalize;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 4px 10px;
-  border-radius: var(--radius-radius-sm);
-  transition: all 0.15s ease;
-}
-
-.monthNavTitleBtn:hover {
-  color: var(--color-text-primary);
-  background-color: var(--color-background-actived);
-}
-
-.monthNavTitleBtn:active {
-  transform: scale(0.96);
+.cardFooter {
+  width: 100%;
 }
 
 /* Horizontal slide container */
@@ -528,7 +494,7 @@
 }
 
 /* ========================================================
-   Year Calendar View (Node 2064:7720)
+   Year Calendar View (V3 Node 4230:12337)
    ======================================================== */
 
 .yearViewContainer {
@@ -538,9 +504,15 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  background-color: var(--color-background-white);
-  height: calc(100vh - 47px);
+  background-color: var(--background-level-1);
+  height: 100vh;
   overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .yearViewContainer {
+    max-width: 600px;
+  }
 }
 
 .yearMonthsScrollList {
@@ -549,8 +521,8 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: var(--spacing-spacing-lg) var(--spacing-spacing-lg) 130px var(--spacing-spacing-lg);
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-lg) var(--spacing-lg) 100px var(--spacing-lg);
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
@@ -559,32 +531,35 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .yearMonthTitle {
-  font-family: var(--typo-h3-family);
-  font-size: 18px;
+  font-family: var(--font-family);
+  font-size: var(--typo-h2-size);
   font-weight: 700;
-  color: var(--color-text-secondary);
+  color: var(--text-dark-primary);
   text-align: center;
   text-transform: capitalize;
+  margin: 0;
 }
 
 /* Fixed Bottom Footer for Year Calendar View */
 .yearFixedFooter {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  background-color: var(--color-background-white);
-  padding: 12px var(--spacing-spacing-lg) 16px var(--spacing-spacing-lg);
-  box-shadow: 0 -4px 16px rgba(34, 34, 34, 0.06);
+  background-color: var(--background-level-1);
+  padding: var(--spacing-lg);
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 90;
+  justify-content: center;
+  box-sizing: border-box;
+  z-index: 100;
+  border-top: 1px solid rgba(0, 46, 44, 0.08);
+}
+
+.yearFixedFooter > button {
+  max-width: 440px;
 }
