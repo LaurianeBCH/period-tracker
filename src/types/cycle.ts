@@ -1,8 +1,17 @@
 export interface UserSettings {
-  averageCycleLength: number; // default: 28 days
-  averagePeriodLength: number; // default: 5 days
+  defaultCycleLength: number; // default: 28 days
+  defaultPeriodLength: number; // default: 4 days
   lutealPhaseLength: number; // default: 14 days
   isOnboarded: boolean;
+  // Compatibilité ascendante
+  averageCycleLength?: number;
+  averagePeriodLength?: number;
+}
+
+export interface PeriodBlock {
+  startDate: string; // ISO format 'YYYY-MM-DD'
+  endDate: string; // ISO format 'YYYY-MM-DD'
+  duration: number; // number of days
 }
 
 export type LogType = 'period_start' | 'period_end';
@@ -29,4 +38,8 @@ export interface DayStatus {
   isOvulationDay: boolean;
   isFertileWindow: boolean;
   log?: CycleLog;
+  cycleDay?: number;
+  totalCycleDays?: number;
+  phaseDay?: number;
+  phaseTotalDays?: number;
 }

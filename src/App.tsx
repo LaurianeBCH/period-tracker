@@ -113,7 +113,10 @@ export default function App() {
             />
 
             {/* V3 "Les phases de mon cycle" Card with wave curve graph */}
-            <PhaseInsightsCard insight={todayInsight} />
+            <PhaseInsightsCard
+              insight={todayInsight}
+              todayStatus={todayStatus}
+            />
           </main>
 
           {/* V3 Bottom Tab Bar */}

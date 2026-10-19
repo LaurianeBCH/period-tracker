@@ -385,12 +385,28 @@
   box-sizing: border-box;
 }
 
+.phaseHeaderGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  text-align: center;
+}
+
 .phaseInsightsTitle {
   font-family: var(--font-family);
   font-size: var(--typo-h2-size);
   font-weight: 700;
   color: var(--text-dark-primary);
   text-align: center;
+  margin: 0;
+}
+
+.phaseCycleDaySubtitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-body-sm-size);
+  color: var(--text-dark-primary);
+  opacity: 0.85;
   margin: 0;
 }
 
@@ -408,30 +424,83 @@
   overflow: visible;
 }
 
+.activeCurveSegment {
+  stroke-width: 3.5px;
+  filter: drop-shadow(0 2px 4px rgba(0, 46, 44, 0.25));
+}
+
+.jourJMarkerGroup {
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s ease;
+}
+
+.jourJMarkerGroup:hover .jourJCircle {
+  transform-origin: center;
+  filter: brightness(1.05);
+}
+
+.jourJCircle {
+  transition: cx 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    cy 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .curvePulseCircle {
-  animation: pulseGlow 2s infinite ease-in-out;
+  transition: cx 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    cy 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: pulseGlow 2.2s infinite ease-in-out;
 }
 
 @keyframes pulseGlow {
   0% {
-    r: 8;
-    opacity: 0.8;
+    r: 12;
+    opacity: 0.65;
   }
   50% {
-    r: 13;
-    opacity: 0.35;
+    r: 18;
+    opacity: 0.2;
   }
   100% {
-    r: 8;
-    opacity: 0.8;
+    r: 12;
+    opacity: 0.65;
   }
 }
 
-.curveLabelsRow {
+.markerTooltipG {
+  pointer-events: none;
+  animation: tooltipFadeIn 0.15s ease-out;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.curveSegmentsBadgesRow {
   display: flex;
-  justify-content: space-around;
   width: 100%;
-  padding-top: 8px;
+  padding-top: var(--spacing-sm);
+  box-sizing: border-box;
+}
+
+.curveSegmentBadgeCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.waterDropBadgeContainer {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .legendList {
@@ -450,6 +519,14 @@
   font-weight: 600;
   line-height: var(--typo-body-sm-line-height);
   color: var(--text-dark-primary);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.activeLegendRow {
+  background-color: rgba(255, 255, 255, 0.35);
+  font-weight: 700;
 }
 
 .learnMoreModalOverlay {
