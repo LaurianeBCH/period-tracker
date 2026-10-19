@@ -8,7 +8,8 @@ interface MonthGridProps {
   year: number;
   month: number; // 0-indexed: 0 = January, 11 = December
   settings: UserSettings;
-  logs: CycleLog[];
+  periodDates?: string[];
+  logs?: CycleLog[];
   onSelectDate: (dateStr: string) => void;
   footerButton?: ReactNode;
   className?: string;
@@ -21,6 +22,7 @@ export const MonthGrid: FC<MonthGridProps> = ({
   year,
   month,
   settings,
+  periodDates = [],
   logs,
   onSelectDate,
   footerButton,
@@ -48,11 +50,13 @@ export const MonthGrid: FC<MonthGridProps> = ({
     cells.push(<DayCell key={`empty-${i}`} />);
   }
 
+  const effectiveDates = periodDates.length > 0 ? periodDates : (logs || []);
+
   // Days of the month
   for (let d = 1; d <= daysInMonth; d++) {
     const currentDate = new Date(year, month, d);
     const dateStr = formatDateISO(currentDate);
-    const status = getDayStatus(dateStr, settings, logs);
+    const status = getDayStatus(dateStr, settings, effectiveDates);
 
     cells.push(
       <DayCell
@@ -62,6 +66,15 @@ export const MonthGrid: FC<MonthGridProps> = ({
         onClick={() => onSelectDate(dateStr)}
       />
     );
+  }
+
+  // Trailing empty cells to complete the last row
+  const remainder = cells.length % 7;
+  if (remainder !== 0) {
+    const trailingCount = 7 - remainder;
+    for (let i = 0; i < trailingCount; i++) {
+      cells.push(<DayCell key={`trailing-${i}`} />);
+    }
   }
 
   return (

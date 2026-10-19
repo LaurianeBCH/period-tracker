@@ -1,84 +1,80 @@
-.calendarWrapper {
+.appLayout {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+  min-height: 100vh;
+  background: transparent;
+  overflow-x: hidden;
+}
+
+/* White background when on full year view */
+.yearViewWrapper {
+  background: var(--color-background-white) !important;
+  background-color: var(--color-background-white) !important;
   height: 100vh;
-  background-color: var(--current-phase-bg);
   overflow: hidden;
-  transition: background-color 0.3s ease;
 }
 
-/* Dynamic background tokens for calendarWrapper & header */
-.bgPhase1 {
-  background-color: var(--background-phase-1) !important;
-}
-
-.bgPhase2 {
-  background-color: var(--background-phase-2) !important;
-}
-
-.bgPhase3 {
-  background-color: var(--background-phase-3) !important;
-}
-
-.bgPhase4 {
-  background-color: var(--background-phase-4) !important;
-}
-
+/* Header container (fixed top & takes 100% of viewport width) */
 .headerContainer {
   position: sticky;
   top: 0;
   z-index: 100;
   width: 100%;
+  background-color: var(--color-background-white);
+  box-shadow: 0 1px 3px rgba(34, 34, 34, 0.04);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.headerInner {
+  width: 100%;
   max-width: 480px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px var(--spacing-lg);
-  background-color: var(--current-phase-bg);
-  transition: background-color 0.3s ease;
+  padding: 12px var(--spacing-spacing-lg);
+}
+
+.headerHomeLayout {
+  justify-content: flex-start;
 }
 
 .headerCenteredLayout {
   display: grid;
-  grid-template-columns: 44px 1fr 44px;
+  grid-template-columns: var(--spacing-size-icon-button) 1fr var(--spacing-size-icon-button);
   align-items: center;
-}
-
-.headerLeftGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  width: 100%;
 }
 
 .headerTitle {
-  font-family: var(--font-family);
-  font-size: 20px;
+  font-family: var(--typo-h1-family);
+  font-size: 22px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text-primary);
+  margin: 0;
 }
 
 .headerTitleCentered {
   text-align: center;
+  font-family: var(--typo-h2-family);
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-primary);
-  margin: 0;
+  color: var(--color-text-primary);
 }
 
 .iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 8px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.5);
+  width: var(--spacing-size-icon-button);
+  height: var(--spacing-size-icon-button);
+  padding: 0;
+  border-radius: var(--radius-radius-full);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--color-stroke-primary);
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.15s ease;
 }
@@ -89,333 +85,401 @@
 }
 
 .iconButton svg {
-  width: 20px;
-  height: 20px;
-  fill: var(--text-primary);
+  width: 18px;
+  height: 18px;
+  fill: var(--color-text-primary);
 }
 
 .backButton {
   justify-self: start;
 }
 
-.settingsButton {
-  justify-self: end;
+/* Home view container */
+.homeContainer {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-spacing-lg);
+  padding: var(--spacing-spacing-lg) var(--spacing-spacing-lg) var(--spacing-spacing-2xl) var(--spacing-spacing-lg);
+  overflow-y: auto;
 }
 
-/* Hero Section above calendar feed (Figma node 115:11084 & 115:11087) */
-.heroBanner {
+/* Monthly Calendar Card ("Pointer mes règles") */
+.monthlyCalendarCard {
+  background-color: var(--color-background-white);
+  border-radius: var(--radius-radius-full);
+  padding: var(--spacing-spacing-lg);
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 8px 0 16px 0;
+  gap: var(--spacing-spacing-md);
+  box-shadow: 0 4px 16px rgba(34, 34, 34, 0.05);
 }
 
-.heroImageFrame {
+.cardHeading {
+  font-family: var(--typo-h2-family);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* Month Navigation (< Août 2026 >) */
+.monthNavHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  max-width: 320px;
-  height: 200px;
+  padding: 4px 0;
+}
+
+.monthNavButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  border: 1px solid var(--color-stroke-primary);
+  background-color: var(--color-background-white);
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
 }
 
-.heroImage {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+.monthNavButton:hover {
+  background-color: var(--color-background-actived);
+  color: var(--color-text-primary);
+  transform: scale(1.04);
 }
 
-.heroPhaseTitle {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  text-align: center;
-  margin-top: 12px;
+.monthNavButton svg {
+  fill: currentColor;
 }
 
-.monthListContainer {
-  width: 100%;
-  max-width: 480px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-  padding: 16px var(--spacing-lg) 100px var(--spacing-lg);
-  overflow-y: auto;
-  scroll-behavior: smooth;
-}
-
-/* Single unified card block for 2 months on Home view */
-.unifiedHomeCard {
-  background-color: var(--background-white);
-  border-radius: var(--radius-full);
-  padding: var(--spacing-lg);
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  box-shadow: 0 4px 12px rgba(43, 42, 54, 0.04);
-}
-
-.unifiedMonthSection {
-  display: flex;
-  flex-direction: column;
-}
-
-.monthCardInner {
-  background: transparent;
-  padding: 0;
-  box-shadow: none;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Regular individual month card (used in Full Calendar view) */
-.monthCard {
-  background-color: var(--background-white);
-  border-radius: var(--radius-full);
-  padding: var(--spacing-lg);
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 12px rgba(43, 42, 54, 0.04);
-}
-
-.monthTitle {
-  font-family: var(--font-family);
+.monthNavTitle {
+  font-family: var(--typo-h3-family);
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text-secondary);
+  text-align: center;
   text-transform: capitalize;
-  margin-bottom: 4px;
 }
 
+.monthNavTitleBtn {
+  font-family: var(--typo-h3-family);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-align: center;
+  text-transform: capitalize;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--radius-radius-sm);
+  transition: all 0.15s ease;
+}
+
+.monthNavTitleBtn:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-background-actived);
+}
+
+.monthNavTitleBtn:active {
+  transform: scale(0.96);
+}
+
+/* Horizontal slide container */
+.monthSliderContainer {
+  width: 100%;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.monthSliderContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.monthSlide {
+  min-width: 100%;
+  max-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Weekdays */
 .weekdaysStrip {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   padding: 10px 0;
-  border-bottom: 1px solid rgba(43, 42, 54, 0.2);
+  border-bottom: 1px solid var(--border);
+  width: 100%;
 }
 
 .weekdayHeaderCell {
   text-align: center;
-  font-size: 12px;
+  font-family: var(--font-family);
+  font-size: var(--typo-caption-size);
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-dark-primary);
 }
 
+/* Days Grid */
 .daysGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: var(--spacing-sm);
-  padding-top: var(--spacing-sm);
+  gap: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  width: 100%;
 }
 
 .dayCell {
   width: 100%;
-  aspect-ratio: 1;
-  height: auto;
+  height: 60px;
+  min-height: 60px;
+  border-radius: var(--radius-sm);
+  padding-top: var(--spacing-sm);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: var(--spacing-xs);
   position: relative;
   font-family: var(--font-family);
-  font-size: 16px;
-  font-weight: 600;
   cursor: pointer;
   user-select: none;
-  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: var(--background-level-3);
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .dayCell:hover {
-  transform: scale(1.06);
+  transform: scale(1.04);
+}
+
+.dayNumber {
+  font-family: var(--typo-body-default-bold-family);
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-default-bold-line-height);
+  text-align: center;
+}
+
+.cellIconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
 }
 
 .emptyCell {
-  visibility: hidden;
+  background-color: var(--background-level-3);
+  border-radius: var(--radius-sm);
+  height: 60px;
+  min-height: 60px;
+  cursor: default;
+  pointer-events: none;
 }
 
-/* Phase styling matching Figma tokens */
+/* Phase styling */
 .phaseFollicular {
-  background-color: var(--surface-phase-1);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  background-color: var(--background-level-3);
+  color: var(--text-dark-primary);
 }
 
 .phaseOvulation {
-  background-color: var(--surface-phase-2);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  background-color: var(--background-level-3);
+  color: var(--text-dark-primary);
 }
 
 .phaseLuteal {
-  background-color: var(--surface-phase-3);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  background-color: var(--background-level-3);
+  color: var(--text-dark-primary);
 }
 
 .phaseMenstrual {
-  background-color: var(--surface-phase-4);
-  border: 2px solid var(--stroke-phase-4);
-  border-radius: var(--radius-full);
-  color: var(--text-on-dark);
+  background-color: var(--text-dark-primary);
+  border: none;
+  color: var(--text-white);
 }
 
 .phaseMenstrualUnconfirmed {
-  background-color: transparent;
-  border: 2px dashed var(--stroke-phase-4);
-  border-radius: var(--radius-full);
-  color: var(--text-primary);
+  background-color: var(--background-level-3);
+  border: 1.5px dashed var(--text-dark-primary);
+  color: var(--text-dark-primary);
 }
 
 .phaseDefault {
-  background-color: var(--background-white);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-}
-
-/* Surface Tokens for Badge Pills */
-.surfacePhase1 {
-  background-color: var(--surface-phase-1);
-  color: var(--text-primary);
-}
-
-.surfacePhase2 {
-  background-color: var(--surface-phase-2);
-  color: var(--text-primary);
-}
-
-.surfacePhase3 {
-  background-color: var(--surface-phase-3);
-  color: var(--text-primary);
-}
-
-.surfacePhase4 {
-  background-color: var(--surface-phase-4);
-  color: var(--text-on-dark);
+  background-color: var(--background-level-3);
+  color: var(--text-dark-primary);
 }
 
 /* Indicator dot for current day */
 .indicatorDot {
   position: absolute;
-  bottom: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 5px;
-  height: 5px;
+  top: 4px;
+  right: 4.5px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: var(--text-primary);
+  background-color: var(--accent);
+  box-shadow: 0 0 6px rgba(251, 255, 36, 0.7);
 }
 
-.indicatorDotOnDark {
-  background-color: var(--text-on-dark);
-}
-
-.cardFooter {
-  margin-top: 16px;
+/* Cycle Phase Legend */
+.cyclePhaseLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   width: 100%;
+  padding-top: 10px;
 }
 
-/* Full calendar preview button embedded in card with height 44px */
-.btnFullCalendar {
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendSwatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-family: var(--typo-caption-family);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* Annual Calendar / Action Button */
+.btnYearCalendar {
+  background-color: var(--color-background-primary);
+  color: var(--color-text-on-dark);
   height: 44px;
   width: 100%;
-  background-color: var(--background-white);
-  border: 1px solid var(--text-secondary);
-  color: var(--text-secondary);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-family);
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: var(--radius-radius-sm);
+  font-family: var(--typo-body-default-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  border: none;
+  margin-top: 6px;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-.btnFullCalendar:hover {
-  background-color: rgba(67, 57, 70, 0.05);
+.btnYearCalendar:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
-/* Phase Insights Section & Cards (Figma node 115:11183) */
-.insightsFeedContainer {
+/* "Votre phase du moment" Card */
+.currentPhaseCard {
+  background-color: var(--color-background-white);
+  border-radius: var(--radius-radius-full);
+  padding: var(--spacing-spacing-lg);
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  margin-top: 8px;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(34, 34, 34, 0.05);
 }
 
-.insightCard {
-  background-color: var(--background-white);
-  border-radius: var(--radius-full);
-  padding: var(--spacing-xl);
-  width: 100%;
+.currentPhaseHeading {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+}
+
+.currentPhaseSubtitle {
+  font-family: var(--typo-caption-family);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.currentPhaseTitle {
+  font-family: var(--typo-h1-family);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.25;
+}
+
+.currentPhaseText {
+  font-family: var(--typo-body-default-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+/* ========================================================
+   Year Calendar View (Node 2064:7720)
+   ======================================================== */
+
+.yearViewContainer {
+  width: 100%;
+  max-width: 480px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--color-background-white);
+  height: calc(100vh - 47px);
+  overflow: hidden;
+}
+
+.yearMonthsScrollList {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: var(--spacing-spacing-lg) var(--spacing-spacing-lg) 130px var(--spacing-spacing-lg);
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.yearMonthSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(43, 42, 54, 0.04);
 }
 
-.badgePill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 12px;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-family);
-  font-size: 12px;
-  font-weight: 700;
-  align-self: flex-start;
-}
-
-.quoteText {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  text-align: center;
-  margin: 12px 0 8px 0;
-  line-height: 1.3;
-}
-
-.cardImageFrame {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 8px;
-}
-
-.cardImage {
-  height: 180px;
-  width: auto;
-  max-width: 280px;
-  object-fit: contain;
-}
-
-.insightSectionTitle {
-  font-family: var(--font-family);
+.yearMonthTitle {
+  font-family: var(--typo-h3-family);
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 2px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  text-transform: capitalize;
 }
 
-.insightSectionText {
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-
-/* Sticky bottom action bar for "Déclarer mes règles" */
-.bottomActionBar {
+/* Fixed Bottom Footer for Year Calendar View */
+.yearFixedFooter {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -423,34 +487,11 @@
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  padding: 16px var(--spacing-lg) 24px var(--spacing-lg);
-  background: linear-gradient(180deg, transparent 0%, var(--current-phase-bg) 40%);
+  background-color: var(--color-background-white);
+  padding: 12px var(--spacing-spacing-lg) 16px var(--spacing-spacing-lg);
+  box-shadow: 0 -4px 16px rgba(34, 34, 34, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   z-index: 90;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  transition: background 0.3s ease;
-}
-
-.btnDeclarePeriod {
-  pointer-events: auto;
-  height: 44px;
-  width: 100%;
-  background-color: var(--surface-phase-4);
-  color: var(--text-on-dark);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-family);
-  font-size: 16px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(181, 79, 84, 0.25);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.btnDeclarePeriod:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
 }
