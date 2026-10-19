@@ -1,0 +1,82 @@
+.tabBarWrapper {
+  width: 100%;
+  background-color: var(--background-level-1);
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  border-top: 1px solid rgba(0, 46, 44, 0.06);
+}
+
+.tabBarInner {
+  width: 100%;
+  max-width: 480px;
+  height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: var(--spacing-lg);
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .tabBarInner {
+    max-width: 600px;
+  }
+}
+
+.tabItem {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.tabItem:active {
+  transform: scale(0.96);
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: var(--spacing-xs) var(--spacing-lg);
+  border-radius: var(--spacing-2xl);
+  transition: background-color 0.2s ease;
+}
+
+.iconWrapperActive {
+  background-color: var(--background-level-2);
+}
+
+.iconWrapperInactive {
+  background-color: transparent;
+}
+
+.label {
+  font-family: var(--font-family);
+  font-size: var(--typo-caption-size);
+  font-weight: 700;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.labelActive {
+  color: var(--text-dark-primary);
+}
+
+.labelInactive {
+  color: var(--text-dark-secondary);
+}
