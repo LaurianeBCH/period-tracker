@@ -1,5 +1,10 @@
+/* ========================================================
+   Theme & Design System Variants — Periode Tracker V3
+   Specification: docs/specs/foundations/ & docs/specs/atoms/
+   ======================================================== */
+
 .container {
-  max-width: 420px;
+  max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0 var(--spacing-lg);
@@ -9,46 +14,196 @@
   font-family: var(--font-family);
 }
 
+/* --- Card Variants --- */
 .card {
-  background: var(--background-white);
+  background: var(--background-level-2);
   border-radius: var(--radius-full);
-  padding: var(--spacing-lg);
-  box-shadow: 0 4px 12px rgba(43, 42, 54, 0.04);
+  padding: var(--spacing-2xl) var(--spacing-lg);
 }
 
+.cardSm {
+  background: var(--background-level-2);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm);
+}
+
+.cardMd {
+  background: var(--background-level-2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+
+/* --- Button Variants --- */
 .btnPrimary {
-  background: var(--surface-phase-4);
-  color: var(--text-on-dark);
-  padding: 14px 24px;
-  border-radius: var(--radius-full);
-  font-weight: 600;
-  font-size: 1rem;
+  background: var(--text-dark-primary);
+  color: var(--text-white);
+  height: 54px;
+  min-height: 54px;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-default-bold-line-height);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   width: 100%;
+  cursor: pointer;
+  border: none;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
 .btnPrimary:hover {
-  opacity: 0.9;
+  opacity: 0.92;
   transform: translateY(-1px);
 }
 
+.btnPrimary:active {
+  transform: translateY(0);
+}
+
 .btnSecondary {
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid rgba(43, 42, 54, 0.2);
-  padding: 12px 20px;
-  border-radius: var(--radius-full);
-  font-weight: 500;
-  font-size: 0.95rem;
+  background: var(--background-level-2);
+  color: var(--text-dark-primary);
+  border: 1px solid var(--border);
+  height: 56px;
+  min-height: 56px;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-default-bold-line-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
   width: 100%;
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .btnSecondary:hover {
-  background: rgba(43, 42, 54, 0.05);
-  color: var(--text-primary);
+  opacity: 0.9;
+}
+
+.btnActived {
+  background: var(--text-dark-primary);
+  color: var(--text-white);
+  height: 54px;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-icon-button);
+  height: var(--size-icon-button);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.iconButton:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* --- Typography Variants --- */
+.caption {
+  font-family: var(--typo-caption-family);
+  font-size: var(--typo-caption-size);
+  font-weight: var(--typo-caption-weight);
+  line-height: var(--typo-caption-line-height);
+}
+
+.number {
+  font-family: var(--typo-number-family);
+  font-size: var(--typo-number-size);
+  font-weight: var(--typo-number-weight);
+  line-height: var(--typo-number-line-height);
+}
+
+.headingH1 {
+  font-family: var(--typo-h1-family);
+  font-size: var(--typo-h1-size);
+  font-weight: var(--typo-h1-weight);
+  line-height: var(--typo-h1-line-height);
+}
+
+.headingH2 {
+  font-family: var(--typo-h2-family);
+  font-size: var(--typo-h2-size);
+  font-weight: var(--typo-h2-weight);
+  line-height: var(--typo-h2-line-height);
+}
+
+.headingH3 {
+  font-family: var(--typo-h3-family);
+  font-size: var(--typo-h3-size);
+  font-weight: var(--typo-h3-weight);
+  line-height: var(--typo-h3-line-height);
+}
+
+.bodyLarge {
+  font-family: var(--typo-body-lg-family);
+  font-size: var(--typo-body-lg-size);
+  font-weight: var(--typo-body-lg-weight);
+  line-height: var(--typo-body-lg-line-height);
+}
+
+.bodyDefaultBold {
+  font-family: var(--typo-body-default-bold-family);
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-default-bold-line-height);
+}
+
+.bodyDefault {
+  font-family: var(--typo-body-default-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
+}
+
+.bodySmall {
+  font-family: var(--typo-body-sm-family);
+  font-size: var(--typo-body-sm-size);
+  font-weight: var(--typo-body-sm-weight);
+  line-height: var(--typo-body-sm-line-height);
+}
+
+/* --- Phase Surface Variants --- */
+.surfacePhase1 {
+  background-color: var(--background-level-3);
+  color: var(--text-dark-primary);
+}
+
+.surfacePhase2 {
+  background-color: var(--background-level-2);
+  color: var(--text-dark-primary);
+}
+
+.surfacePhase3 {
+  background-color: var(--background-level-3);
+  color: var(--text-dark-primary);
+}
+
+.surfacePhase4 {
+  background-color: var(--text-dark-primary);
+  color: var(--text-white);
 }

@@ -1,43 +1,177 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lora:ital,wght@0,600;0,700;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap');
 
-:root {
-  /* Design Tokens from Figma */
-  --font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Lora', Georgia, serif; /* Figma "Display" font token */
+/* ========================================================
+   Design Tokens — Periode Tracker V3
+   Specification: docs/specs/tokens/token-reference.md
+   ======================================================== */
 
-  /* Text Colors */
-  --text-primary: #2b2a36;
-  --text-secondary: #433946;
-  --text-muted: #6b6b6b;
-  --text-on-dark: #ffffff;
-
-  /* Background Tokens */
-  --background-phase-1: #d2ecff;
-  --background-phase-2: #e5f4ef;
-  --background-phase-3: #ffefd9;
-  --background-phase-4: #fce7eb;
-  --background-white: #ffffff;
-  --surface-primary: #2b2a36;
-
-  /* Active dynamic phase background token */
-  --current-phase-bg: var(--background-phase-1);
-
-  /* 4-Phase Ovulation Cycle Surface Tokens */
-  --surface-phase-1: #d2ecff; /* Phase 1: Follicular */
-  --surface-phase-2: #e5f4ef; /* Phase 2: Ovulation */
-  --surface-phase-3: #ffefd9; /* Phase 3: Luteal */
-  --surface-phase-4: #b54f54; /* Phase 4: Menstrual */
-
-  /* Strokes */
-  --stroke-phase-4: #b54f54;
-
-  /* Component Dimensions & Spacing */
-  --size-calendar-cell: 44px;
-  --radius-full: 20px;
-  --radius-sm: 8px;
-  --spacing-lg: 16px;
+:root, [data-theme="phase 1"] {
+  /* --- Spacing Tokens --- */
+  --spacing-xs: 4px;
   --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
   --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 64px;
+
+  /* --- Radius Tokens --- */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-full: 20px;
+  --radius-pill: 100px;
+  --radius-100: 0px;
+
+  /* --- Sizing Tokens --- */
+  --size-icon-button: 36px;
+  --size-calendar-cell: 44px;
+  --size-button-height: 54px;
+
+  /* --- Base Color Tokens (Mode: Phase 1) --- */
+  --text-dark-primary: #002e2c;
+  --background-level-3: #4bbca4;
+  --text-light: #d2fccf;
+  --background-level-1: #d2fccf;
+  --border: #5ec3a3;
+  --background-level-2: #9ce2c0;
+  --text-white: #ffffff;
+  --text-dark-secondary: #137051;
+  --accent: #fbff24;
+  --accent-alpha: #fbff2400;
+
+  /* Typography Scale */
+  --font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --typo-caption-family: var(--font-family);
+  --typo-caption-size: 14px;
+  --typo-caption-weight: 700;
+  --typo-caption-line-height: normal;
+
+  --typo-number-family: var(--font-family);
+  --typo-number-size: 50px;
+  --typo-number-weight: 700;
+  --typo-number-line-height: 100%;
+
+  --typo-h1-family: var(--font-family);
+  --typo-h1-size: 22px;
+  --typo-h1-weight: 700;
+  --typo-h1-line-height: normal;
+
+  --typo-h2-family: var(--font-family);
+  --typo-h2-size: 20px;
+  --typo-h2-weight: 700;
+  --typo-h2-line-height: normal;
+
+  --typo-h3-family: var(--font-family);
+  --typo-h3-size: 18px;
+  --typo-h3-weight: 700;
+  --typo-h3-line-height: normal;
+
+  --typo-body-lg-family: var(--font-family);
+  --typo-body-lg-size: 18px;
+  --typo-body-lg-weight: 600;
+  --typo-body-lg-line-height: 24px;
+
+  --typo-body-default-bold-family: var(--font-family);
+  --typo-body-default-bold-size: 16px;
+  --typo-body-default-bold-weight: 700;
+  --typo-body-default-bold-line-height: 22px;
+
+  --typo-body-default-family: var(--font-family);
+  --typo-body-default-size: 16px;
+  --typo-body-default-weight: 600;
+  --typo-body-default-line-height: 22px;
+
+  --typo-body-sm-family: var(--font-family);
+  --typo-body-sm-size: 14px;
+  --typo-body-sm-weight: 600;
+  --typo-body-sm-line-height: 18px;
+
+  /* --- Backward Compatibility Aliases for Legacy Code --- */
+  --color-text-primary: var(--text-dark-primary);
+  --color-text-secondary: var(--text-dark-secondary);
+  --color-text-muted: var(--text-dark-secondary);
+  --color-text-on-dark: var(--text-white);
+  --color-background-white: var(--background-level-1);
+  --color-surface-phase-1: var(--background-level-3);
+  --color-surface-phase-2: var(--background-level-2);
+  --color-surface-phase-3: var(--background-level-3);
+  --color-surface-phase-4: var(--text-dark-primary);
+  --color-stroke-primary: var(--border);
+  --color-background-primary: var(--text-dark-primary);
+  --color-background-secondary: var(--background-level-2);
+  --color-background-muted: var(--background-level-3);
+  --color-background-actived: var(--background-level-2);
+
+  --spacing-spacing-xs: var(--spacing-xs);
+  --spacing-spacing-sm: var(--spacing-sm);
+  --spacing-spacing-md: var(--spacing-md);
+  --spacing-spacing-lg: var(--spacing-lg);
+  --spacing-spacing-xl: var(--spacing-xl);
+  --spacing-spacing-2xl: var(--spacing-2xl);
+  --spacing-size-icon-button: var(--size-icon-button);
+  --spacing-size-button-height: var(--size-button-height);
+  --spacing-size-calendar-cell: var(--size-calendar-cell);
+
+  --radius-radius-sm: var(--radius-sm);
+  --radius-radius-md: var(--radius-md);
+  --radius-radius-full: var(--radius-full);
+}
+
+/* Collection: Color - Mode: Phase 2 */
+[data-theme="phase 2"] {
+  --text-dark-primary: #583500;
+  --background-level-3: #e09e51;
+  --text-light: #f7efb6;
+  --background-level-1: #f7efb6;
+  --border: #e9c672;
+  --background-level-2: #f0e486;
+  --text-white: #ffffff;
+  --text-dark-secondary: #85550c;
+  --accent: #6d9cec;
+  --accent-alpha: #324dff00;
+}
+
+/* Collection: Color - Mode: Phase 3 */
+[data-theme="phase 3"] {
+  --text-dark-primary: #081f45;
+  --background-level-3: #477bb3;
+  --text-light: #daedf2;
+  --background-level-1: #daedf2;
+  --border: #74b6e8;
+  --background-level-2: #c0e0f2;
+  --text-white: #ffffff;
+  --text-dark-secondary: #1b417f;
+  --accent: #f7a4cb;
+  --accent-alpha: #f7a4cb00;
+}
+
+/* Collection: Color - Mode: Phase4 */
+[data-theme="phase 4"],
+[data-theme="phase4"] {
+  --text-dark-primary: #321310;
+  --background-level-3: #cb6c62;
+  --text-light: #f8dbcc;
+  --background-level-1: #f8dbcc;
+  --border: #ee928a;
+  --background-level-2: #eeb8b0;
+  --text-white: #ffffff;
+  --text-dark-secondary: #6a342f;
+  --accent: #a7feb0;
+  --accent-alpha: #a7feb000;
+}
+
+/* Collection: Color - Mode: Neutre */
+[data-theme="neutre"] {
+  --text-dark-primary: #000000;
+  --background-level-3: #e1dbd5;
+  --text-light: #a2a2a2;
+  --background-level-1: #fcf9f7;
+  --border: #5b6068;
+  --background-level-2: #f7f0ea;
+  --text-white: #ffffff;
+  --text-dark-secondary: #555555;
+  --accent: #74f6ff;
+  --accent-alpha: #74f6ff00;
 }
 
 * {
@@ -50,12 +184,12 @@
 html,
 body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   font-family: var(--font-family);
-  background-color: var(--current-phase-bg);
-  color: var(--text-primary);
+  background-color: var(--background-level-1);
+  color: var(--text-dark-primary);
   overflow-x: hidden;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 #root {
