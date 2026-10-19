@@ -15,17 +15,18 @@ import {
 } from './utils/cycleEngine';
 import { getPhaseInsight } from './data/phaseInsights';
 import { OnboardingWizard } from './components/OnboardingWizard/OnboardingWizard';
-import { CalendarHeader } from './components/Calendar/CalendarHeader';
+import { NavigationHeader, TabBar, TabId } from './components/organisms';
 import { HomeMonthlyCalendar } from './components/Calendar/HomeMonthlyCalendar';
 import { YearCalendarView } from './components/Calendar/YearCalendarView';
 import { PhaseInsightsCard } from './components/Calendar/PhaseInsightsCard';
-import { PhaseAnimationView } from './components/PhaseAnimation';
 import styles from './components/Calendar/Calendar.module.css';
 
 export default function App() {
   const [settings, setSettings] = useState<UserSettings>(() => getSettings());
   const [periodDates, setPeriodDates] = useState<string[]>(() => getPeriodDates());
   const [currentView, setCurrentView] = useState<'home' | 'full_calendar'>('home');
+  const [activeTab, setActiveTab] = useState<TabId>('calendar');
+  const [isEditingSettings, setIsEditingSettings] = useState(false);
 
   useEffect(() => {
     saveSettings(settings);
@@ -35,29 +36,23 @@ export default function App() {
   const todayStatus = getDayStatus(todayISO, settings, periodDates);
   const todayInsight = getPhaseInsight(todayStatus.phase);
 
-  // Apply phase linear-gradient on body
+  // Synchronize V3 Multi-Mode Design Tokens with current phase
   useEffect(() => {
     if (!settings.isOnboarded) return;
 
-    if (currentView === 'full_calendar') {
-      document.body.style.background = '#ffffff';
-      return;
-    }
-
     const phaseKey = todayInsight.phaseKey;
-    const gradient =
+    const themeMode =
       phaseKey === 'Phase1-Follicular'
-        ? 'linear-gradient(180deg, rgba(252, 255, 234, 1) 0%, rgba(238, 241, 226, 1) 100%)'
+        ? 'phase 1'
         : phaseKey === 'Phase2-Ovulation'
-        ? 'linear-gradient(180deg, rgba(255, 231, 192, 0) 0%, rgba(255, 231, 192, 1) 100%)'
+        ? 'phase 2'
         : phaseKey === 'Phase3-Luteal'
-        ? 'linear-gradient(180deg, rgba(223, 208, 241, 0) 0%, rgba(223, 208, 241, 1) 100%)'
-        : 'linear-gradient(180deg, rgba(232, 196, 196, 0) 0%, rgba(250, 157, 173, 1) 100%)';
+        ? 'phase 3'
+        : 'phase 4';
 
-    document.documentElement.style.setProperty('--current-phase-gradient', gradient);
-    document.body.style.background = gradient;
-    document.body.style.backgroundAttachment = 'fixed';
-  }, [settings.isOnboarded, currentView, todayInsight.phaseKey]);
+    document.documentElement.setAttribute('data-theme', themeMode);
+    document.body.style.backgroundColor = 'var(--background-level-1)';
+  }, [settings.isOnboarded, todayInsight.phaseKey]);
 
   const handleOnboardingComplete = (
     newSettings: UserSettings,
@@ -68,6 +63,7 @@ export default function App() {
       setPeriodDates([...initialDates]);
     }
     setSettings(newSettings);
+    setIsEditingSettings(false);
   };
 
   /**
@@ -82,8 +78,13 @@ export default function App() {
     setPeriodDates([...updated]);
   };
 
-  if (!settings.isOnboarded) {
-    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  if (!settings.isOnboarded || isEditingSettings) {
+    return (
+      <OnboardingWizard
+        onComplete={handleOnboardingComplete}
+        initialSettings={settings.isOnboarded ? settings : undefined}
+      />
+    );
   }
 
   const isYearView = currentView === 'full_calendar';
@@ -94,24 +95,38 @@ export default function App() {
         isYearView ? styles.yearViewWrapper : ''
       }`}
     >
-      <CalendarHeader title="Period Tracker" />
+      {/* V3 Navigation Header */}
+      <NavigationHeader
+        title="Period Tracker"
+        onSettingsClick={() => setIsEditingSettings(true)}
+      />
 
       {currentView === 'home' ? (
-        <div className={styles.homeContainer}>
-          {/* Monthly Calendar card with horizontal slide, legend & annual button */}
-          <HomeMonthlyCalendar
-            settings={settings}
-            periodDates={periodDates}
-            onSelectDate={handleSelectDate}
-            onViewFullCalendar={() => setCurrentView('full_calendar')}
+        <>
+          <main className={styles.homeContainer}>
+            {/* Monthly Calendar card */}
+            <HomeMonthlyCalendar
+              settings={settings}
+              periodDates={periodDates}
+              onSelectDate={handleSelectDate}
+              onViewFullCalendar={() => setCurrentView('full_calendar')}
+            />
+
+            {/* V3 "Les phases de mon cycle" Card with wave curve graph */}
+            <PhaseInsightsCard insight={todayInsight} />
+          </main>
+
+          {/* V3 Bottom Tab Bar */}
+          <TabBar
+            activeTab={activeTab}
+            onTabChange={(tab) => {
+              setActiveTab(tab);
+              if (tab === 'calendar') {
+                setCurrentView('home');
+              }
+            }}
           />
-
-          {/* "Votre phase du moment" Card */}
-          <PhaseInsightsCard insight={todayInsight} />
-
-          {/* Animation illustrée de la phase en cours */}
-          <PhaseAnimationView phase={todayInsight.phaseKey} />
-        </div>
+        </>
       ) : (
         <YearCalendarView
           settings={settings}
