@@ -392,46 +392,139 @@
   transform: translateY(-1px);
 }
 
-/* "Votre phase du moment" Card */
-.currentPhaseCard {
-  background-color: var(--color-background-white);
-  border-radius: var(--radius-radius-full);
-  padding: var(--spacing-spacing-lg);
+/* ========================================================
+   Phase Insights Card & Wave Curve (Figma Node 4230:12292)
+   ======================================================== */
+
+.phaseInsightsCard {
+  background-color: var(--background-level-2);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xl);
   width: 100%;
+  box-sizing: border-box;
+}
+
+.phaseInsightsTitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-h2-size);
+  font-weight: 700;
+  color: var(--text-dark-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.curveContainer {
+  width: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 4px 16px rgba(34, 34, 34, 0.05);
+  align-items: center;
 }
 
-.currentPhaseHeading {
+.curveSvg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.curvePulseCircle {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% {
+    r: 8;
+    opacity: 0.8;
+  }
+  50% {
+    r: 13;
+    opacity: 0.35;
+  }
+  100% {
+    r: 8;
+    opacity: 0.8;
+  }
+}
+
+.curveLabelsRow {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding-top: 8px;
+}
+
+.legendList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--spacing-sm);
+  width: 100%;
 }
 
-.currentPhaseSubtitle {
-  font-family: var(--typo-caption-family);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-}
-
-.currentPhaseTitle {
-  font-family: var(--typo-h1-family);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1.25;
-}
-
-.currentPhaseText {
-  font-family: var(--typo-body-default-family);
-  font-size: 16px;
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-family);
+  font-size: var(--typo-body-sm-size);
   font-weight: 600;
-  line-height: 1.45;
-  color: var(--color-text-secondary);
+  line-height: var(--typo-body-sm-line-height);
+  color: var(--text-dark-primary);
+}
+
+.learnMoreModalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 46, 44, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: var(--spacing-lg);
+}
+
+.learnMoreModalContent {
+  background-color: var(--background-level-1);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-2xl);
+  max-width: 440px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.modalPhaseItem {
+  background-color: var(--background-level-2);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modalPhaseTitle {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalPhaseDesc {
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--text-dark-secondary);
+  line-height: 1.4;
 }
 
 /* ========================================================
