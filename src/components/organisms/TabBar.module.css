@@ -8,12 +8,12 @@
   left: 0;
   right: 0;
   z-index: 90;
-  border-top: 1px solid rgba(0, 46, 44, 0.06);
+  border-top: none;
 }
 
 .tabBarInner {
   width: 100%;
-  max-width: 480px;
+  max-width: 402px;
   height: 85px;
   display: flex;
   align-items: center;

@@ -100,12 +100,7 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
 
   return (
     <div className={styles.phaseInsightsCard}>
-      <div className={styles.phaseHeaderGroup}>
-        <h2 className={styles.phaseInsightsTitle}>Les phases de mon cycle</h2>
-        <p className={styles.phaseCycleDaySubtitle}>
-          Jour J • <strong>Jour {cycleDay}</strong> sur {totalCycleDays} ({activeSegment.label})
-        </p>
-      </div>
+      <h2 className={styles.phaseInsightsTitle}>Les phases de mon cycle</h2>
 
       {/* SVG Wave Curve Graph (Figma exact geometry: 4 segments, 3 separators, dynamic day marker) */}
       <div className={styles.curveContainer}>
@@ -319,35 +314,19 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
 
       {/* Legend items */}
       <div className={styles.legendList}>
-        <div
-          className={`${styles.legendRow} ${
-            activeSegmentKey === 'phase1' ? styles.activeLegendRow : ''
-          }`}
-        >
+        <div className={styles.legendRow}>
           <Badge variant="phase1">1</Badge>
           <span>Prise d’élan (folliculaire)</span>
         </div>
-        <div
-          className={`${styles.legendRow} ${
-            activeSegmentKey === 'phase2' ? styles.activeLegendRow : ''
-          }`}
-        >
+        <div className={styles.legendRow}>
           <Badge variant="phase2">2</Badge>
           <span>Debout sur la planche (ovulation)</span>
         </div>
-        <div
-          className={`${styles.legendRow} ${
-            activeSegmentKey === 'phase3' ? styles.activeLegendRow : ''
-          }`}
-        >
+        <div className={styles.legendRow}>
           <Badge variant="phase3">3</Badge>
           <span>Dans le tube de la vague (lutéale)</span>
         </div>
-        <div
-          className={`${styles.legendRow} ${
-            activeSegmentKey === 'phase4' ? styles.activeLegendRow : ''
-          }`}
-        >
+        <div className={styles.legendRow}>
           <div className={styles.waterDropBadgeContainer}>
             <WaterDropIcon size={16} color="var(--text-dark-primary)" />
           </div>
@@ -356,8 +335,8 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
       </div>
 
       {/* Button Secondary: "En savoir plus sur les phases" */}
-      <Button variant="secondary" onClick={() => setIsModalOpen(true)}>
-        <SparklesSmallIcon size={20} />
+      <Button variant="secondary" fullWidth onClick={() => setIsModalOpen(true)}>
+        <SparklesSmallIcon size={24} />
         <span>En savoir plus sur les phases</span>
       </Button>
 
