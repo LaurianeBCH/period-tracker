@@ -1,7 +1,7 @@
 import { FC, useState, useRef, useEffect } from 'react';
-import { PhaseInsight, PHASE_INSIGHTS } from '../../data/phaseInsights';
+import { PhaseInsight } from '../../data/phaseInsights';
 import { DayStatus } from '../../types/cycle';
-import { Badge, Button, WaterDropIcon } from '../atoms';
+import { WaterDropIcon } from '../atoms';
 import {
   CURVE_SEGMENTS,
   calculateTodayCurvePosition,
@@ -307,14 +307,13 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
       </div>
 
       {/* Legend items */}
-      {/*<div className={styles.legendList}>
+      {/*
+      <div className={styles.legendList}>
         <div className={styles.legendRow}>
-          <Badge variant="phase1">1</Badge>
-          <span>Prise d’élan (folliculaire)</span>
+          <span>1 Prise d’élan (folliculaire)</span>
         </div>
         <div className={styles.legendRow}>
-          <Badge variant="phase2">2</Badge>
-          <span>Debout sur la planche (ovulation)</span>
+          <span>2 Debout sur la planche (ovulation)</span>
         </div>
         <div className={styles.legendRow}>
           <span className={styles.phase3Number}>3</span>
@@ -327,6 +326,7 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
           <span>Repos avant la prochaine vague (règle)</span>
         </div>
       </div>
+      */}
 
       {/* Button Secondary Figma: "En savoir plus" with right chevron -> navigates to recommendations */}
       <button
