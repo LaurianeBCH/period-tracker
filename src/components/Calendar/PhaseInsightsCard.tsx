@@ -14,26 +14,15 @@ interface PhaseInsightsCardProps {
   insight: PhaseInsight;
   todayStatus?: DayStatus;
   selectedStatus?: DayStatus;
+  onNavigateToRecommendations?: () => void;
 }
-
-const SparklesSmallIcon: FC<{ size?: number }> = ({ size = 20 }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-hidden="true"
-  >
-    <path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z" />
-  </svg>
-);
 
 export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
   insight,
   todayStatus,
-  selectedStatus
+  selectedStatus,
+  onNavigateToRecommendations
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
   // Status to display: selected day if active, otherwise today's status
@@ -42,7 +31,6 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
   const currentPhaseDay = activeStatus?.phaseDay ?? 1;
   const currentPhaseTotalDays = activeStatus?.phaseTotalDays ?? 6;
   const cycleDay = activeStatus?.cycleDay ?? 1;
-  const totalCycleDays = activeStatus?.totalCycleDays ?? 28;
 
   // Segment references to measure exact SVG path length
   const seg1Ref = useRef<SVGPathElement | null>(null);
@@ -99,84 +87,60 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
   const activeSegment = CURVE_SEGMENTS[activeSegmentKey];
 
   return (
-    <div className={styles.phaseInsightsCard}>
-      <h2 className={styles.phaseInsightsTitle}>Les phases de mon cycle</h2>
+    <div className={styles.insightsCard}>
+      {/* V3 Figma Header: "Ma phase du moment" + phase title */}
+      <div className={styles.insightsHeader}>
+        <h2 className={styles.insightsMainTitle}>Phase du moment</h2>
+        <p className={styles.insightsPhaseSubtitle}>{insight.title}</p>
+      </div>
 
-      {/* SVG Wave Curve Graph (Figma exact geometry: 4 segments, 3 separators, dynamic day marker) */}
+      {/* SVG Wave Curve Graph (Figma exact geometry: 4 segments, 3 solid separators, dynamic day marker, bottom badge row) */}
       <div className={styles.curveContainer}>
         <svg
-          viewBox="0 0 370 200"
+          viewBox="0 0 370 202"
           className={styles.curveSvg}
           xmlns="http://www.w3.org/2000/svg"
           aria-label="Graphique d'avancement jour par jour dans le cycle menstruel"
         >
           <defs>
-            {/* Figma drop shadow filter for avatar/marker (#FBFF24 blur) */}
+            {/* Figma drop shadow glow filter for avatar/marker (#FBFF24 blur) */}
             <filter
               id="avatarGlowFilter"
               x="-50%"
               y="-50%"
               width="200%"
               height="200%"
-              filterUnits="userSpaceOnUse"
-              colorInterpolationFilters="sRGB"
             >
-              <feGaussianBlur stdDeviation="8" result="blur" />
-              <feFlood floodColor="#FBFF24" floodOpacity="0.8" result="color" />
-              <feComposite in2="blur" in="color" operator="in" result="glow" />
-              <feMerge>
-                <feMergeNode in="glow" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
+              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#FBFF24" floodOpacity="0.85" />
             </filter>
           </defs>
 
-          {/* 3 Vertical separator lines between the 4 segments */}
-          {/* Separator 1: Between Phase 1 and Phase 2 (x=62.87) */}
+          {/* 3 Vertical separator lines between the 4 segments (solid in Figma, extending down to badge row) */}
           <line
             x1="62.87"
-            y1="5"
+            y1="2"
             x2="62.87"
-            y2="185"
+            y2="202"
             stroke="var(--border)"
-            strokeWidth="1.2"
-            strokeDasharray="4 4"
-            opacity="0.6"
+            strokeWidth="1"
           />
 
-          {/* Separator 2: Between Phase 2 and Phase 3 (x=130.00) */}
           <line
             x1="130.00"
-            y1="5"
+            y1="2"
             x2="130.00"
-            y2="185"
+            y2="202"
             stroke="var(--border)"
-            strokeWidth="1.2"
-            strokeDasharray="4 4"
-            opacity="0.6"
+            strokeWidth="1"
           />
 
-          {/* Separator 3: Between Phase 3 and Phase 4 (x=297.24) */}
           <line
             x1="297.24"
-            y1="5"
+            y1="2"
             x2="297.24"
-            y2="185"
+            y2="202"
             stroke="var(--border)"
-            strokeWidth="1.2"
-            strokeDasharray="4 4"
-            opacity="0.6"
-          />
-
-          {/* Baseline guide line through whole cycle */}
-          <line
-            x1="0"
-            y1="173.14"
-            x2="369"
-            y2="173.14"
-            stroke="var(--text-dark-primary)"
             strokeWidth="1"
-            opacity="0.15"
           />
 
           {/* Segment 1: Prise d'élan (Folliculaire) */}
@@ -186,7 +150,7 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             d={CURVE_SEGMENTS.phase1.pathD}
             fill="none"
             stroke="var(--text-dark-primary)"
-            strokeWidth={activeSegmentKey === 'phase1' ? '3.5' : '2.5'}
+            strokeWidth="2"
             strokeLinecap="round"
             className={activeSegmentKey === 'phase1' ? styles.activeCurveSegment : ''}
           />
@@ -198,7 +162,7 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             d={CURVE_SEGMENTS.phase2.pathD}
             fill="none"
             stroke="var(--text-dark-primary)"
-            strokeWidth={activeSegmentKey === 'phase2' ? '3.5' : '2.5'}
+            strokeWidth="2"
             strokeLinecap="round"
             className={activeSegmentKey === 'phase2' ? styles.activeCurveSegment : ''}
           />
@@ -210,26 +174,84 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             d={CURVE_SEGMENTS.phase3.pathD}
             fill="none"
             stroke="var(--text-dark-primary)"
-            strokeWidth={activeSegmentKey === 'phase3' ? '3.5' : '2.5'}
+            strokeWidth="2"
             strokeLinecap="round"
             className={activeSegmentKey === 'phase3' ? styles.activeCurveSegment : ''}
           />
 
-          {/* Segment 4: Repos avant la prochaine vague (Règles) */}
+          {/* Segment 4: Repos avant la prochaine vague (Règles - flat baseline line) */}
           <path
             ref={seg4Ref}
             id="curve-seg-4"
             d={CURVE_SEGMENTS.phase4.pathD}
             fill="none"
             stroke="var(--text-dark-primary)"
-            strokeWidth={activeSegmentKey === 'phase4' ? '3.5' : '2.5'}
+            strokeWidth="2"
             strokeLinecap="round"
             className={activeSegmentKey === 'phase4' ? styles.activeCurveSegment : ''}
           />
 
+          {/* Bottom phase badges row (integrated inside SVG for exact alignment with separators) */}
+          {/* Phase 1 badge: circular pill with "1" */}
+          <g id="badge-phase1">
+            <circle cx="31.44" cy="190" r="9" fill="var(--background-level-1)" />
+            <text
+              x="31.44"
+              y="190"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fill="var(--text-dark-primary)"
+              fontSize="14"
+              fontFamily="var(--font-family)"
+              fontWeight="400"
+            >
+              1
+            </text>
+          </g>
+
+          {/* Phase 2 badge: circular pill with "2" */}
+          <g id="badge-phase2">
+            <circle cx="96.44" cy="190" r="9" fill="var(--text-white)" />
+            <text
+              x="96.44"
+              y="190"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fill="var(--text-dark-primary)"
+              fontSize="14"
+              fontFamily="var(--font-family)"
+              fontWeight="400"
+            >
+              2
+            </text>
+          </g>
+
+          {/* Phase 3 badge: "3" */}
+          <g id="badge-phase3">
+            <circle cx="213.62" cy="190" r="9" fill="var(--background-level-2)" />
+            <text
+              x="213.62"
+              y="190"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fill="var(--text-dark-primary)"
+              fontSize="14"
+              fontFamily="var(--font-family)"
+              fontWeight="400"
+            >
+              3
+            </text>
+          </g>
+
+          {/* Phase 4 badge: water drop icon */}
+          <g id="badge-phase4" transform="translate(324.62, 181)">
+            <WaterDropIcon size={18} color="var(--text-dark-primary)" />
+          </g>
+
           {/* Dynamic Day Marker: Jour J (Yellow glowing circle) */}
           <g
-            className={styles.jourJMarkerGroup}
+            className={styles.dayMarkerGroup}
+            filter="url(#avatarGlowFilter)"
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
             onClick={() => setShowTooltip((prev) => !prev)}
@@ -237,30 +259,27 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             tabIndex={0}
             aria-label={`Jour J: Jour ${cycleDay} du cycle, ${activeSegment.label}`}
           >
-            {/* Outer pulsing glow aura */}
-            <circle
-              cx={markerPos.x}
-              cy={markerPos.y}
-              r="16"
-              fill="var(--accent)"
-              opacity="0.5"
-              className={styles.curvePulseCircle}
-            />
-
-            {/* Main yellow avatar circle with dark border */}
+            {/* Main yellow avatar circle with dark border matching Figma */}
             <circle
               cx={markerPos.x}
               cy={markerPos.y}
               r="10"
               fill="var(--accent)"
+              className={styles.dayMarkerCircle}
+            />
+            <circle
+              cx={markerPos.x}
+              cy={markerPos.y}
+              r="9"
+              fill="none"
               stroke="var(--text-dark-primary)"
-              strokeWidth="2.5"
-              className={styles.jourJCircle}
+              strokeWidth="2"
+              className={styles.dayMarkerBorder}
             />
 
             {/* Floating indicator tooltip on hover/click */}
             {showTooltip && (
-              <g className={styles.markerTooltipG}>
+              <g className={styles.markerTooltip}>
                 <rect
                   x={Math.max(10, Math.min(270, markerPos.x - 45))}
                   y={Math.max(5, markerPos.y - 36)}
@@ -285,35 +304,10 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             )}
           </g>
         </svg>
-
-        {/* Phase badges aligned proportionally beneath their corresponding curve segment */}
-        <div className={styles.curveSegmentsBadgesRow}>
-          {/* Column 1: Phase 1 (0 to 62.87px -> 17.0%) */}
-          <div className={styles.curveSegmentBadgeCol} style={{ width: '17%' }}>
-            <Badge variant="phase1">1</Badge>
-          </div>
-
-          {/* Column 2: Phase 2 (62.87px to 130px -> 18.2%) */}
-          <div className={styles.curveSegmentBadgeCol} style={{ width: '18.2%' }}>
-            <Badge variant="phase2">2</Badge>
-          </div>
-
-          {/* Column 3: Phase 3 (130px to 297.24px -> 45.3%) */}
-          <div className={styles.curveSegmentBadgeCol} style={{ width: '45.3%' }}>
-            <Badge variant="phase3">3</Badge>
-          </div>
-
-          {/* Column 4: Phase 4 (297.24px to 369px -> 19.5%) */}
-          <div className={styles.curveSegmentBadgeCol} style={{ width: '19.5%' }}>
-            <div className={styles.waterDropBadgeContainer}>
-              <WaterDropIcon size={16} color="var(--text-dark-primary)" />
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Legend items */}
-      <div className={styles.legendList}>
+      {/*<div className={styles.legendList}>
         <div className={styles.legendRow}>
           <Badge variant="phase1">1</Badge>
           <span>Prise d’élan (folliculaire)</span>
@@ -323,85 +317,39 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
           <span>Debout sur la planche (ovulation)</span>
         </div>
         <div className={styles.legendRow}>
-          <Badge variant="phase3">3</Badge>
+          <span className={styles.phase3Number}>3</span>
           <span>Dans le tube de la vague (lutéale)</span>
         </div>
         <div className={styles.legendRow}>
-          <div className={styles.waterDropBadgeContainer}>
+          <div className={styles.waterDropBadge}>
             <WaterDropIcon size={16} color="var(--text-dark-primary)" />
           </div>
           <span>Repos avant la prochaine vague (règle)</span>
         </div>
       </div>
 
-      {/* Button Secondary: "En savoir plus sur les phases" */}
-      <Button variant="secondary" fullWidth onClick={() => setIsModalOpen(true)}>
-        <SparklesSmallIcon size={24} />
-        <span>En savoir plus sur les phases</span>
-      </Button>
-
-      {/* Detail Modal */}
-      {isModalOpen && (
-        <div
-          className={styles.learnMoreModalOverlay}
-          onClick={() => setIsModalOpen(false)}
-          role="dialog"
-          aria-modal="true"
+      {/* Button Secondary Figma: "En savoir plus" with right chevron -> navigates to recommendations */}
+      <button
+        type="button"
+        className={styles.moreButton}
+        onClick={onNavigateToRecommendations}
+      >
+        <span className={styles.moreButtonText}>En savoir plus</span>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={styles.moreButtonChevron}
+          aria-hidden="true"
         >
-          <div
-            className={styles.learnMoreModalContent}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className={styles.phaseInsightsTitle}>Comprendre les 4 phases</h3>
-
-            <div className={styles.modalPhaseItem}>
-              <div className={styles.modalPhaseTitle}>
-                <Badge variant="phase1">1</Badge>
-                <span>Prise d’élan (Folliculaire)</span>
-              </div>
-              <p className={styles.modalPhaseDesc}>
-                {PHASE_INSIGHTS['Phase1-Follicular'].emotions}
-              </p>
-            </div>
-
-            <div className={styles.modalPhaseItem}>
-              <div className={styles.modalPhaseTitle}>
-                <Badge variant="phase2">2</Badge>
-                <span>Debout sur la planche (Ovulation)</span>
-              </div>
-              <p className={styles.modalPhaseDesc}>
-                {PHASE_INSIGHTS['Phase2-Ovulation'].emotions}
-              </p>
-            </div>
-
-            <div className={styles.modalPhaseItem}>
-              <div className={styles.modalPhaseTitle}>
-                <Badge variant="phase3">3</Badge>
-                <span>Dans le tube de la vague (Lutéale)</span>
-              </div>
-              <p className={styles.modalPhaseDesc}>
-                {PHASE_INSIGHTS['Phase3-Luteal'].emotions}
-              </p>
-            </div>
-
-            <div className={styles.modalPhaseItem}>
-              <div className={styles.modalPhaseTitle}>
-                <div className={styles.waterDropBadgeContainer}>
-                  <WaterDropIcon size={16} color="var(--text-dark-primary)" />
-                </div>
-                <span>Repos avant la prochaine vague (Menstruelle)</span>
-              </div>
-              <p className={styles.modalPhaseDesc}>
-                {PHASE_INSIGHTS['Phase4-Menstrual'].emotions}
-              </p>
-            </div>
-
-            <Button variant="primary" onClick={() => setIsModalOpen(false)}>
-              Fermer
-            </Button>
-          </div>
-        </div>
-      )}
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
     </div>
   );
 };

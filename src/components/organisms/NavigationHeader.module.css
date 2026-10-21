@@ -3,14 +3,15 @@
   background-color: var(--background-level-1);
   display: flex;
   justify-content: center;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
 }
 
 .headerInner {
   width: 100%;
-  max-width: 1024px;
   height: 58px;
   display: flex;
   align-items: center;
@@ -19,7 +20,7 @@
   box-sizing: border-box;
 }
 
-.title {
+.headerTitle {
   margin: 0;
   font-family: var(--font-family);
   font-size: var(--typo-h1-size);
@@ -28,7 +29,7 @@
   color: var(--text-dark-primary);
 }
 
-.iconButton {
+.headerIconButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -42,11 +43,11 @@
   transition: opacity 0.2s ease, transform 0.15s ease;
 }
 
-.iconButton:hover {
+.headerIconButton:hover {
   opacity: 0.75;
   transform: rotate(15deg);
 }
 
-.iconButton:active {
+.headerIconButton:active {
   transform: scale(0.95);
 }

@@ -29,14 +29,14 @@ export const DayCell: FC<DayCellProps> = ({ dayNumber, status, onClick }) => {
   const renderIndicator = () => {
     if (isConfirmedPeriod) {
       return (
-        <div className={styles.cellIconContainer}>
+        <div className={styles.cellIcon}>
           <WaterDropIcon size={14} color="var(--text-white)" />
         </div>
       );
     }
     if (isEstimatedPeriod) {
       return (
-        <div className={styles.cellIconContainer}>
+        <div className={styles.cellIcon}>
           <WaterDropIcon size={14} color="var(--text-dark-primary)" />
         </div>
       );
@@ -62,7 +62,7 @@ export const DayCell: FC<DayCellProps> = ({ dayNumber, status, onClick }) => {
     >
       <span className={styles.dayNumber}>{dayNumber}</span>
       {renderIndicator()}
-      {status.isToday && <div className={styles.indicatorDot} title="Aujourd'hui" />}
+      {status.isToday && <div className={styles.todayDot} title="Aujourd'hui" />}
     </div>
   );
 };

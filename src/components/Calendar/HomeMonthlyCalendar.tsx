@@ -44,55 +44,150 @@ export const HomeMonthlyCalendar: FC<HomeMonthlyCalendarProps> = ({
 
   // Default to current month index (12)
   const [currentIndex, setCurrentIndex] = useState(12);
+  const currentIndexRef = useRef(12);
+  const isProgrammaticScrollRef = useRef(false);
+  const programmaticScrollTimerRef = useRef<number | null>(null);
 
-  // Scroll to current month on initial mount
+  // Scroll to current month on initial mount & handle window resize
   useEffect(() => {
     const el = sliderRef.current;
     if (!el) return;
-    const targetSlide = el.children[currentIndex] as HTMLElement;
-    if (targetSlide) {
-      el.scrollLeft = targetSlide.offsetLeft;
-    }
+
+    const alignMonth = (smooth = false) => {
+      const isDesktop = window.innerWidth >= 1024;
+      const targetSlide = el.children[currentIndexRef.current] as HTMLElement;
+      if (!targetSlide) return;
+
+      if (isDesktop) {
+        targetSlide.scrollIntoView({
+          behavior: smooth ? 'smooth' : ('instant' as ScrollBehavior),
+          block: 'start'
+        });
+      } else {
+        targetSlide.scrollIntoView({
+          behavior: smooth ? 'smooth' : ('instant' as ScrollBehavior),
+          inline: 'center',
+          block: 'nearest'
+        });
+      }
+    };
+
+    // Instant alignment on mount without animation glitches
+    alignMonth(false);
+
+    const handleResize = () => {
+      alignMonth(false);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Update active month title as user swipes
+  // Listen to scrollend event to safely release programmatic scroll lock
+  useEffect(() => {
+    const el = sliderRef.current;
+    if (!el) return;
+
+    const handleScrollEnd = () => {
+      if (window.innerWidth >= 1024) return;
+      isProgrammaticScrollRef.current = false;
+      if (programmaticScrollTimerRef.current) {
+        window.clearTimeout(programmaticScrollTimerRef.current);
+        programmaticScrollTimerRef.current = null;
+      }
+      const width = el.clientWidth;
+      if (width > 0) {
+        const finalIndex = Math.round(el.scrollLeft / width);
+        if (finalIndex >= 0 && finalIndex < months.length && finalIndex !== currentIndexRef.current) {
+          currentIndexRef.current = finalIndex;
+          setCurrentIndex(finalIndex);
+        }
+      }
+    };
+
+    el.addEventListener('scrollend', handleScrollEnd);
+    return () => {
+      el.removeEventListener('scrollend', handleScrollEnd);
+      if (programmaticScrollTimerRef.current) {
+        window.clearTimeout(programmaticScrollTimerRef.current);
+      }
+    };
+  }, [months.length]);
+
+  // Update active month title as user swipes manually
   const handleScroll = () => {
+    if (window.innerWidth >= 1024) return;
+    if (isProgrammaticScrollRef.current) return;
     const el = sliderRef.current;
     if (!el) return;
     const scrollLeft = el.scrollLeft;
     const width = el.clientWidth;
     if (width > 0) {
       const newIndex = Math.round(scrollLeft / width);
-      if (newIndex >= 0 && newIndex < months.length && newIndex !== currentIndex) {
+      if (newIndex >= 0 && newIndex < months.length && newIndex !== currentIndexRef.current) {
+        currentIndexRef.current = newIndex;
         setCurrentIndex(newIndex);
       }
     }
   };
 
-  const scrollToMonth = (index: number) => {
+  const scrollToMonth = (index: number, smooth = true) => {
     const el = sliderRef.current;
     if (!el) return;
+    if (index < 0 || index >= months.length) return;
+
     const targetSlide = el.children[index] as HTMLElement;
-    if (targetSlide) {
+    if (!targetSlide) return;
+
+    currentIndexRef.current = index;
+    setCurrentIndex(index);
+
+    if (smooth) {
+      isProgrammaticScrollRef.current = true;
+      if (programmaticScrollTimerRef.current) {
+        window.clearTimeout(programmaticScrollTimerRef.current);
+      }
+
       targetSlide.scrollIntoView({
         behavior: 'smooth',
         inline: 'center',
         block: 'nearest'
       });
-      setCurrentIndex(index);
+
+      // Safety timeout in case scrollend is not supported or delayed
+      programmaticScrollTimerRef.current = window.setTimeout(() => {
+        isProgrammaticScrollRef.current = false;
+      }, 500);
+    } else {
+      targetSlide.scrollIntoView({
+        behavior: 'instant' as ScrollBehavior,
+        inline: 'center',
+        block: 'nearest'
+      });
     }
   };
 
   const goToPrevMonth = () => {
-    if (currentIndex > 0) {
-      scrollToMonth(currentIndex - 1);
+    if (currentIndexRef.current > 0) {
+      scrollToMonth(currentIndexRef.current - 1, true);
     }
   };
 
   const goToNextMonth = () => {
-    if (currentIndex < months.length - 1) {
-      scrollToMonth(currentIndex + 1);
+    if (currentIndexRef.current < months.length - 1) {
+      scrollToMonth(currentIndexRef.current + 1, true);
     }
+  };
+
+  const goToCurrentMonth = () => {
+    const now = new Date();
+    const curYear = now.getFullYear();
+    const curMonth = now.getMonth();
+    const idx = months.findIndex(
+      (m) => m.year === curYear && m.month === curMonth
+    );
+    const targetIndex = idx !== -1 ? idx : 12;
+    scrollToMonth(targetIndex, true);
   };
 
   const currentMonthItem = months[currentIndex] || months[12];
@@ -103,15 +198,20 @@ export const HomeMonthlyCalendar: FC<HomeMonthlyCalendarProps> = ({
   });
   const monthTitle = rawMonthName.charAt(0).toUpperCase() + rawMonthName.slice(1);
 
+  const now = new Date();
+  const isCurrentMonth =
+    currentMonthItem.year === now.getFullYear() &&
+    currentMonthItem.month === now.getMonth();
+
   const effectiveDates = periodDates.length > 0 ? periodDates : (logs || []);
 
   return (
-    <div className={styles.homeCalendarCard}>
+    <div className={styles.calendarCard}>
       {/* Month Navigation Header */}
-      <div className={styles.monthHeaderRow}>
+      <div className={styles.monthHeader}>
         <button
           type="button"
-          className={styles.monthNavButton}
+          className={styles.navButton}
           onClick={goToPrevMonth}
           aria-label="Mois précédent"
           title="Mois précédent"
@@ -121,11 +221,25 @@ export const HomeMonthlyCalendar: FC<HomeMonthlyCalendarProps> = ({
           </svg>
         </button>
 
-        <h2 className={styles.monthTitle}>{monthTitle}</h2>
+        <h2 className={styles.monthHeading}>
+          <button
+            type="button"
+            className={styles.monthTitle}
+            onClick={goToCurrentMonth}
+            title={
+              isCurrentMonth
+                ? 'Mois et année en cours'
+                : 'Revenir au mois et année en cours'
+            }
+            aria-label={`Mois affiché : ${monthTitle}. Cliquer pour revenir au mois et année en cours.`}
+          >
+            {monthTitle}
+          </button>
+        </h2>
 
         <button
           type="button"
-          className={styles.monthNavButton}
+          className={styles.navButton}
           onClick={goToNextMonth}
           aria-label="Mois suivant"
           title="Mois suivant"
@@ -139,7 +253,7 @@ export const HomeMonthlyCalendar: FC<HomeMonthlyCalendarProps> = ({
       {/* Horizontal slide container for months */}
       <div
         ref={sliderRef}
-        className={styles.monthSliderContainer}
+        className={styles.monthSlider}
         onScroll={handleScroll}
       >
         {months.map((m) => {
@@ -180,15 +294,23 @@ export const HomeMonthlyCalendar: FC<HomeMonthlyCalendarProps> = ({
             }
           }
 
+          const rawMonth = new Date(m.year, m.month, 1).toLocaleDateString('fr-FR', {
+            month: 'long',
+            year: 'numeric'
+          });
+          const slideMonthTitle =
+            rawMonth.charAt(0).toUpperCase() + rawMonth.slice(1);
+
           return (
             <div
               key={`${m.year}-${m.month}`}
               className={styles.monthSlide}
               data-year-month={`${m.year}-${m.month}`}
             >
-              <div className={styles.weekdaysStrip}>
+              <h2 className={styles.desktopMonthTitle}>{slideMonthTitle}</h2>
+              <div className={styles.weekdaysRow}>
                 {WEEKDAYS.map((wd) => (
-                  <div key={wd} className={styles.weekdayHeaderCell}>
+                  <div key={wd} className={styles.weekdayCell}>
                     {wd}
                   </div>
                 ))}
@@ -200,7 +322,7 @@ export const HomeMonthlyCalendar: FC<HomeMonthlyCalendarProps> = ({
       </div>
 
       {/* Action button to view full continuous calendar */}
-      <div className={styles.cardFooter}>
+      <div className={styles.calendarFooter}>
         <Button
           variant="primary"
           fullWidth

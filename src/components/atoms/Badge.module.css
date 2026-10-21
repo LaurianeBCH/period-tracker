@@ -24,8 +24,8 @@
   border-radius: var(--radius-pill);
   font-family: var(--font-family);
   font-size: var(--typo-body-sm-size);
-  font-weight: 600;
-  line-height: 18px;
+  font-weight: var(--typo-body-sm-weight);
+  line-height: var(--typo-body-sm-line-height);
   text-align: center;
   user-select: none;
 }

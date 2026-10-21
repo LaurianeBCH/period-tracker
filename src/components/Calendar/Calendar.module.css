@@ -1,3 +1,4 @@
+/* Layout global de l'application */
 .appLayout {
   display: flex;
   flex-direction: column;
@@ -6,10 +7,12 @@
   width: 100%;
   min-height: 100vh;
   background: transparent;
-  overflow-x: hidden;
+  overflow-x: clip;
+  padding-top: 58px;
+  box-sizing: border-box;
 }
 
-/* White background when on full year view */
+/* Fond blanc sur la vue calendrier annuel */
 .yearViewWrapper {
   background: var(--color-background-white) !important;
   background-color: var(--color-background-white) !important;
@@ -17,87 +20,10 @@
   overflow: hidden;
 }
 
-/* Header container (fixed top & takes 100% of viewport width) */
-.headerContainer {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 100%;
-  background-color: var(--color-background-white);
-  box-shadow: 0 1px 3px rgba(34, 34, 34, 0.04);
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.headerInner {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  align-items: center;
-  padding: 12px var(--spacing-spacing-lg);
-}
-
-.headerHomeLayout {
-  justify-content: flex-start;
-}
-
-.headerCenteredLayout {
-  display: grid;
-  grid-template-columns: var(--spacing-size-icon-button) 1fr var(--spacing-size-icon-button);
-  align-items: center;
-  width: 100%;
-}
-
-.headerTitle {
-  font-family: var(--typo-h1-family);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
-.headerTitleCentered {
-  text-align: center;
-  font-family: var(--typo-h2-family);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.iconButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--spacing-size-icon-button);
-  height: var(--spacing-size-icon-button);
-  padding: 0;
-  border-radius: var(--radius-radius-full);
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid var(--color-stroke-primary);
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.15s ease;
-}
-
-.iconButton:hover {
-  opacity: 0.85;
-  transform: scale(1.05);
-}
-
-.iconButton svg {
-  width: 18px;
-  height: 18px;
-  fill: var(--color-text-primary);
-}
-
-.backButton {
-  justify-self: start;
-}
-
-/* Home view container */
+/* Conteneur principal de la vue d'accueil (responsive mobile/desktop) */
 .homeContainer {
   width: 100%;
-  max-width: 402px;
+  max-width: 600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -106,36 +32,93 @@
   box-sizing: border-box;
 }
 
+.desktopMonthTitle {
+  display: none;
+}
+
 @media (min-width: 1024px) {
   .homeContainer {
-    max-width: 1100px;
+    max-width: 1024px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) 370px;
     gap: var(--spacing-2xl);
     align-items: start;
     padding: var(--spacing-2xl) var(--spacing-2xl) 120px var(--spacing-2xl);
   }
+
+  /* À partir de 1024px: masquer le slider mois par mois et afficher le calendrier complet */
+  .monthHeader {
+    display: none !important;
+  }
+
+  .calendarFooter {
+    display: none !important;
+  }
+
+  .calendarCard {
+    overflow: visible;
+  }
+
+  /* Titre visible au dessus de chaque mois du calendrier complet */
+  .desktopMonthTitle {
+    display: block;
+    font-family: var(--font-family);
+    font-size: var(--typo-h1-size);
+    font-weight: var(--typo-h1-weight);
+    color: var(--text-dark-primary);
+    text-align: center;
+    margin: 0;
+    line-height: normal;
+  }
+
+  /* Le calendrier complet s'étend sur toute la page avec défilement global de la fenêtre */
+  .monthSlider {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+    overflow: visible;
+    scroll-snap-type: none;
+    max-height: none;
+    padding-right: 0;
+  }
+
+  .monthSlide {
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    scroll-snap-align: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    scroll-margin-top: 78px;
+  }
 }
 
-/* Home Monthly Calendar (V3 Node 4230:12234 calendar-feed: transparent over background-level-1) */
-.homeCalendarCard {
+/* ========================================================
+   Carte Calendrier Mensuel (Home)
+   ======================================================== */
+
+.calendarCard {
   background-color: transparent;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2xl);
   box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* Month Navigation (< Août 2026 >) */
-.monthHeaderRow {
+/* En-tête de navigation du mois (< Mois Année >) */
+.monthHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
 }
 
-.monthNavButton {
+.navButton {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-pill);
@@ -149,37 +132,64 @@
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-.monthNavButton:hover {
+.navButton:hover {
   opacity: 0.75;
   transform: scale(1.08);
+}
+
+.monthHeading {
+  margin: 0;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .monthTitle {
   font-family: var(--font-family);
   font-size: var(--typo-h2-size);
-  font-weight: 700;
+  font-weight: var(--typo-h2-weight);
   color: var(--text-dark-primary);
   text-align: center;
   margin: 0;
-  flex: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
 }
 
-.cardFooter {
+.monthTitle:hover {
+  opacity: 0.85;
+  background-color: rgba(0, 46, 44, 0.06);
+}
+
+.monthTitle:active {
+  transform: scale(0.97);
+}
+
+.calendarFooter {
   width: 100%;
 }
 
-/* Horizontal slide container */
-.monthSliderContainer {
+/* Défilement horizontal des mois */
+.monthSlider {
+  position: relative;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   display: flex;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 
-.monthSliderContainer::-webkit-scrollbar {
+.monthSlider::-webkit-scrollbar {
   display: none;
 }
 
@@ -191,10 +201,11 @@
   scroll-snap-align: center;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
-/* Weekdays */
-.weekdaysStrip {
+/* En-tête des jours de la semaine (Lun, Mar, ...) */
+.weekdaysRow {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   padding: 10px 0;
@@ -202,20 +213,20 @@
   width: 100%;
 }
 
-.weekdayHeaderCell {
+.weekdayCell {
   text-align: center;
   font-family: var(--font-family);
   font-size: var(--typo-caption-size);
-  font-weight: 700;
+  font-weight: var(--typo-caption-weight);
   color: var(--text-dark-primary);
 }
 
-/* Days Grid */
+/* Grille des cellules de jours */
 .daysGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: var(--spacing-xs);
-  padding-top: var(--spacing-xs);
+  padding-top: var(--spacing-md);
   width: 100%;
 }
 
@@ -251,7 +262,7 @@
   text-align: center;
 }
 
-.cellIconContainer {
+.cellIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,18 +279,11 @@
   pointer-events: none;
 }
 
-/* Phase styling */
-.phaseFollicular {
-  background-color: var(--background-level-3);
-  color: var(--text-dark-primary);
-}
-
-.phaseOvulation {
-  background-color: var(--background-level-3);
-  color: var(--text-dark-primary);
-}
-
-.phaseLuteal {
+/* Styles par phase du cycle */
+.phaseFollicular,
+.phaseOvulation,
+.phaseLuteal,
+.phaseDefault {
   background-color: var(--background-level-3);
   color: var(--text-dark-primary);
 }
@@ -296,13 +300,8 @@
   color: var(--text-dark-primary);
 }
 
-.phaseDefault {
-  background-color: var(--background-level-3);
-  color: var(--text-dark-primary);
-}
-
-/* Indicator dot for current day */
-.indicatorDot {
+/* Pastille indicatrice du jour actuel */
+.todayDot {
   position: absolute;
   top: 4px;
   right: 4.5px;
@@ -313,84 +312,69 @@
   box-shadow: 0 0 6px rgba(251, 255, 36, 0.7);
 }
 
-/* Cycle Phase Legend */
-.cyclePhaseLegend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  width: 100%;
-  padding-top: 10px;
-}
-
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.legendSwatch {
-  width: 16px;
-  height: 16px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-.legendLabel {
-  font-family: var(--typo-caption-family);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-}
-
-/* Annual Calendar / Action Button */
-.btnYearCalendar {
-  background-color: var(--color-background-primary);
-  color: var(--color-text-on-dark);
-  height: 44px;
-  width: 100%;
-  border-radius: var(--radius-radius-sm);
-  font-family: var(--typo-body-default-family);
-  font-size: var(--typo-body-default-size);
-  font-weight: var(--typo-body-default-weight);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  margin-top: 6px;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.btnYearCalendar:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
 /* ========================================================
-   Phase Insights Card & Wave Curve (Figma Node 4230:12292)
+   Carte des Phases du Cycle & Courbe ondulée
    ======================================================== */
 
-.phaseInsightsCard {
+.insightsCard {
   background-color: var(--background-level-2);
   border-radius: var(--radius-full);
-  padding: var(--spacing-2xl) var(--spacing-lg);
+  padding: var(--spacing-2xl) var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-2xl);
+  gap: var(--spacing-lg);
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
 }
 
-.phaseInsightsTitle {
+@media (min-width: 1024px) {
+  .insightsCard {
+    max-width: 370px;
+    position: sticky;
+    top: 78px;
+  }
+}
+
+.insightsHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: center;
+  text-align: center;
+}
+
+.insightsMainTitle {
   font-family: var(--font-family);
-  font-size: var(--typo-h2-size);
-  font-weight: 700;
+  font-size: var(--typo-h1-size);
+  font-weight: var(--typo-h1-weight);
   color: var(--text-dark-primary);
   text-align: center;
   margin: 0;
+  line-height: normal;
 }
+
+.insightsPhaseSubtitle {
+  /*font-family: var(--font-family);
+  font-size: var(--typo-h3-size);
+  font-weight: var(--typo-h3-weight);
+  color: var(--text-dark-primary);
+  text-align: center;
+  margin: 0;
+  line-height: normal;*/
+  background-color: var(--accent);
+  color: var(--text-dark-primary);
+  padding: 4px 8px;
+  border-radius: var(--spacing-sm);
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-default-bold-line-height);
+  white-space: nowrap;
+}
+
 
 .curveContainer {
   width: 100%;
@@ -407,48 +391,28 @@
 }
 
 .activeCurveSegment {
-  stroke-width: 3.5px;
-  filter: drop-shadow(0 2px 4px rgba(0, 46, 44, 0.25));
+  stroke-width: 2.2;
 }
 
-.jourJMarkerGroup {
+.dayMarkerGroup {
   cursor: pointer;
   outline: none;
   transition: transform 0.2s ease;
 }
 
-.jourJMarkerGroup:hover .jourJCircle {
+.dayMarkerGroup:hover .dayMarkerCircle,
+.dayMarkerGroup:hover .dayMarkerBorder {
   transform-origin: center;
   filter: brightness(1.05);
 }
 
-.jourJCircle {
+.dayMarkerCircle,
+.dayMarkerBorder {
   transition: cx 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     cy 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.curvePulseCircle {
-  transition: cx 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    cy 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: pulseGlow 2.2s infinite ease-in-out;
-}
-
-@keyframes pulseGlow {
-  0% {
-    r: 12;
-    opacity: 0.65;
-  }
-  50% {
-    r: 18;
-    opacity: 0.2;
-  }
-  100% {
-    r: 12;
-    opacity: 0.65;
-  }
-}
-
-.markerTooltipG {
+.markerTooltip {
   pointer-events: none;
   animation: tooltipFadeIn 0.15s ease-out;
 }
@@ -458,26 +422,16 @@
     opacity: 0;
     transform: translateY(4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.curveSegmentsBadgesRow {
-  display: flex;
-  width: 100%;
-  padding-top: var(--spacing-sm);
-  box-sizing: border-box;
-}
 
-.curveSegmentBadgeCol {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-.waterDropBadgeContainer {
+.waterDropBadge {
   width: 18px;
   height: 18px;
   display: flex;
@@ -498,12 +452,65 @@
   gap: var(--spacing-xs);
   font-family: var(--font-family);
   font-size: var(--typo-body-sm-size);
-  font-weight: 600;
+  font-weight: var(--typo-body-sm-weight);
   line-height: var(--typo-body-sm-line-height);
   color: var(--text-dark-primary);
 }
 
-.learnMoreModalOverlay {
+.phase3Number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  font-family: var(--font-family);
+  font-size: var(--typo-body-sm-size);
+  font-weight: var(--typo-body-sm-weight);
+  line-height: var(--typo-body-sm-line-height);
+  color: var(--text-dark-primary);
+  text-align: center;
+}
+
+.moreButton {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--background-level-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+}
+
+.moreButton:hover {
+  opacity: 0.85;
+  background-color: rgba(0, 46, 44, 0.04);
+}
+
+.moreButton:active {
+  transform: scale(0.99);
+}
+
+.moreButtonText {
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-default-bold-line-height);
+  color: var(--text-dark-primary);
+  margin: 0;
+}
+
+.moreButtonChevron {
+  color: var(--text-dark-primary);
+  flex-shrink: 0;
+}
+
+.modalOverlay {
   position: fixed;
   inset: 0;
   background-color: rgba(0, 46, 44, 0.4);
@@ -515,7 +522,7 @@
   padding: var(--spacing-lg);
 }
 
-.learnMoreModalContent {
+.modalContent {
   background-color: var(--background-level-1);
   border-radius: var(--radius-full);
   padding: var(--spacing-2xl);
@@ -540,8 +547,8 @@
 
 .modalPhaseTitle {
   font-family: var(--font-family);
-  font-size: 16px;
-  font-weight: 700;
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
   color: var(--text-dark-primary);
   display: flex;
   align-items: center;
@@ -550,13 +557,14 @@
 
 .modalPhaseDesc {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: var(--typo-body-sm-size);
+  font-weight: var(--typo-body-sm-weight);
   color: var(--text-dark-secondary);
   line-height: 1.4;
 }
 
 /* ========================================================
-   Year Calendar View (V3 Node 4230:12337)
+   Vue Calendrier Annuel
    ======================================================== */
 
 .yearViewContainer {
@@ -571,13 +579,13 @@
   overflow: hidden;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 992px) {
   .yearViewContainer {
     max-width: 600px;
   }
 }
 
-.yearMonthsScrollList {
+.yearMonthList {
   width: 100%;
   flex: 1;
   overflow-y: auto;
@@ -599,15 +607,14 @@
 .yearMonthTitle {
   font-family: var(--font-family);
   font-size: var(--typo-h2-size);
-  font-weight: 700;
+  font-weight: var(--typo-h2-weight);
   color: var(--text-dark-primary);
   text-align: center;
   text-transform: capitalize;
   margin: 0;
 }
 
-/* Fixed Bottom Footer for Year Calendar View */
-.yearFixedFooter {
+.yearFooter {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -622,6 +629,18 @@
   border-top: 1px solid rgba(0, 46, 44, 0.08);
 }
 
-.yearFixedFooter > button {
+.yearFooter>button {
   max-width: 440px;
+}
+
+@media (min-width: 992px) {
+  .mobileOnlyFooter {
+    display: none !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .desktopOnlyTabBar {
+    display: none !important;
+  }
 }

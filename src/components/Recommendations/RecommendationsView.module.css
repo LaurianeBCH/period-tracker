@@ -1,0 +1,392 @@
+/* ========================================================
+   Page Recommandations — V3 Design Tokens
+   Figma: 4237:4883 (Menu), 4237:4906 (Details), 4237:5030 (Desktop)
+   ======================================================== */
+
+.pageLayout {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--spacing-2xl) var(--spacing-lg) 105px var(--spacing-lg);
+}
+
+@media (min-width: 992px) {
+  .pageLayout {
+    max-width: 1024px;
+    display: grid;
+    grid-template-columns: 370px minmax(0, 1fr);
+    gap: var(--spacing-2xl);
+    align-items: start;
+    padding: var(--spacing-2xl) var(--spacing-2xl) 120px var(--spacing-2xl);
+  }
+}
+
+/* ========================================================
+   COLONNE MENU (4 PHASES)
+   ======================================================== */
+
+.menuColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+.menuHeading {
+  font-family: var(--font-family);
+  font-size: var(--typo-h1-size, 22px);
+  font-weight: 700;
+  color: var(--text-dark-primary);
+  text-align: center;
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+@media (min-width: 992px) {
+  .menuHeading {
+    display: none;
+    /* Titre masqué sur desktop car le header global suffit */
+  }
+
+  .menuColumn {
+    position: sticky;
+    top: 78px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 46, 44, 0.2) transparent;
+    padding-right: var(--spacing-xs);
+  }
+
+  .menuColumn::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .menuColumn::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 46, 44, 0.2);
+    border-radius: 4px;
+  }
+
+  .menuColumn::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+.phaseMenuList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+.menuCard {
+  width: 100%;
+  min-height: 150px;
+  border-radius: var(--radius-full, 20px);
+  padding: var(--spacing-lg, 16px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--spacing-sm, 8px);
+  cursor: pointer;
+  text-align: left;
+  background-color: var(--background-level-2);
+  color: var(--text-dark-primary);
+  box-sizing: border-box;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  border: 2px solid transparent;
+  outline: none;
+}
+
+.menuCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 46, 44, 0.08);
+}
+
+/* Le menu actif a un border uniquement sur desktop (>= 992px) */
+.menuCardActive {
+  border: 2px solid transparent;
+}
+
+@media (min-width: 992px) {
+  .menuCardActive {
+    border: 2px solid var(--border) !important;
+    box-shadow: 0 4px 14px rgba(0, 46, 44, 0.14);
+  }
+}
+
+@media (max-width: 991px) {
+  .menuCardActive {
+    border: 2px solid transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+.menuCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.phaseAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full, 20px);
+  background-color: var(--text-white, white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family);
+  font-size: var(--typo-h3-size);
+  font-weight: var(--typo-h3-weight);
+  flex-shrink: 0;
+}
+
+.phaseCardTitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-h2-size);
+  font-weight: var(--typo-h2-weight);
+  margin: 0;
+  flex: 1;
+  line-height: 1.2;
+}
+
+.currentBadge {
+  background-color: var(--accent, #fbff24);
+  color: var(--text-dark-primary, #002e2c);
+  padding: 4px 8px;
+  border-radius: var(--spacing-sm, 8px);
+  font-family: var(--font-family);
+  font-size: var(--typo-caption-size);
+  font-weight: var(--typo-caption-weight);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.phaseCardSubtitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
+  margin: 0;
+  width: 100%;
+}
+
+.menuCardChevron {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+/* ========================================================
+   COLONNE DÉTAILS
+   ======================================================== */
+
+.detailsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl, 32px);
+  width: 100%;
+}
+
+.illustrationWrapper {
+  width: 100%;
+  height: 320px;
+  border-radius: var(--radius-full, 20px);
+  overflow: hidden;
+  background-color: var(--background-level-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 992px) {
+  .illustrationWrapper {
+    height: 380px;
+  }
+}
+
+.illustrationImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-full, 20px);
+}
+
+.detailsHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 12px);
+  width: 100%;
+}
+
+.detailsTitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-h1-size, 22px);
+  font-weight: var(--typo-h1-weight);
+  color: var(--text-dark-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.detailsDescription {
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
+  color: var(--text-dark-secondary, #137051);
+  margin: 0;
+}
+
+.sectionDivider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--border);
+  opacity: 0.35;
+  border: none;
+  margin: 0;
+}
+
+/* --- Section Nutrition --- */
+.contentSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 16px);
+  width: 100%;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  color: var(--text-dark-primary);
+}
+
+.sectionTitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-h2-size);
+  font-weight: var(--typo-h2-weight);
+  color: var(--text-dark-primary);
+  margin: 0;
+}
+
+.sectionIntroText {
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
+  color: var(--text-dark-secondary, #137051);
+  margin: 0;
+}
+
+/* Nutrition Cards Grid */
+.nutritionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 16px);
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .nutritionGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacing-lg, 16px);
+  }
+}
+
+.nutritionCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 8px);
+  width: 100%;
+}
+
+.nutritionBanner {
+  width: 100%;
+  height: 100px;
+  border-radius: var(--radius-full, 20px);
+  background-color: var(--background-level-2);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nutritionBanner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemTitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-h3-size);
+  font-weight: var(--typo-h3-weight);
+  color: var(--text-dark-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.itemSubtitle {
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
+  color: var(--text-dark-secondary, #137051);
+  margin: 0;
+}
+
+/* --- Section État d'esprit --- */
+.mindsetList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 16px);
+  width: 100%;
+}
+
+.mindsetItem {
+  display: flex;
+  gap: var(--spacing-lg, 16px);
+  align-items: flex-start;
+  width: 100%;
+}
+
+.mindsetThumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-md, 16px);
+  background-color: var(--background-level-2);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mindsetThumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mindsetTextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 4px);
+  flex: 1;
+  min-width: 0;
+  padding-top: var(--spacing-xs, 4px);
+}
+
+/* --- Utilities --- */
+
+@media (max-width: 991px) {
+  .hideOnMobile {
+    display: none !important;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import styles from './TabBar.module.css';
 
 export type TabId = 'calendar' | 'recommendations' | 'cycle';
@@ -43,13 +43,15 @@ const UserIcon: FC<{ size?: number }> = ({ size = 24 }) => (
     height={size}
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
   >
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
+    <path
+      d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM7.35 18.5C8.66 17.56 10.26 17 12 17C13.74 17 15.34 17.56 16.65 18.5C15.34 19.44 13.74 20 12 20C10.26 20 8.66 19.44 7.35 18.5ZM18.14 17.12C16.45 15.8 14.32 15 12 15C9.68 15 7.55 15.8 5.86 17.12C4.7 15.73 4 13.95 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 13.95 19.3 15.73 18.14 17.12Z"
+      fill="currentColor"
+    />
+    <path
+      d="M12 6C10.07 6 8.5 7.57 8.5 9.5C8.5 11.43 10.07 13 12 13C13.93 13 15.5 11.43 15.5 9.5C15.5 7.57 13.93 6 12 6ZM12 11C11.17 11 10.5 10.33 10.5 9.5C10.5 8.67 11.17 8 12 8C12.83 8 13.5 8.67 13.5 9.5C13.5 10.33 12.83 11 12 11Z"
+      fill="currentColor"
+    />
   </svg>
 );
 
@@ -89,15 +91,15 @@ export const TabBar: FC<TabBarProps> = ({
               aria-current={isActive ? 'page' : undefined}
             >
               <div
-                className={`${styles.iconWrapper} ${
-                  isActive ? styles.iconWrapperActive : styles.iconWrapperInactive
+                className={`${styles.tabIconWrapper} ${
+                  isActive ? styles.tabIconActive : styles.tabIconInactive
                 }`}
               >
                 {tab.icon}
               </div>
               <span
-                className={`${styles.label} ${
-                  isActive ? styles.labelActive : styles.labelInactive
+                className={`${styles.tabLabel} ${
+                  isActive ? styles.tabLabelActive : styles.tabLabelInactive
                 }`}
               >
                 {tab.label}

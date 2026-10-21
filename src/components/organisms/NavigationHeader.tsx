@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import styles from './NavigationHeader.module.css';
 
 interface NavigationHeaderProps {
@@ -33,11 +33,11 @@ export const NavigationHeader: FC<NavigationHeaderProps> = ({
   return (
     <header className={styles.headerWrapper} role="banner">
       <div className={styles.headerInner}>
-        <h1 className={styles.title}>{title}</h1>
+        <h1 className={styles.headerTitle}>{title}</h1>
         {onSettingsClick && (
           <button
             type="button"
-            className={styles.iconButton}
+            className={styles.headerIconButton}
             onClick={onSettingsClick}
             aria-label="Paramètres"
           >

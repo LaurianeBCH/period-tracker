@@ -5,7 +5,8 @@
    Specification: docs/specs/tokens/token-reference.md
    ======================================================== */
 
-:root, [data-theme="phase 1"] {
+:root,
+[data-theme="phase 1"] {
   /* --- Spacing Tokens --- */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -73,17 +74,17 @@
 
   --typo-body-default-bold-family: var(--font-family);
   --typo-body-default-bold-size: 16px;
-  --typo-body-default-bold-weight: 700;
+  --typo-body-default-bold-weight: 600;
   --typo-body-default-bold-line-height: 22px;
 
   --typo-body-default-family: var(--font-family);
   --typo-body-default-size: 16px;
-  --typo-body-default-weight: 600;
+  --typo-body-default-weight: 500;
   --typo-body-default-line-height: 22px;
 
   --typo-body-sm-family: var(--font-family);
   --typo-body-sm-size: 14px;
-  --typo-body-sm-weight: 600;
+  --typo-body-sm-weight: 500;
   --typo-body-sm-line-height: 18px;
 
   /* --- Backward Compatibility Aliases for Legacy Code --- */
@@ -119,7 +120,7 @@
 
 /* Collection: Color - Mode: Phase 2 */
 [data-theme="phase 2"] {
-  --text-dark-primary: #583500;
+  --text-dark-primary: #412802;
   --background-level-3: #e09e51;
   --text-light: #f7efb6;
   --background-level-1: #f7efb6;
@@ -188,7 +189,7 @@ body {
   font-family: var(--font-family);
   background-color: var(--background-level-1);
   color: var(--text-dark-primary);
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 

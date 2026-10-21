@@ -4,6 +4,11 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   base: '/period-tracker/',
+  css: {
+    modules: {
+      generateScopedName: '[local]'
+    }
+  },
   plugins: [
     react(),
     VitePWA({

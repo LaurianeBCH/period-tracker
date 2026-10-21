@@ -61,7 +61,7 @@ export const YearCalendarView: FC<YearCalendarViewProps> = ({
   return (
     <div className={styles.yearViewContainer}>
       {/* Scrollable list of months */}
-      <div className={styles.yearMonthsScrollList} ref={containerRef}>
+      <div className={styles.yearMonthList} ref={containerRef}>
         {months.map((m) => {
           const isCurrent =
             m.year === currentYearMonth.year && m.month === currentYearMonth.month;
@@ -115,9 +115,9 @@ export const YearCalendarView: FC<YearCalendarViewProps> = ({
               data-year-month={`${m.year}-${m.month}`}
             >
               <h2 className={styles.yearMonthTitle}>{monthTitle}</h2>
-              <div className={styles.weekdaysStrip}>
+              <div className={styles.weekdaysRow}>
                 {WEEKDAYS.map((wd) => (
-                  <div key={wd} className={styles.weekdayHeaderCell}>
+                  <div key={wd} className={styles.weekdayCell}>
                     {wd}
                   </div>
                 ))}
@@ -129,7 +129,7 @@ export const YearCalendarView: FC<YearCalendarViewProps> = ({
       </div>
 
       {/* Fixed bottom footer with V3 Primary Return Button */}
-      <div className={styles.yearFixedFooter}>
+      <div className={styles.yearFooter}>
         <Button
           variant="primary"
           fullWidth
