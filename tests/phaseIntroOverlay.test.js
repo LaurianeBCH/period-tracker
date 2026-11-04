@@ -25,3 +25,9 @@ test('PhaseIntroOverlay component and CSS adhere to design tokens and Phase 4 ru
   assert.match(tsx, /\.play\(\)\.catch\(/, 'Must handle browser autoplay rejection gracefully');
   assert.doesNotMatch(tsx, /<button/i, 'Must not render any sound button on the intro overlay');
 });
+
+test('App.tsx mounts PhaseIntroOverlay for the active phase', () => {
+  const appCode = fs.readFileSync(path.resolve('src/App.tsx'), 'utf-8');
+  assert.match(appCode, /PhaseIntroOverlay/, 'App.tsx must import and render PhaseIntroOverlay');
+});
+
