@@ -28,15 +28,17 @@ export function PhaseIntroOverlay({
   durationMs = PHASE4_INTRO_DURATION_MS,
   onComplete
 }: PhaseIntroOverlayProps) {
-  const initialPhaseRef = useRef<CyclePhase>(phase);
-  const [isVisible, setIsVisible] = useState<boolean>(() => isPhase4(initialPhaseRef.current));
+  const hasPlayedRef = useRef<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(() => isPhase4(phase));
   const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isPhase4(initialPhaseRef.current)) {
-      setIsVisible(false);
+    if (!isPhase4(phase) || hasPlayedRef.current) {
       return;
     }
+
+    setIsVisible(true);
+    setIsFadingOut(false);
 
     const baseUrl = import.meta.env.BASE_URL || '/period-tracker/';
     const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
@@ -65,6 +67,7 @@ export function PhaseIntroOverlay({
     }, durationMs);
 
     const unmountTimer = window.setTimeout(() => {
+      hasPlayedRef.current = true;
       cleanupUnlockListeners();
       audio.pause();
       audio.src = '';
@@ -79,9 +82,9 @@ export function PhaseIntroOverlay({
       audio.pause();
       audio.src = '';
     };
-  }, [durationMs, onComplete]);
+  }, [phase, durationMs, onComplete]);
 
-  if (!isVisible || !isPhase4(initialPhaseRef.current)) {
+  if (!isVisible || !isPhase4(phase)) {
     return null;
   }
 

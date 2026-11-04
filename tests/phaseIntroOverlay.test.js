@@ -26,12 +26,11 @@ test('PhaseIntroOverlay component and CSS adhere to design tokens and Phase 4 ru
   assert.doesNotMatch(tsx, /<button/i, 'Must not render any sound button on the intro overlay');
 });
 
-test('App.tsx mounts PhaseIntroOverlay for the active phase and guards startup-only playback', () => {
+test('App.tsx mounts PhaseIntroOverlay for the active phase and plays once on Phase 4 entry', () => {
   const appCode = fs.readFileSync(path.resolve('src/App.tsx'), 'utf-8');
   assert.match(appCode, /PhaseIntroOverlay/, 'App.tsx must import and render PhaseIntroOverlay');
-  assert.match(appCode, /shouldPlayPhaseIntro/, 'App.tsx must use shouldPlayPhaseIntro');
 
   const tsx = fs.readFileSync(path.resolve('src/components/PhaseIntroOverlay/PhaseIntroOverlay.tsx'), 'utf-8');
-  assert.match(tsx, /useRef/, 'PhaseIntroOverlay must lock startup phase on initial mount via useRef');
+  assert.match(tsx, /hasPlayedRef/, 'PhaseIntroOverlay must track playback via hasPlayedRef so it plays on startup or post-onboarding Phase 4 entry');
 });
 
