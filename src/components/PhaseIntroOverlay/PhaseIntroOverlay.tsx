@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CyclePhase } from '../../types/cycle';
 import styles from './PhaseIntroOverlay.module.css';
 
@@ -28,11 +28,12 @@ export function PhaseIntroOverlay({
   durationMs = PHASE4_INTRO_DURATION_MS,
   onComplete
 }: PhaseIntroOverlayProps) {
-  const [isVisible, setIsVisible] = useState<boolean>(() => isPhase4(phase));
+  const initialPhaseRef = useRef<CyclePhase>(phase);
+  const [isVisible, setIsVisible] = useState<boolean>(() => isPhase4(initialPhaseRef.current));
   const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isPhase4(phase)) {
+    if (!isPhase4(initialPhaseRef.current)) {
       setIsVisible(false);
       return;
     }
@@ -78,9 +79,9 @@ export function PhaseIntroOverlay({
       audio.pause();
       audio.src = '';
     };
-  }, [phase, durationMs, onComplete]);
+  }, [durationMs, onComplete]);
 
-  if (!isVisible || !isPhase4(phase)) {
+  if (!isVisible || !isPhase4(initialPhaseRef.current)) {
     return null;
   }
 

@@ -21,7 +21,7 @@ import { YearCalendarView } from './components/Calendar/YearCalendarView';
 import { PhaseInsightsCard } from './components/Calendar/PhaseInsightsCard';
 import { MyCycleView } from './components/MyCycle/MyCycleView';
 import { RecommendationsView } from './components/Recommendations/RecommendationsView';
-import { PhaseIntroOverlay } from './components/PhaseIntroOverlay';
+import { PhaseIntroOverlay, shouldPlayPhaseIntro } from './components/PhaseIntroOverlay';
 import { Button } from './components/atoms';
 import styles from './components/Calendar/Calendar.module.css';
 
@@ -40,6 +40,9 @@ export default function App() {
   const todayISO = getTodayISO();
   const todayStatus = getDayStatus(todayISO, settings, periodDates);
   const todayInsight = getPhaseInsight(todayStatus.phase);
+  const [playIntroOnStart] = useState(() =>
+    shouldPlayPhaseIntro(settings.isOnboarded, isEditingSettings, todayInsight.phaseKey)
+  );
 
   // Synchronize V3 Multi-Mode Design Tokens with current phase (or restore on tab switch)
   useEffect(() => {
@@ -101,7 +104,7 @@ export default function App() {
         isYearView ? styles.yearViewWrapper : ''
       }`}
     >
-      <PhaseIntroOverlay phase={todayInsight.phaseKey} />
+      {playIntroOnStart && <PhaseIntroOverlay phase={todayInsight.phaseKey} />}
 
       {/* V3 Navigation Header */}
       <NavigationHeader
