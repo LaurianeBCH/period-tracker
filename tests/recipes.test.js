@@ -24,3 +24,20 @@ test('recipesData.ts contains 160 cleaned recipes (4 seasons x 4 phases x 10) an
   const urlMatches = [...content.matchAll(/url:\s*"(https:\/\/www\.google\.com\/search\?q=recette\+[^"]+)"/g)];
   assert.strictEqual(urlMatches.length, 160, `Expected 160 Google search recipe URLs, got ${urlMatches.length}`);
 });
+
+test('RecommendationsView renders Idées de recettes using the Button atom (secondary variant) and design tokens', () => {
+  const viewCode = fs.readFileSync(path.resolve('src/components/Recommendations/RecommendationsView.tsx'), 'utf-8');
+  const cssCode = fs.readFileSync(path.resolve('src/components/Recommendations/RecommendationsView.module.css'), 'utf-8');
+
+  assert.match(viewCode, /import\s+\{[^}]*Button[^}]*\}\s+from\s+['"]\.\.\/atoms['"]/, 'Must import Button atom from ../atoms');
+  assert.match(viewCode, /getRecipesForPhase/, 'Must call getRecipesForPhase');
+  assert.match(viewCode, /Idées de recettes/, 'Must render heading "Idées de recettes"');
+  assert.match(viewCode, /<Button[\s\S]*?variant="secondary"/, 'Must use <Button variant="secondary">');
+  assert.match(viewCode, /window\.open\([^,]+,\s*['"]_blank['"],\s*['"]noopener,noreferrer['"]\)/, 'Must open recipe URL in a new tab');
+
+  assert.match(cssCode, /\.recipesGrid/, 'CSS must define .recipesGrid');
+  assert.match(cssCode, /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/, 'Desktop recipesGrid must have 2 columns');
+  const recipesCssBlock = cssCode.slice(cssCode.indexOf('.recipesTitle'));
+  assert.doesNotMatch(recipesCssBlock, /#[0-9a-fA-F]{3,8}|rgba?\(/, 'New recipe CSS rules must only use design tokens (AGENTS.md)');
+});
+

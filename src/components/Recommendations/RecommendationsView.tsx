@@ -1,6 +1,8 @@
 import { FC, useState, useEffect } from 'react';
 import { CyclePhase } from '../../types/cycle';
 import { RECOMMENDATIONS_DATA, PhaseRecommendation } from '../../data/recommendationsData';
+import { getRecipesForPhase } from '../../data/recipesData';
+import { Button } from '../atoms';
 import styles from './RecommendationsView.module.css';
 
 interface RecommendationsViewProps {
@@ -78,6 +80,7 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
 
   const selectedPhase: PhaseRecommendation =
     RECOMMENDATIONS_DATA.find((p) => p.id === selectedPhaseId) || RECOMMENDATIONS_DATA[0];
+  const recipes = getRecipesForPhase(selectedPhase.id);
 
   // Basculer les couleurs dynamiquement selon le menu de phase sélectionné
   useEffect(() => {
@@ -225,6 +228,37 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
                 <h3 className={styles.itemTitle}>{item.title}</h3>
                 <p className={styles.itemSubtitle}>{item.subtitle}</p>
               </div>
+            ))}
+          </div>
+
+          <h3 className={styles.recipesTitle}>Idées de recettes</h3>
+
+          <div className={styles.recipesGrid}>
+            {recipes.map((recipe, idx) => (
+              <Button
+                key={idx}
+                type="button"
+                variant="secondary"
+                fullWidth
+                className={styles.recipeButton}
+                onClick={() => window.open(recipe.url, '_blank', 'noopener,noreferrer')}
+              >
+                <span className={styles.recipeButtonLabel}>{recipe.title}</span>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={styles.recipeChevron}
+                  aria-hidden="true"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </Button>
             ))}
           </div>
         </section>

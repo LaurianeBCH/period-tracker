@@ -42,7 +42,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: var(--spacing-lg);
-  height: 56px;
+  height: auto;
   min-height: 56px;
   gap: var(--spacing-sm);
   font-size: var(--typo-body-default-bold-size);
