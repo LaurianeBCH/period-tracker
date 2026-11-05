@@ -66,3 +66,51 @@ test('Task 1: SQL schema, storage clearAllStorage, and syncService merge/magic-l
   const emptyRes = await sendMagicLink('   ');
   assert.ok(emptyRes.error, 'sendMagicLink must return an error on empty email');
 });
+
+test('Task 2: NavigationHeader removes Settings button and MyCycleView renders Mon cycle + 2-state Sync card with Design Tokens', () => {
+  const headerCode = fs.readFileSync(
+    path.join(rootDir, 'src', 'components', 'organisms', 'NavigationHeader.tsx'),
+    'utf8'
+  );
+  assert.doesNotMatch(headerCode, /aria-label="Paramètres"/, 'NavigationHeader must not render the Paramètres button');
+
+  const appCode = fs.readFileSync(path.join(rootDir, 'src', 'App.tsx'), 'utf8');
+  assert.doesNotMatch(appCode, /isEditingSettings/, 'App.tsx must not use isEditingSettings to reopen OnboardingWizard');
+  assert.match(appCode, /pullAndMergeCloudData/, 'App.tsx must sync with Supabase on session');
+  assert.match(appCode, /pushCloudData/, 'App.tsx must push data changes to Supabase');
+
+  const cycleViewCode = fs.readFileSync(
+    path.join(rootDir, 'src', 'components', 'MyCycle', 'MyCycleView.tsx'),
+    'utf8'
+  );
+  assert.match(cycleViewCode, /<h1[^>]*>[\s\S]*?Mon cycle[\s\S]*?<\/h1>/, 'MyCycleView must render <h1>Mon cycle</h1>');
+  assert.match(cycleViewCode, /Synchroniser vos données/, 'MyCycleView must render unsynced title');
+  assert.match(
+    cycleViewCode,
+    /Vos données sont actuellement enregistrées? dans le cache de votre navigateur\. Vous pouvez saisir une adresse email pour synchroniser vos données en ligne\./,
+    'MyCycleView must render unsynced description'
+  );
+  assert.match(cycleViewCode, /Saisir une adresse email/, 'MyCycleView must render email label');
+  assert.match(cycleViewCode, /placeholder="contact@gmail\.com"/, 'MyCycleView must render contact@gmail.com placeholder');
+  assert.match(cycleViewCode, /Créer un compte/, 'MyCycleView must render Créer un compte button');
+  assert.match(cycleViewCode, /Données synchronisées/, 'MyCycleView must render synced title');
+  assert.match(cycleViewCode, /Supprimer mon compte/, 'MyCycleView must render Supprimer mon compte button');
+  assert.match(cycleViewCode, /Se déconnecter/, 'MyCycleView must render Se déconnecter button');
+  assert.match(cycleViewCode, /<Button[\s\S]*?variant="primary"/, 'MyCycleView must use Button primary variant');
+  assert.match(cycleViewCode, /<Button[\s\S]*?variant="secondary"/, 'MyCycleView must use Button secondary variant');
+
+  const cycleCss = fs.readFileSync(
+    path.join(rootDir, 'src', 'components', 'MyCycle', 'MyCycleView.module.css'),
+    'utf8'
+  );
+  assert.match(cycleCss, /\.pageTitle/, 'MyCycleView.module.css must define .pageTitle');
+  assert.match(cycleCss, /\.rightColumn/, 'MyCycleView.module.css must define .rightColumn');
+  assert.match(cycleCss, /\.syncCard/, 'MyCycleView.module.css must define .syncCard');
+  assert.match(cycleCss, /\.syncInput/, 'MyCycleView.module.css must define .syncInput');
+  assert.doesNotMatch(
+    cycleCss,
+    /#[0-9a-fA-F]{3,8}|rgba?\(/,
+    'MyCycleView.module.css must strictly use design tokens without hardcoded colors (AGENTS.md)'
+  );
+});
+

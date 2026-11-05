@@ -1,12 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { UserSettings } from './types/cycle';
 import {
+  DEFAULT_SETTINGS,
   getSettings,
   saveSettings,
   getPeriodDates,
   savePeriodDates,
-  togglePeriodDate
+  togglePeriodDate,
+  clearAllStorage
 } from './services/storage';
+import { supabase } from './services/supabaseClient';
+import {
+  sendMagicLink,
+  pullAndMergeCloudData,
+  pushCloudData,
+  signOutAccount,
+  deleteUserAccount
+} from './services/syncService';
 import {
   getDayStatus,
   getTodayISO,
@@ -25,17 +35,80 @@ import { PhaseIntroOverlay } from './components/PhaseIntroOverlay';
 import { Button } from './components/atoms';
 import styles from './components/Calendar/Calendar.module.css';
 
+interface SessionUser {
+  id: string;
+  email: string;
+}
+
 export default function App() {
   const [settings, setSettings] = useState<UserSettings>(() => getSettings());
   const [periodDates, setPeriodDates] = useState<string[]>(() => getPeriodDates());
   const [currentView, setCurrentView] = useState<'home' | 'full_calendar'>('home');
   const [activeTab, setActiveTab] = useState<TabId>('calendar');
   const [recMobileView, setRecMobileView] = useState<'menu' | 'details'>('menu');
-  const [isEditingSettings, setIsEditingSettings] = useState(false);
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const isHydratingFromCloudRef = useRef(false);
 
   useEffect(() => {
     saveSettings(settings);
   }, [settings]);
+
+  // Listen to Supabase auth state and merge local + remote data upon login
+  useEffect(() => {
+    if (!supabase) return;
+
+    let isMounted = true;
+
+    const syncForUser = async (id: string) => {
+      isHydratingFromCloudRef.current = true;
+      try {
+        const merged = await pullAndMergeCloudData(id, getSettings(), getPeriodDates());
+        if (isMounted && merged) {
+          saveSettings(merged.settings);
+          savePeriodDates(merged.periodDates);
+          setSettings(merged.settings);
+          setPeriodDates(merged.periodDates);
+        }
+      } finally {
+        if (isMounted) {
+          isHydratingFromCloudRef.current = false;
+        }
+      }
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      if (session?.user?.id && session.user.email) {
+        setSessionUser({ id: session.user.id, email: session.user.email });
+        void syncForUser(session.user.id);
+      } else {
+        setSessionUser(null);
+      }
+    });
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
+      if (session?.user?.id && session.user.email) {
+        setSessionUser({ id: session.user.id, email: session.user.email });
+        void syncForUser(session.user.id);
+      } else {
+        setSessionUser(null);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Push updates to Supabase whenever settings or periodDates change while logged in
+  useEffect(() => {
+    if (!sessionUser || isHydratingFromCloudRef.current) return;
+    void pushCloudData(sessionUser.id, settings, periodDates);
+  }, [sessionUser, settings, periodDates]);
 
   const todayISO = getTodayISO();
   const todayStatus = getDayStatus(todayISO, settings, periodDates);
@@ -70,7 +143,6 @@ export default function App() {
       setPeriodDates([...initialDates]);
     }
     setSettings(newSettings);
-    setIsEditingSettings(false);
   };
 
   /**
@@ -85,7 +157,23 @@ export default function App() {
     setPeriodDates([...updated]);
   };
 
-  if (!settings.isOnboarded || isEditingSettings) {
+  const handleSignOut = async () => {
+    await signOutAccount();
+    setSessionUser(null);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (sessionUser) {
+      await deleteUserAccount(sessionUser.id);
+    }
+    clearAllStorage();
+    setSessionUser(null);
+    setPeriodDates([]);
+    setSettings({ ...DEFAULT_SETTINGS });
+    return { error: null };
+  };
+
+  if (!settings.isOnboarded) {
     return (
       <OnboardingWizard
         onComplete={handleOnboardingComplete}
@@ -104,10 +192,7 @@ export default function App() {
       <PhaseIntroOverlay phase={todayInsight.phaseKey} />
 
       {/* V3 Navigation Header */}
-      <NavigationHeader
-        title="Period Tracker"
-        onSettingsClick={() => setIsEditingSettings(true)}
-      />
+      <NavigationHeader title="Period Tracker" />
 
       {currentView === 'home' ? (
         <>
@@ -115,6 +200,10 @@ export default function App() {
             <MyCycleView
               settings={settings}
               periodDates={periodDates}
+              userEmail={sessionUser?.email ?? null}
+              onSendMagicLink={sendMagicLink}
+              onSignOut={handleSignOut}
+              onDeleteAccount={handleDeleteAccount}
             />
           ) : activeTab === 'recommendations' ? (
             <RecommendationsView
