@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
+from concurrent.futures import ProcessPoolExecutor
 import os
 import struct
-import subprocess
-import tempfile
 import zlib
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC_ANIM = os.path.join(ROOT_DIR, "Ressources", "anim-phase4.png")
-SRC_AUDIO = os.path.join(ROOT_DIR, "Ressources", "Ouverture — fin en douceur - usesuno.com.m4a")
+RES_DIR = os.path.join(ROOT_DIR, "Ressources")
 OUT_DIR = os.path.join(ROOT_DIR, "public", "intro")
-OUT_ANIM = os.path.join(OUT_DIR, "phase4-anim.png")
-OUT_AUDIO = os.path.join(OUT_DIR, "phase4-audio.m4a")
+
+PHASE_FILES = [
+    ("phase1.png", "phase1-anim.png"),
+    ("phase2.png", "phase2-anim.png"),
+    ("phase3.png", "phase3-anim.png"),
+    ("phase4.png", "phase4-anim.png"),
+]
+
+LUT = bytes(255 if v >= 248 else (v & 0xF0) for v in range(256))
 
 
 def make_chunk(chunk_type: bytes, chunk_data: bytes) -> bytes:
@@ -24,8 +29,12 @@ def decode_rgba_frame(zbytes: bytes, width: int, height: int) -> bytearray:
     stride = width * 4
     pixels = bytearray(height * stride)
     for y in range(height):
-        ft = raw[y * (stride + 1)]
-        row = raw[y * (stride + 1) + 1 : (y + 1) * (stride + 1)]
+        row_start = y * (stride + 1)
+        ft = raw[row_start]
+        row = raw[row_start + 1 : row_start + 1 + stride]
+        if ft == 0:
+            pixels[y * stride : (y + 1) * stride] = row
+            continue
         out = bytearray(stride)
         prev_row_offset = (y - 1) * stride
         for i in range(stride):
@@ -51,24 +60,27 @@ def decode_rgba_frame(zbytes: bytes, width: int, height: int) -> bytearray:
 
 def encode_quantized_frame(pixels: bytearray, width: int, height: int) -> bytes:
     stride = width * 4
-    q = bytearray(len(pixels))
-    for i, v in enumerate(pixels):
-        q[i] = 255 if v >= 248 else (v & 0xF0)
-
-    filtered = bytearray()
+    q = bytes(pixels).translate(LUT)
+    filtered = bytearray(height * (stride + 1))
     for y in range(height):
-        filtered.append(1)  # PNG Sub filter
+        out_offset = y * (stride + 1)
+        filtered[out_offset] = 1  # PNG Sub filter
         row = q[y * stride : (y + 1) * stride]
-        for i in range(stride):
-            a = row[i - 4] if i >= 4 else 0
-            filtered.append((row[i] - a) & 0xFF)
+        filtered[out_offset + 1 : out_offset + 5] = row[:4]
+        for i in range(4, stride):
+            filtered[out_offset + 1 + i] = (row[i] - row[i - 4]) & 0xFF
     return zlib.compress(bytes(filtered), 9)
 
 
-def compress_apng(src_path: str, out_path: str) -> None:
+def process_apng(pair: tuple[str, str]) -> str:
+    src_name, out_name = pair
+    src_path = os.path.join(RES_DIR, src_name)
+    out_path = os.path.join(OUT_DIR, out_name)
+
     with open(src_path, "rb") as f:
         data = f.read()
 
+    need_quantize = len(data) >= 550_000
     pos = 8
     header_chunks = []
     fctl_payloads = []
@@ -84,7 +96,11 @@ def compress_apng(src_path: str, out_path: str) -> None:
         if ctype == b"IHDR":
             width, height = struct.unpack(">II", cdata[:8])
             header_chunks.append((ctype, cdata))
-        elif ctype in (b"acTL", b"sRGB"):
+        elif ctype == b"acTL":
+            num_frames, _ = struct.unpack(">II", cdata)
+            # Enforce num_plays = 1 (single play, no loop)
+            header_chunks.append((ctype, struct.pack(">II", num_frames, 1)))
+        elif ctype == b"sRGB":
             header_chunks.append((ctype, cdata))
         elif ctype == b"fcTL":
             if cur_z:
@@ -106,13 +122,16 @@ def compress_apng(src_path: str, out_path: str) -> None:
 
     seq_num = 0
     for idx, (fctl_raw, zdata) in enumerate(zip(fctl_payloads, frames_z)):
-        # Rewrite sequence number in fcTL
         new_fctl = struct.pack(">I", seq_num) + fctl_raw[4:]
         seq_num += 1
         out.extend(make_chunk(b"fcTL", new_fctl))
 
-        pixels = decode_rgba_frame(zdata, width, height)
-        compressed = encode_quantized_frame(pixels, width, height)
+        if need_quantize and len(zdata) > 20_000:
+            pixels = decode_rgba_frame(zdata, width, height)
+            candidate = encode_quantized_frame(pixels, width, height)
+            compressed = candidate if len(candidate) < len(zdata) else zdata
+        else:
+            compressed = zdata
 
         if idx == 0:
             out.extend(make_chunk(b"IDAT", compressed))
@@ -125,51 +144,19 @@ def compress_apng(src_path: str, out_path: str) -> None:
     with open(out_path, "wb") as f:
         f.write(out)
 
-
-def compress_audio(src_path: str, out_path: str) -> None:
-    with tempfile.NamedTemporaryFile(suffix=".m4a", delete=False) as tmp:
-        tmp_path = tmp.name
-    try:
-        subprocess.run(
-            [
-                "avconvert",
-                "--preset",
-                "PresetAppleM4A",
-                "--source",
-                src_path,
-                "--output",
-                tmp_path,
-                "--replace",
-            ],
-            check=True,
-        )
-        subprocess.run(
-            [
-                "afconvert",
-                "-f",
-                "m4af",
-                "-d",
-                "aach",
-                "-b",
-                "48000",
-                tmp_path,
-                out_path,
-            ],
-            check=True,
-        )
-    finally:
-        if os.path.exists(tmp_path):
-            os.remove(tmp_path)
+    return f"{out_name}: {len(data) // 1024}KB -> {len(out) // 1024}KB (frames={len(frames_z)}, num_plays=1)"
 
 
 def main() -> None:
     os.makedirs(OUT_DIR, exist_ok=True)
-    compress_apng(SRC_ANIM, OUT_ANIM)
-    compress_audio(SRC_AUDIO, OUT_AUDIO)
-    print(f"Compressed APNG: {os.path.getsize(OUT_ANIM)} bytes -> {OUT_ANIM}")
-    print(f"Compressed Audio: {os.path.getsize(OUT_AUDIO)} bytes -> {OUT_AUDIO}")
+    legacy_audio = os.path.join(OUT_DIR, "phase4-audio.m4a")
+    if os.path.exists(legacy_audio):
+        os.remove(legacy_audio)
+
+    with ProcessPoolExecutor() as pool:
+        for summary in pool.map(process_apng, PHASE_FILES):
+            print(summary)
 
 
 if __name__ == "__main__":
     main()
-

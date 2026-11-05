@@ -3,27 +3,32 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 
-test('Compressed Phase 4 intro media assets exist, are smaller than sources, and preserve APNG frames', () => {
-  const animPath = path.resolve('public/intro/phase4-anim.png');
+const EXPECTED_PHASES = [
+  { file: 'phase1-anim.png', source: 'phase1.png', frames: 16 },
+  { file: 'phase2-anim.png', source: 'phase2.png', frames: 19 },
+  { file: 'phase3-anim.png', source: 'phase3.png', frames: 16 },
+  { file: 'phase4-anim.png', source: 'phase4.png', frames: 21 }
+];
+
+test('All 4 phase intro animations exist, are compressed, have num_plays=1 (no loop), and audio is removed', () => {
   const audioPath = path.resolve('public/intro/phase4-audio.m4a');
+  assert.strictEqual(fs.existsSync(audioPath), false, 'phase4-audio.m4a must be removed');
 
-  assert.strictEqual(fs.existsSync(animPath), true, 'public/intro/phase4-anim.png must exist');
-  assert.strictEqual(fs.existsSync(audioPath), true, 'public/intro/phase4-audio.m4a must exist');
+  for (const { file, source, frames } of EXPECTED_PHASES) {
+    const outPath = path.resolve('public/intro', file);
+    const srcPath = path.resolve('Ressources', source);
+    assert.strictEqual(fs.existsSync(outPath), true, `${file} must exist`);
 
-  const animStat = fs.statSync(animPath);
-  const audioStat = fs.statSync(audioPath);
+    const outBytes = fs.readFileSync(outPath);
+    const srcSize = fs.statSync(srcPath).size;
 
-  assert.ok(animStat.size > 10_000 && animStat.size < 600_000, `Expected anim size < 600KB, got ${animStat.size}`);
-  assert.ok(audioStat.size > 5_000 && audioStat.size < 45_000, `Expected audio size < 45KB, got ${audioStat.size}`);
+    assert.ok(outBytes.length <= srcSize && outBytes.length < 600_000, `${file} size (${outBytes.length}) must be <= source (${srcSize}) and < 600KB`);
 
-  const animBytes = fs.readFileSync(animPath);
-  assert.ok(animBytes.includes(Buffer.from('acTL')), 'Compressed PNG must remain an animated PNG (acTL chunk present)');
-  let fcTLCount = 0;
-  let idx = 0;
-  while ((idx = animBytes.indexOf(Buffer.from('fcTL'), idx)) !== -1) {
-    fcTLCount++;
-    idx += 4;
+    const acTLIndex = outBytes.indexOf(Buffer.from('acTL'));
+    assert.ok(acTLIndex !== -1, `${file} must contain acTL chunk`);
+    const numFrames = outBytes.readUInt32BE(acTLIndex + 4);
+    const numPlays = outBytes.readUInt32BE(acTLIndex + 8);
+    assert.strictEqual(numFrames, frames, `${file} must preserve ${frames} frames`);
+    assert.strictEqual(numPlays, 1, `${file} must have num_plays = 1 (no loop)`);
   }
-  assert.strictEqual(fcTLCount, 16, 'Compressed APNG must preserve all 16 frames');
 });
-
