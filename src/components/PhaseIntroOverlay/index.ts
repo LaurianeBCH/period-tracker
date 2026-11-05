@@ -1,8 +1,12 @@
 export {
   PhaseIntroOverlay,
-  shouldPlayPhaseIntro,
-  isPhase4,
-  PHASE4_INTRO_DURATION_MS,
-  PHASE4_FADE_MS
+  PHASE_INTRO_CONFIG,
+  PHASE_FADE_MS,
+  normalizeIntroPhase,
+  shouldTriggerPhaseIntro
 } from './PhaseIntroOverlay';
-export type { PhaseIntroOverlayProps } from './PhaseIntroOverlay';
+export type {
+  PhaseIntroOverlayProps,
+  CanonicalIntroPhase,
+  PhaseIntroMeta
+} from './PhaseIntroOverlay';
