@@ -36,6 +36,7 @@ test('RecommendationsView renders Idées de recettes using the Button atom (seco
   assert.match(viewCode, /window\.open\([^,]+,\s*['"]_blank['"],\s*['"]noopener,noreferrer['"]\)/, 'Must open recipe URL in a new tab');
 
   assert.match(cssCode, /\.recipesGrid/, 'CSS must define .recipesGrid');
+  assert.match(cssCode, /\.recipesTitle\s*\{[^}]*var\(--spacing-2xl\)/s, '.recipesTitle must have top margin var(--spacing-2xl)');
   assert.match(cssCode, /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/, 'Desktop recipesGrid must have 2 columns');
   const recipesCssBlock = cssCode.slice(cssCode.indexOf('.recipesTitle'));
   assert.doesNotMatch(recipesCssBlock, /#[0-9a-fA-F]{3,8}|rgba?\(/, 'New recipe CSS rules must only use design tokens (AGENTS.md)');
