@@ -1,5 +1,5 @@
-import { UserSettings, CycleLog } from '../types/cycle';
-import { addDays, extractPeriodBlocks } from '../utils/cycleEngine';
+import type { UserSettings, CycleLog } from '../types/cycle.ts';
+import { addDays, extractPeriodBlocks } from '../utils/cycleEngine.ts';
 
 const SETTINGS_KEY = 'period_tracker_settings';
 const PERIOD_DATES_KEY = 'period_tracker_dates';
@@ -150,3 +150,18 @@ export function togglePeriodDate(dateStr: string, autofillLength: number = 4): s
   savePeriodDates(updated);
   return updated;
 }
+
+/**
+ * Clears all local storage keys used by Period Tracker (used on account deletion).
+ */
+export function clearAllStorage(): void {
+  try {
+    localStorage.removeItem(SETTINGS_KEY);
+    localStorage.removeItem(PERIOD_DATES_KEY);
+    localStorage.removeItem(LEGACY_SETTINGS_KEY);
+    localStorage.removeItem(LEGACY_LOGS_KEY);
+  } catch (err) {
+    console.error('Error clearing localStorage:', err);
+  }
+}
+

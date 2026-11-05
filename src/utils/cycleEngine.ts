@@ -1,4 +1,4 @@
-import { UserSettings, DayStatus, CyclePhase, PeriodBlock, CycleLog } from '../types/cycle';
+import type { UserSettings, DayStatus, CyclePhase, PeriodBlock, CycleLog } from '../types/cycle';
 
 export function formatDateISO(date: Date): string {
   const year = date.getFullYear();
