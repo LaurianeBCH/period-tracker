@@ -24,7 +24,6 @@ import {
   computeCycleMetrics
 } from './utils/cycleEngine';
 import { getPhaseInsight } from './data/phaseInsights';
-import { OnboardingWizard } from './components/OnboardingWizard/OnboardingWizard';
 import { NavigationHeader, TabBar, TabId } from './components/organisms';
 import { HomeMonthlyCalendar } from './components/Calendar/HomeMonthlyCalendar';
 import { YearCalendarView } from './components/Calendar/YearCalendarView';
@@ -114,11 +113,15 @@ export default function App() {
   const todayStatus = getDayStatus(todayISO, settings, periodDates);
   const todayInsight = getPhaseInsight(todayStatus.phase);
 
-  // Synchronize V3 Multi-Mode Design Tokens with current phase (or restore on tab switch)
+  // Synchronize V3 Multi-Mode Design Tokens with current phase (or 'neutre' when periodDates is empty)
   useEffect(() => {
-    if (!settings.isOnboarded) return;
-
     if (activeTab === 'calendar' || activeTab === 'cycle') {
+      if (periodDates.length === 0) {
+        document.documentElement.setAttribute('data-theme', 'neutre');
+        document.body.style.backgroundColor = 'var(--background-level-1)';
+        return;
+      }
+
       const phaseKey = todayInsight.phaseKey;
       const themeMode =
         phaseKey === 'Phase1-Follicular'
@@ -132,18 +135,7 @@ export default function App() {
       document.documentElement.setAttribute('data-theme', themeMode);
       document.body.style.backgroundColor = 'var(--background-level-1)';
     }
-  }, [settings.isOnboarded, todayInsight.phaseKey, activeTab]);
-
-  const handleOnboardingComplete = (
-    newSettings: UserSettings,
-    initialDates: string[] = []
-  ) => {
-    if (initialDates && initialDates.length > 0) {
-      savePeriodDates(initialDates);
-      setPeriodDates([...initialDates]);
-    }
-    setSettings(newSettings);
-  };
+  }, [periodDates.length, todayInsight.phaseKey, activeTab]);
 
   /**
    * Direct calendar click:
@@ -173,14 +165,6 @@ export default function App() {
     return { error: null };
   };
 
-  if (!settings.isOnboarded) {
-    return (
-      <OnboardingWizard
-        onComplete={handleOnboardingComplete}
-      />
-    );
-  }
-
   const isYearView = currentView === 'full_calendar';
 
   return (
@@ -189,7 +173,7 @@ export default function App() {
         isYearView ? styles.yearViewWrapper : ''
       }`}
     >
-      <PhaseIntroOverlay phase={todayInsight.phaseKey} />
+      {periodDates.length > 0 && <PhaseIntroOverlay phase={todayInsight.phaseKey} />}
 
       {/* V3 Navigation Header */}
       <NavigationHeader title="Period Tracker" />

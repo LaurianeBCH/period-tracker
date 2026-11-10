@@ -27,6 +27,7 @@ export type CyclePhase =
   | 'Phase3-Luteal'
   | 'Phase4-Menstrual'
   | 'Phase4-Menstrual-Unconfirmed'
+  | 'Neutral'
   | 'Default';
 
 export interface DayStatus {

@@ -207,6 +207,18 @@ export const HomeMonthlyCalendar: FC<HomeMonthlyCalendarProps> = ({
 
   return (
     <div className={styles.calendarCard}>
+      {effectiveDates.length === 0 && (
+        <p className={styles.emptyCalendarPrompt}>
+          <span className={styles.emptyPromptQuestion}>
+            Quand avez-vous eu vos dernières règles ?
+          </span>
+          <br />
+          <span className={styles.emptyPromptHint}>
+            Pointer les dates dans le calendrier.
+          </span>
+        </p>
+      )}
+
       {/* Month Navigation Header */}
       <div className={styles.monthHeader}>
         <button

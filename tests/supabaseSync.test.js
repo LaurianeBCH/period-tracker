@@ -138,4 +138,63 @@ test('Neutral mode engine status, PWA manifest link scope, and getAuthRedirectUr
   assert.match(viteConfig, /launch_handler/, 'Manifest must configure launch_handler');
 });
 
+test('Task 2: Neutral mode UI removes OnboardingWizard and renders Figma empty-state prompts with Design Tokens', () => {
+  const appCode = fs.readFileSync(path.join(rootDir, 'src', 'App.tsx'), 'utf8');
+  assert.doesNotMatch(appCode, /OnboardingWizard/, 'App.tsx must no longer render OnboardingWizard');
+  assert.match(appCode, /'neutre'/, 'App.tsx must apply neutre theme when periodDates is empty');
+  assert.match(
+    appCode,
+    /periodDates\.length\s*>\s*0\s*&&\s*<PhaseIntroOverlay/,
+    'App.tsx must only render PhaseIntroOverlay when periodDates.length > 0'
+  );
+
+  const calendarCode = fs.readFileSync(
+    path.join(rootDir, 'src', 'components', 'Calendar', 'HomeMonthlyCalendar.tsx'),
+    'utf8'
+  );
+  assert.match(
+    calendarCode,
+    /Quand avez-vous eu vos dernières règles \?/,
+    'HomeMonthlyCalendar must render empty prompt question'
+  );
+  assert.match(
+    calendarCode,
+    /Pointer les dates dans le calendrier\./,
+    'HomeMonthlyCalendar must render empty prompt hint'
+  );
+
+  const insightsCode = fs.readFileSync(
+    path.join(rootDir, 'src', 'components', 'Calendar', 'PhaseInsightsCard.tsx'),
+    'utf8'
+  );
+  assert.match(
+    insightsCode,
+    /Aucune information pour le moment\. Renseignez vos dernières règles/,
+    'PhaseInsightsCard must render neutral empty subtitle'
+  );
+  assert.match(
+    insightsCode,
+    /!isNeutral\s*&&\s*\(/,
+    'PhaseInsightsCard must hide dayMarkerGroup when in neutral state'
+  );
+
+  const calendarCss = fs.readFileSync(
+    path.join(rootDir, 'src', 'components', 'Calendar', 'Calendar.module.css'),
+    'utf8'
+  );
+  assert.match(calendarCss, /\.emptyCalendarPrompt/, 'Calendar.module.css must define .emptyCalendarPrompt');
+  assert.match(calendarCss, /\.emptyPromptQuestion/, 'Calendar.module.css must define .emptyPromptQuestion');
+  assert.match(calendarCss, /\.emptyPromptHint/, 'Calendar.module.css must define .emptyPromptHint');
+  assert.match(calendarCss, /\.insightsEmptySubtitle/, 'Calendar.module.css must define .insightsEmptySubtitle');
+
+  const newRulesStart = calendarCss.indexOf('.emptyCalendarPrompt');
+  const newRulesSlice = calendarCss.slice(newRulesStart);
+  assert.doesNotMatch(
+    newRulesSlice,
+    /#[0-9a-fA-F]{3,8}|rgba?\(/,
+    'New neutral-mode CSS classes must strictly use design tokens without hardcoded colors (AGENTS.md)'
+  );
+});
+
+
 

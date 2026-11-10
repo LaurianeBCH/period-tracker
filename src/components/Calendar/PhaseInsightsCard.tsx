@@ -27,6 +27,7 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
 
   // Status to display: selected day if active, otherwise today's status
   const activeStatus = selectedStatus || todayStatus;
+  const isNeutral = activeStatus?.phase === 'Neutral';
   const currentPhase = activeStatus?.phase || insight.phaseKey;
   const currentPhaseDay = activeStatus?.phaseDay ?? 1;
   const currentPhaseTotalDays = activeStatus?.phaseTotalDays ?? 6;
@@ -88,10 +89,16 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
 
   return (
     <div className={styles.insightsCard}>
-      {/* V3 Figma Header: "Ma phase du moment" + phase title */}
+      {/* V3 Figma Header: "Ma phase du moment" + phase title (or empty-state message in Neutral mode) */}
       <div className={styles.insightsHeader}>
         <h2 className={styles.insightsMainTitle}>Phase du moment</h2>
-        <p className={styles.insightsPhaseSubtitle}>{insight.title}</p>
+        {isNeutral ? (
+          <p className={styles.insightsEmptySubtitle}>
+            Aucune information pour le moment. Renseignez vos dernières règles
+          </p>
+        ) : (
+          <p className={styles.insightsPhaseSubtitle}>{insight.title}</p>
+        )}
       </div>
 
       {/* SVG Wave Curve Graph (Figma exact geometry: 4 segments, 3 solid separators, dynamic day marker, bottom badge row) */}
@@ -248,61 +255,63 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             <WaterDropIcon size={18} color="var(--text-dark-primary)" />
           </g>
 
-          {/* Dynamic Day Marker: Jour J (Yellow glowing circle) */}
-          <g
-            className={styles.dayMarkerGroup}
-            filter="url(#avatarGlowFilter)"
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
-            onClick={() => setShowTooltip((prev) => !prev)}
-            role="button"
-            tabIndex={0}
-            aria-label={`Jour J: Jour ${cycleDay} du cycle, ${activeSegment.label}`}
-          >
-            {/* Main yellow avatar circle with dark border matching Figma */}
-            <circle
-              cx={markerPos.x}
-              cy={markerPos.y}
-              r="10"
-              fill="var(--accent)"
-              className={styles.dayMarkerCircle}
-            />
-            <circle
-              cx={markerPos.x}
-              cy={markerPos.y}
-              r="9"
-              fill="none"
-              stroke="var(--text-dark-primary)"
-              strokeWidth="2"
-              className={styles.dayMarkerBorder}
-            />
+          {/* Dynamic Day Marker: Jour J (Yellow glowing circle, hidden in Neutral mode) */}
+          {!isNeutral && (
+            <g
+              className={styles.dayMarkerGroup}
+              filter="url(#avatarGlowFilter)"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              onClick={() => setShowTooltip((prev) => !prev)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Jour J: Jour ${cycleDay} du cycle, ${activeSegment.label}`}
+            >
+              {/* Main yellow avatar circle with dark border matching Figma */}
+              <circle
+                cx={markerPos.x}
+                cy={markerPos.y}
+                r="10"
+                fill="var(--accent)"
+                className={styles.dayMarkerCircle}
+              />
+              <circle
+                cx={markerPos.x}
+                cy={markerPos.y}
+                r="9"
+                fill="none"
+                stroke="var(--text-dark-primary)"
+                strokeWidth="2"
+                className={styles.dayMarkerBorder}
+              />
 
-            {/* Floating indicator tooltip on hover/click */}
-            {showTooltip && (
-              <g className={styles.markerTooltip}>
-                <rect
-                  x={Math.max(10, Math.min(270, markerPos.x - 45))}
-                  y={Math.max(5, markerPos.y - 36)}
-                  width="90"
-                  height="26"
-                  rx="6"
-                  fill="var(--text-dark-primary)"
-                  opacity="0.9"
-                />
-                <text
-                  x={Math.max(55, Math.min(315, markerPos.x))}
-                  y={Math.max(22, markerPos.y - 19)}
-                  textAnchor="middle"
-                  fill="var(--text-white)"
-                  fontSize="11"
-                  fontFamily="var(--font-family)"
-                  fontWeight="bold"
-                >
-                  Jour J (J{cycleDay})
-                </text>
-              </g>
-            )}
-          </g>
+              {/* Floating indicator tooltip on hover/click */}
+              {showTooltip && (
+                <g className={styles.markerTooltip}>
+                  <rect
+                    x={Math.max(10, Math.min(270, markerPos.x - 45))}
+                    y={Math.max(5, markerPos.y - 36)}
+                    width="90"
+                    height="26"
+                    rx="6"
+                    fill="var(--text-dark-primary)"
+                    opacity="0.9"
+                  />
+                  <text
+                    x={Math.max(55, Math.min(315, markerPos.x))}
+                    y={Math.max(22, markerPos.y - 19)}
+                    textAnchor="middle"
+                    fill="var(--text-white)"
+                    fontSize="11"
+                    fontFamily="var(--font-family)"
+                    fontWeight="bold"
+                  >
+                    Jour J (J{cycleDay})
+                  </text>
+                </g>
+              )}
+            </g>
+          )}
         </svg>
       </div>
 

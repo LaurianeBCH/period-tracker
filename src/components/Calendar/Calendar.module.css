@@ -644,3 +644,33 @@
     display: none !important;
   }
 }
+
+/* --- Mode Neutre (Première connexion sans règles enregistrées — Figma 4347:9297 & 4347:9168) --- */
+.emptyCalendarPrompt {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
+}
+
+.emptyPromptQuestion {
+  color: var(--text-dark-primary);
+}
+
+.emptyPromptHint {
+  color: var(--text-dark-secondary);
+}
+
+.insightsEmptySubtitle {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
+  color: var(--text-dark-secondary);
+}
