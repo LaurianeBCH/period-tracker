@@ -52,6 +52,11 @@
   --typo-number-weight: 700;
   --typo-number-line-height: 100%;
 
+  --typo-h0-family: var(--font-family);
+  --typo-h0-size: 24px;
+  --typo-h0-weight: 700;
+  --typo-h0-line-height: normal;
+
   --typo-h1-family: var(--font-family);
   --typo-h1-size: 22px;
   --typo-h1-weight: 700;

@@ -104,6 +104,14 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
 
   return (
     <div className={styles.pageLayout}>
+      <div
+        className={`${styles.pageTitleRow} ${
+          mobileView === 'details' ? styles.hideOnMobile : ''
+        }`}
+      >
+        <h1 className={styles.pageTitle}>Recommandations</h1>
+      </div>
+
       {/* ========================================================
           COLONNE MENU (4 PHASES)
           Visible sur mobile si mobileView === 'menu'
@@ -115,8 +123,6 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
         }`}
         aria-label="Sélection des phases"
       >
-        <h1 className={styles.menuHeading}>Recommandations</h1>
-
         <div className={styles.phaseMenuList}>
           {RECOMMENDATIONS_DATA.map((phase) => {
             const isActive = selectedPhase.id === phase.id;

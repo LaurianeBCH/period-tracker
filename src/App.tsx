@@ -197,6 +197,10 @@ export default function App() {
             />
           ) : (
             <main className={styles.homeContainer}>
+              <div className={styles.pageTitleRow}>
+                <h1 className={styles.pageTitle}>Calendrier</h1>
+              </div>
+
               {/* Monthly Calendar card */}
               <HomeMonthlyCalendar
                 settings={settings}

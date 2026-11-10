@@ -171,7 +171,9 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
 
   return (
     <main className={styles.cycleContainer}>
-      <h1 className={styles.pageTitle}>Mon cycle</h1>
+      <div className={styles.pageTitleRow}>
+        <h1 className={styles.pageTitle}>Mon cycle</h1>
+      </div>
 
       {/* Left Column (Desktop) / Top Cards (Mobile) */}
       <div className={styles.leftColumn}>
