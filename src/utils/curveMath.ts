@@ -5,6 +5,8 @@ export interface Point {
 
 export type CycleSegmentKey = 'phase1' | 'phase2' | 'phase3' | 'phase4';
 
+export const SEGMENT_ORDER: CycleSegmentKey[] = ['phase1', 'phase2', 'phase3', 'phase4'];
+
 export const CURVE_SEGMENTS = {
   phase1: {
     key: 'phase1' as const,
@@ -20,7 +22,7 @@ export const CURVE_SEGMENTS = {
     badge: '2',
     startX: 62.8715,
     endX: 130.0,
-    pathD: "M 62.8715 1 C 81.7275 1, 73.9072 153.32, 106.2893 153.32 C 117.7733 153.32, 122.1795 147.343, 129.9982 139.06"
+    pathD: "M 62.8715 1 C 81.7275 1, 73.9072 153.32, 106.2893 153.32 C 117.7733 153.32, 122.1795 147.343, 130 139.06"
   },
   phase3: {
     key: 'phase3' as const,
@@ -28,7 +30,7 @@ export const CURVE_SEGMENTS = {
     badge: '3',
     startX: 130.0,
     endX: 297.242,
-    pathD: "M 130.813 141.005 C 152.086 111.197, 165.23 56.302, 202.54 56.302 C 266.026 56.302, 266.874 173.139, 298.056 173.139"
+    pathD: "M 130 139.06 C 152.086 111.197, 165.23 56.302, 202.54 56.302 C 266.026 56.302, 266.874 173.139, 297.242 173.139"
   },
   phase4: {
     key: 'phase4' as const,
@@ -77,7 +79,7 @@ export function getAnalyticalCurvePoint(segmentKey: CycleSegmentKey, progress: n
       } else {
         const subT = (t - 0.65) / 0.35;
         return {
-          x: cubicBezier(subT, 106.2893, 117.7733, 122.1795, 129.9982),
+          x: cubicBezier(subT, 106.2893, 117.7733, 122.1795, 130),
           y: cubicBezier(subT, 153.32, 153.32, 147.343, 139.06)
         };
       }
@@ -87,13 +89,13 @@ export function getAnalyticalCurvePoint(segmentKey: CycleSegmentKey, progress: n
       if (t < 0.5) {
         const subT = t / 0.5;
         return {
-          x: cubicBezier(subT, 130.813, 152.086, 165.23, 202.54),
-          y: cubicBezier(subT, 141.005, 111.197, 56.302, 56.302)
+          x: cubicBezier(subT, 130, 152.086, 165.23, 202.54),
+          y: cubicBezier(subT, 139.06, 111.197, 56.302, 56.302)
         };
       } else {
         const subT = (t - 0.5) / 0.5;
         return {
-          x: cubicBezier(subT, 202.54, 266.026, 266.874, 298.056),
+          x: cubicBezier(subT, 202.54, 266.026, 266.874, 297.242),
           y: cubicBezier(subT, 56.302, 56.302, 173.139, 173.139)
         };
       }
@@ -125,6 +127,35 @@ export function getSegmentKeyFromPhase(phase: string): CycleSegmentKey {
     default:
       return 'phase4';
   }
+}
+
+/**
+ * Calculates continuous curve progress in [0..4] (0..1 = phase1, 1..2 = phase2, 2..3 = phase3, 3..4 = phase4)
+ */
+export function getTargetCurveProgress(
+  phase: string,
+  phaseDay: number = 1,
+  phaseTotalDays: number = 1
+): number {
+  const segmentKey = getSegmentKeyFromPhase(phase);
+  const segmentIndex = SEGMENT_ORDER.indexOf(segmentKey);
+  const total = Math.max(1, phaseTotalDays);
+  const day = Math.max(1, Math.min(total, phaseDay));
+  const localProgress = Math.max(0, Math.min(1, (day - 0.5) / total));
+
+  return segmentIndex + localProgress;
+}
+
+/**
+ * Evaluates (x, y) along the full 4-segment curve for a continuous progress in [0..4]
+ */
+export function getCurvePointAtProgress(globalProgress: number): Point {
+  const clamped = Math.max(0, Math.min(4, globalProgress));
+  const segmentIndex = Math.min(3, Math.floor(clamped));
+  const localProgress = clamped - segmentIndex;
+  const segmentKey = SEGMENT_ORDER[segmentIndex];
+
+  return getAnalyticalCurvePoint(segmentKey, localProgress);
 }
 
 /**

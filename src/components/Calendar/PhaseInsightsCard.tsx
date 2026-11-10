@@ -4,8 +4,10 @@ import { DayStatus } from '../../types/cycle';
 import { WaterDropIcon } from '../atoms';
 import {
   CURVE_SEGMENTS,
-  calculateTodayCurvePosition,
+  SEGMENT_ORDER,
+  getCurvePointAtProgress,
   getSegmentKeyFromPhase,
+  getTargetCurveProgress,
   Point
 } from '../../utils/curveMath';
 import styles from './Calendar.module.css';
@@ -23,8 +25,6 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
   selectedStatus,
   onNavigateToRecommendations
 }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-
   // Status to display: selected day if active, otherwise today's status
   const activeStatus = selectedStatus || todayStatus;
   const isNeutral = activeStatus?.phase === 'Neutral';
@@ -39,50 +39,83 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
   const seg3Ref = useRef<SVGPathElement | null>(null);
   const seg4Ref = useRef<SVGPathElement | null>(null);
 
-  // Analytical coordinate fallback
-  const initial = calculateTodayCurvePosition(
-    currentPhase,
-    currentPhaseDay,
-    currentPhaseTotalDays
-  );
+  // Track current progress along the 4-segment curve [0..4] so animation starts from 0 on mount
+  const currentProgressRef = useRef<number>(0);
+  const [markerPos, setMarkerPos] = useState<Point>(() => getCurvePointAtProgress(0));
 
-  const [markerPos, setMarkerPos] = useState<Point>(initial.point);
-
-  // Synchronize precise SVG coordinates along the path on mount & status updates
+  // Animate dayMarkerCircle along the curve to reach the current day's position
   useEffect(() => {
-    const segmentKey = getSegmentKeyFromPhase(currentPhase);
-    let targetPath: SVGPathElement | null = null;
-
-    if (segmentKey === 'phase1') targetPath = seg1Ref.current;
-    else if (segmentKey === 'phase2') targetPath = seg2Ref.current;
-    else if (segmentKey === 'phase3') targetPath = seg3Ref.current;
-    else if (segmentKey === 'phase4') targetPath = seg4Ref.current;
-
-    if (targetPath) {
-      try {
-        const totalLength = targetPath.getTotalLength();
-        const progress = Math.max(
-          0,
-          Math.min(1, (currentPhaseDay - 0.5) / Math.max(1, currentPhaseTotalDays))
-        );
-        const svgPoint = targetPath.getPointAtLength(progress * totalLength);
-        if (svgPoint && !isNaN(svgPoint.x) && !isNaN(svgPoint.y)) {
-          setMarkerPos({ x: svgPoint.x, y: svgPoint.y });
-          return;
-        }
-      } catch {
-        // Fallback to analytical calculation if SVG getPointAtLength fails
-      }
+    if (isNeutral) {
+      currentProgressRef.current = 0;
+      return;
     }
 
-    // Default analytical position
-    const calculated = calculateTodayCurvePosition(
+    const targetProgress = getTargetCurveProgress(
       currentPhase,
       currentPhaseDay,
       currentPhaseTotalDays
     );
-    setMarkerPos(calculated.point);
-  }, [currentPhase, currentPhaseDay, currentPhaseTotalDays]);
+    const startProgress = currentProgressRef.current;
+
+    const getPointOnDomOrAnalytical = (globalProgress: number): Point => {
+      const clamped = Math.max(0, Math.min(4, globalProgress));
+      const segmentIndex = Math.min(3, Math.floor(clamped));
+      const localProgress = clamped - segmentIndex;
+      const segmentKey = SEGMENT_ORDER[segmentIndex];
+
+      let targetPath: SVGPathElement | null = null;
+      if (segmentKey === 'phase1') targetPath = seg1Ref.current;
+      else if (segmentKey === 'phase2') targetPath = seg2Ref.current;
+      else if (segmentKey === 'phase3') targetPath = seg3Ref.current;
+      else if (segmentKey === 'phase4') targetPath = seg4Ref.current;
+
+      if (targetPath) {
+        try {
+          const totalLength = targetPath.getTotalLength();
+          const svgPoint = targetPath.getPointAtLength(localProgress * totalLength);
+          if (svgPoint && !isNaN(svgPoint.x) && !isNaN(svgPoint.y)) {
+            return { x: svgPoint.x, y: svgPoint.y };
+          }
+        } catch {
+          // Fallback to analytical calculation if SVG getPointAtLength fails
+        }
+      }
+
+      return getCurvePointAtProgress(clamped);
+    };
+
+    if (Math.abs(targetProgress - startProgress) < 0.001) {
+      setMarkerPos(getPointOnDomOrAnalytical(targetProgress));
+      currentProgressRef.current = targetProgress;
+      return;
+    }
+
+    const durationMs = 950;
+    let startTime: number | null = null;
+    let animationFrameId: number;
+
+    const step = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const rawT = Math.min(1, elapsed / durationMs);
+      // Cubic ease-out for smooth deceleration into the target day
+      const easedT = 1 - Math.pow(1 - rawT, 3);
+      const nextProgress = startProgress + (targetProgress - startProgress) * easedT;
+
+      currentProgressRef.current = nextProgress;
+      setMarkerPos(getPointOnDomOrAnalytical(nextProgress));
+
+      if (rawT < 1) {
+        animationFrameId = requestAnimationFrame(step);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(step);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isNeutral, currentPhase, currentPhaseDay, currentPhaseTotalDays]);
 
   const activeSegmentKey = getSegmentKeyFromPhase(currentPhase);
   const activeSegment = CURVE_SEGMENTS[activeSegmentKey];
@@ -110,7 +143,7 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
           aria-label="Graphique d'avancement jour par jour dans le cycle menstruel"
         >
           <defs>
-            {/* Figma drop shadow glow filter for avatar/marker (#FBFF24 blur) */}
+            {/* Figma drop shadow glow filter for avatar/marker (var(--accent) blur) */}
             <filter
               id="avatarGlowFilter"
               x="-50%"
@@ -118,7 +151,13 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
               width="200%"
               height="200%"
             >
-              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#FBFF24" floodOpacity="0.85" />
+              <feDropShadow
+                dx="0"
+                dy="0"
+                stdDeviation="6"
+                floodColor="var(--accent)"
+                floodOpacity="0.85"
+              />
             </filter>
           </defs>
 
@@ -255,19 +294,14 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             <WaterDropIcon size={18} color="var(--text-dark-primary)" />
           </g>
 
-          {/* Dynamic Day Marker: Jour J (Yellow glowing circle, hidden in Neutral mode) */}
+          {/* Dynamic Day Marker: Jour J (Accent glowing circle, hidden in Neutral mode) */}
           {!isNeutral && (
             <g
               className={styles.dayMarkerGroup}
               filter="url(#avatarGlowFilter)"
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              onClick={() => setShowTooltip((prev) => !prev)}
-              role="button"
-              tabIndex={0}
               aria-label={`Jour J: Jour ${cycleDay} du cycle, ${activeSegment.label}`}
             >
-              {/* Main yellow avatar circle with dark border matching Figma */}
+              {/* Main accent avatar circle with dark border matching Figma */}
               <circle
                 cx={markerPos.x}
                 cy={markerPos.y}
@@ -284,58 +318,10 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
                 strokeWidth="2"
                 className={styles.dayMarkerBorder}
               />
-
-              {/* Floating indicator tooltip on hover/click */}
-              {showTooltip && (
-                <g className={styles.markerTooltip}>
-                  <rect
-                    x={Math.max(10, Math.min(270, markerPos.x - 45))}
-                    y={Math.max(5, markerPos.y - 36)}
-                    width="90"
-                    height="26"
-                    rx="6"
-                    fill="var(--text-dark-primary)"
-                    opacity="0.9"
-                  />
-                  <text
-                    x={Math.max(55, Math.min(315, markerPos.x))}
-                    y={Math.max(22, markerPos.y - 19)}
-                    textAnchor="middle"
-                    fill="var(--text-white)"
-                    fontSize="11"
-                    fontFamily="var(--font-family)"
-                    fontWeight="bold"
-                  >
-                    Jour J (J{cycleDay})
-                  </text>
-                </g>
-              )}
             </g>
           )}
         </svg>
       </div>
-
-      {/* Legend items */}
-      {/*
-      <div className={styles.legendList}>
-        <div className={styles.legendRow}>
-          <span>1 Prise d’élan (folliculaire)</span>
-        </div>
-        <div className={styles.legendRow}>
-          <span>2 Debout sur la planche (ovulation)</span>
-        </div>
-        <div className={styles.legendRow}>
-          <span className={styles.phase3Number}>3</span>
-          <span>Dans le tube de la vague (lutéale)</span>
-        </div>
-        <div className={styles.legendRow}>
-          <div className={styles.waterDropBadge}>
-            <WaterDropIcon size={16} color="var(--text-dark-primary)" />
-          </div>
-          <span>Repos avant la prochaine vague (règle)</span>
-        </div>
-      </div>
-      */}
 
       {/* Button Secondary Figma: "En savoir plus" with right chevron -> navigates to recommendations */}
       <button

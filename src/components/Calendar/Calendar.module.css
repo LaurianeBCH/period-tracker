@@ -395,38 +395,15 @@
 }
 
 .dayMarkerGroup {
-  cursor: pointer;
-  outline: none;
-  transition: transform 0.2s ease;
-}
-
-.dayMarkerGroup:hover .dayMarkerCircle,
-.dayMarkerGroup:hover .dayMarkerBorder {
-  transform-origin: center;
-  filter: brightness(1.05);
-}
-
-.dayMarkerCircle,
-.dayMarkerBorder {
-  transition: cx 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    cy 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.markerTooltip {
   pointer-events: none;
-  animation: tooltipFadeIn 0.15s ease-out;
 }
 
-@keyframes tooltipFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
+.dayMarkerCircle {
+  filter: drop-shadow(0 0 var(--spacing-sm) var(--accent));
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.dayMarkerBorder {
+  pointer-events: none;
 }
 
 
