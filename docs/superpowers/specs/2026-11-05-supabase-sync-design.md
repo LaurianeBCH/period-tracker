@@ -118,3 +118,4 @@ Sécurité (Row Level Security — RLS) :
 ## 5. Hors Périmètre (Non-Goals)
 - Pas d'authentification par mot de passe ni OAuth tiers (Google/Apple) : uniquement l'email avec lien de confirmation comme sur la maquette.
 - Pas de menu Paramètres séparé dans l'en-tête.
+

@@ -58,3 +58,4 @@ end;
 $$;
 
 grant execute on function public.delete_user_account() to authenticated;
+

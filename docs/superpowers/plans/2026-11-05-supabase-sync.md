@@ -167,3 +167,4 @@ Expected: PASS (0 failures) and clean `vite build`.
 git add src/components/organisms/NavigationHeader.tsx src/components/MyCycle/MyCycleView.tsx src/components/MyCycle/MyCycleView.module.css src/App.tsx tests/supabaseSync.test.js
 git commit -m "feat(cycle): add Supabase email sync card in MyCycleView and remove header settings icon"
 ```
+

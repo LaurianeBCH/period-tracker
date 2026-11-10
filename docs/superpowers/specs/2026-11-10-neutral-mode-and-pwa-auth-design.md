@@ -47,3 +47,4 @@ Parallèlement :
   - `handle_links: 'preferred'`
   - `launch_handler: { client_mode: ['navigate-existing', 'auto'] }`
 - Dans [`syncService.ts`](file:///Users/lauriane/Sites/period-tracker/src/services/syncService.ts), exporter un helper `getAuthRedirectUrl(origin: string, baseUrl?: string): string` qui construit `new URL(baseUrl || '/period-tracker/', origin).href` afin que `emailRedirectTo` cible toujours l'URL complète dans le `scope` de la PWA.
+

@@ -145,3 +145,4 @@ Expected: PASS (0 failures) and clean `vite build`.
 git add src/App.tsx src/components/Calendar/HomeMonthlyCalendar.tsx src/components/Calendar/PhaseInsightsCard.tsx src/components/Calendar/Calendar.module.css tests/supabaseSync.test.js
 git commit -m "feat(calendar): replace onboarding with Neutral mode and empty-state prompts"
 ```
+
