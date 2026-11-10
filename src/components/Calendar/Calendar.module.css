@@ -33,11 +33,7 @@
 }
 
 .pageTitleRow {
-  grid-column: 1 / -1;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none;
 }
 
 .pageTitle {
@@ -69,6 +65,19 @@
     row-gap: var(--spacing-xl);
     align-items: start;
     padding: var(--spacing-2xl) var(--spacing-2xl) 120px var(--spacing-2xl);
+  }
+
+  .pageTitleRow {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 58px;
+    z-index: 90;
+    background-color: var(--background-level-1);
+    padding: var(--spacing-sm) 0;
   }
 
   /* À partir de 1024px: masquer le slider mois par mois et afficher le calendrier complet */
@@ -115,7 +124,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
-    scroll-margin-top: 78px;
+    scroll-margin-top: 140px;
   }
 }
 
@@ -359,7 +368,7 @@
   .insightsCard {
     max-width: 370px;
     position: sticky;
-    top: 78px;
+    top: 140px;
   }
 }
 

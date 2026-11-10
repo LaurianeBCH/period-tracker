@@ -27,11 +27,7 @@
 }
 
 .pageTitleRow {
-  grid-column: 1 / -1;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none;
 }
 
 .pageTitle {
@@ -62,10 +58,23 @@
 }
 
 @media (min-width: 992px) {
+  .pageTitleRow {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 58px;
+    z-index: 90;
+    background-color: var(--background-level-1);
+    padding: var(--spacing-sm) 0;
+  }
+
   .menuColumn {
     position: sticky;
-    top: 78px;
-    max-height: calc(100vh - 100px);
+    top: 140px;
+    max-height: calc(100vh - 160px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 46, 44, 0.2) transparent;
