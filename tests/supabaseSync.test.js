@@ -105,8 +105,16 @@ test('Task 2: NavigationHeader removes Settings button and MyCycleView renders M
     'utf8'
   );
   assert.match(cycleCss, /\.pageTitle/, 'MyCycleView.module.css must define .pageTitle');
-  assert.match(cycleCss, /\.rightColumn/, 'MyCycleView.module.css must define .rightColumn');
-  assert.match(cycleCss, /\.syncCard/, 'MyCycleView.module.css must define .syncCard');
+  assert.match(
+    cycleCss,
+    /grid-template-columns:\s*minmax\(0,\s*1fr\)\s+minmax\(0,\s*1fr\)/,
+    'MyCycleView.module.css must use 2 equal columns on desktop per Figma 4349:7425'
+  );
+  assert.match(
+    cycleCss,
+    /\.syncCard\s*\{[\s\S]*?grid-column:\s*1\s*\/\s*-1/,
+    'MyCycleView.module.css .syncCard must span full width across both columns'
+  );
   assert.match(cycleCss, /\.syncInput/, 'MyCycleView.module.css must define .syncInput');
   assert.doesNotMatch(
     cycleCss,
@@ -141,12 +149,8 @@ test('Neutral mode engine status, PWA manifest link scope, and getAuthRedirectUr
 test('Task 2: Neutral mode UI removes OnboardingWizard and renders Figma empty-state prompts with Design Tokens', () => {
   const appCode = fs.readFileSync(path.join(rootDir, 'src', 'App.tsx'), 'utf8');
   assert.doesNotMatch(appCode, /OnboardingWizard/, 'App.tsx must no longer render OnboardingWizard');
+  assert.doesNotMatch(appCode, /PhaseIntroOverlay/, 'App.tsx must no longer render PhaseIntroOverlay');
   assert.match(appCode, /'neutre'/, 'App.tsx must apply neutre theme when periodDates is empty');
-  assert.match(
-    appCode,
-    /periodDates\.length\s*>\s*0\s*&&\s*<PhaseIntroOverlay/,
-    'App.tsx must only render PhaseIntroOverlay when periodDates.length > 0'
-  );
 
   const calendarCode = fs.readFileSync(
     path.join(rootDir, 'src', 'components', 'Calendar', 'HomeMonthlyCalendar.tsx'),

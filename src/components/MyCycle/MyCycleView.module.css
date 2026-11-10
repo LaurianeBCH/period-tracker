@@ -1,6 +1,6 @@
 /* ========================================================
    Page Mon Cycle — V3 Design Tokens
-   Figma: 4332:7035, 4332:7153 (Mobile) & 4332:7268 (Desktop)
+   Figma: 4349:7023 (Mobile) & 4349:7425 (Desktop)
    ======================================================== */
 
 .cycleContainer {
@@ -9,7 +9,7 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-lg);
   padding: var(--spacing-2xl) var(--spacing-lg) 105px var(--spacing-lg);
   box-sizing: border-box;
 }
@@ -18,9 +18,9 @@
   .cycleContainer {
     max-width: 1024px;
     display: grid;
-    grid-template-columns: 370px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     column-gap: var(--spacing-2xl);
-    row-gap: var(--spacing-xl);
+    row-gap: var(--spacing-2xl);
     align-items: start;
     padding: var(--spacing-2xl) var(--spacing-lg) 120px var(--spacing-lg);
   }
@@ -66,6 +66,7 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   width: 100%;
+  min-width: 0;
 }
 
 .rightColumn {
@@ -74,12 +75,6 @@
   gap: var(--spacing-lg);
   width: 100%;
   min-width: 0;
-}
-
-@media (min-width: 1024px) {
-  .leftColumn {
-    max-width: 370px;
-  }
 }
 
 @media (max-width: 1023px) {
@@ -313,7 +308,7 @@
   color: var(--text-dark-primary);
   opacity: 0.75;
   margin: 0;
-  text-align: right;
+  text-align: left;
   flex-shrink: 0;
 }
 
@@ -329,18 +324,11 @@
   position: absolute;
   top: 9px;
   left: 32px;
-  right: 8px;
+  right: 0;
   height: 182px;
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
-}
-
-@media (min-width: 1024px) {
-  .barsContainer {
-    left: 44px;
-    right: 12px;
-  }
 }
 
 .barColumn {
@@ -393,7 +381,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 140px;
+  height: 160px;
   text-align: center;
   padding: var(--spacing-md);
   box-sizing: border-box;
@@ -401,10 +389,11 @@
 
 .emptyChartMessage p {
   font-family: var(--font-family);
-  font-size: var(--typo-body-sm-size);
-  font-weight: var(--typo-body-sm-weight);
+  font-size: var(--typo-body-default-size);
+  font-weight: var(--typo-body-default-weight);
+  line-height: var(--typo-body-default-line-height);
   color: var(--text-dark-secondary);
-  line-height: 1.4;
+  max-width: 310px;
   margin: 0;
 }
 
@@ -418,8 +407,9 @@
   margin: 0;
 }
 
-/* --- Card 4: Synchronisation Supabase --- */
+/* --- Card 4: Synchronisation Supabase (Full width across both columns on Desktop) --- */
 .syncCard {
+  grid-column: 1 / -1;
   background-color: var(--background-level-2);
   border-radius: var(--radius-full);
   padding: var(--spacing-lg);
@@ -435,7 +425,7 @@
   font-size: var(--typo-body-default-size);
   font-weight: var(--typo-body-default-weight);
   line-height: var(--typo-body-default-line-height);
-  color: var(--text-dark-primary);
+  color: var(--text-dark-secondary);
   margin: 0;
 }
 

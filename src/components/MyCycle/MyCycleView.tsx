@@ -67,10 +67,11 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
     const avgPeriodVal =
       periodLengths.length > 0
         ? periodLengths.reduce((sum, v) => sum + v, 0) / periodLengths.length
-        : settings.defaultPeriodLength || 4;
+        : settings.defaultPeriodLength || 5;
 
+    const isWholeNumber = Math.round(avgPeriodVal * 10) % 10 === 0;
     const formattedAvgPeriod = avgPeriodVal.toLocaleString('fr-FR', {
-      minimumFractionDigits: 1,
+      minimumFractionDigits: isWholeNumber ? 0 : 1,
       maximumFractionDigits: 1
     });
 
@@ -108,9 +109,9 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
     return {
       hasData: false,
       mostFrequent: fallbackCycle,
-      frequentFraction: 'Cycle estimé',
-      shortest: '—',
-      longest: '—',
+      frequentFraction: '',
+      shortest: '-',
+      longest: '-',
       averagePeriod: formattedAvgPeriod,
       recentCycles: []
     };
@@ -175,7 +176,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
         <h1 className={styles.pageTitle}>Mon cycle</h1>
       </div>
 
-      {/* Left Column (Desktop) / Top Cards (Mobile) */}
+      {/* Left Column (Desktop 50%) / Top Cards (Mobile) */}
       <div className={styles.leftColumn}>
         {/* Card 1: Durée la plus fréquente de mon cycle */}
         <section className={styles.cycleLengthCard} aria-labelledby="cycle-freq-title">
@@ -200,9 +201,11 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
                 <p className={styles.bigStatNumber}>{cycleStats.mostFrequent}</p>
                 <p className={styles.unitText}>jours</p>
               </div>
-              <div className={styles.cyclesBadge}>
-                {cycleStats.frequentFraction}
-              </div>
+              {cycleStats.hasData && (
+                <div className={styles.cyclesBadge}>
+                  {cycleStats.frequentFraction}
+                </div>
+              )}
             </div>
           </div>
 
@@ -211,7 +214,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
               <p className={styles.cardTitle}>Durée la plus courte</p>
               <div className={styles.subStatRow}>
                 <p className={styles.mediumStatNumber}>{cycleStats.shortest}</p>
-                {cycleStats.shortest !== '—' && <p className={styles.subUnitText}>jours</p>}
+                <p className={styles.subUnitText}>jours</p>
               </div>
             </div>
 
@@ -219,7 +222,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
               <p className={styles.cardTitle}>Durée la plus longue</p>
               <div className={styles.subStatRow}>
                 <p className={styles.mediumStatNumber}>{cycleStats.longest}</p>
-                {cycleStats.longest !== '—' && <p className={styles.subUnitText}>jours</p>}
+                <p className={styles.subUnitText}>jours</p>
               </div>
             </div>
           </div>
@@ -240,7 +243,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
         </section>
       </div>
 
-      {/* Right Column (Desktop) / Bottom Cards (Mobile) */}
+      {/* Right Column (Desktop 50%) / Card 3: Evolutions de mes derniers cycles */}
       <div className={styles.rightColumn}>
         <section className={styles.chartCard} aria-labelledby="chart-title">
           <div className={styles.chartHeader}>
@@ -318,7 +321,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
                 })
               ) : (
                 <div className={styles.emptyChartMessage}>
-                  <p>Enregistrez vos prochaines règles pour afficher l’évolution de vos cycles.</p>
+                  <p>Renseignez vos prochaines règles pour afficher l’évolution de vos cycles.</p>
                 </div>
               )}
             </div>
@@ -329,79 +332,79 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
             Le cycle dure en moyenne 28,5 jours et peut varier de 21 à 35 jours. D’un mois à un autre, il peut raccourcir ou rallonger de 4 à 5 jours. La durée du cycle a tendance à se réduire progressivement en vieillissant.
           </p>
         </section>
-
-        {/* Card 4: Synchronisation Supabase (Figma 4332:7035, 4332:7153, 4332:7268) */}
-        {userEmail ? (
-          <section className={styles.syncCard} aria-labelledby="sync-card-title">
-            <div className={styles.syncHeaderGroup}>
-              <h2 id="sync-card-title" className={styles.cardTitle}>
-                Données synchronisées
-              </h2>
-              <p className={styles.syncEmailText}>{userEmail}</p>
-            </div>
-            <div className={styles.syncActionsGroup}>
-              <Button
-                variant="secondary"
-                fullWidth
-                disabled={isSubmitting}
-                onClick={handleDeleteClick}
-              >
-                Supprimer mon compte
-              </Button>
-              <Button
-                variant="secondary"
-                fullWidth
-                disabled={isSubmitting}
-                onClick={handleSignOutClick}
-              >
-                Se déconnecter
-              </Button>
-            </div>
-          </section>
-        ) : (
-          <section className={styles.syncCard} aria-labelledby="sync-card-title">
-            <h2 id="sync-card-title" className={styles.cardTitle}>
-              Synchroniser vos données
-            </h2>
-            <p className={styles.syncDescription}>
-              Vos données sont actuellement enregistrées dans le cache de votre navigateur. Vous pouvez saisir une adresse email pour synchroniser vos données en ligne.
-            </p>
-            <form className={styles.syncForm} onSubmit={handleSubmitEmail}>
-              <div className={styles.syncFieldGroup}>
-                <label htmlFor="sync-email" className={styles.syncLabel}>
-                  Saisir une adresse email
-                </label>
-                <input
-                  id="sync-email"
-                  type="email"
-                  required
-                  className={styles.syncInput}
-                  placeholder="contact@gmail.com"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  disabled={isSubmitting}
-                />
-              </div>
-              <Button
-                type="submit"
-                variant="primary"
-                fullWidth
-                disabled={isSubmitting}
-              >
-                Valider
-              </Button>
-              {feedbackMessage && (
-                <p
-                  className={styles.syncFeedback}
-                  role={isErrorFeedback ? 'alert' : 'status'}
-                >
-                  {feedbackMessage}
-                </p>
-              )}
-            </form>
-          </section>
-        )}
       </div>
+
+      {/* Card 4: Full-width bottom row on desktop (Figma 4349:7489) */}
+      {userEmail ? (
+        <section className={styles.syncCard} aria-labelledby="sync-card-title">
+          <div className={styles.syncHeaderGroup}>
+            <h2 id="sync-card-title" className={styles.cardTitle}>
+              Données synchronisées
+            </h2>
+            <p className={styles.syncEmailText}>{userEmail}</p>
+          </div>
+          <div className={styles.syncActionsGroup}>
+            <Button
+              variant="secondary"
+              fullWidth
+              disabled={isSubmitting}
+              onClick={handleDeleteClick}
+            >
+              Supprimer mon compte
+            </Button>
+            <Button
+              variant="secondary"
+              fullWidth
+              disabled={isSubmitting}
+              onClick={handleSignOutClick}
+            >
+              Se déconnecter
+            </Button>
+          </div>
+        </section>
+      ) : (
+        <section className={styles.syncCard} aria-labelledby="sync-card-title">
+          <h2 id="sync-card-title" className={styles.cardTitle}>
+            Synchroniser vos données
+          </h2>
+          <p className={styles.syncDescription}>
+            Vos données sont actuellement enregistrées dans le cache de votre navigateur. Vous pouvez saisir une adresse email pour synchroniser vos données en ligne.
+          </p>
+          <form className={styles.syncForm} onSubmit={handleSubmitEmail}>
+            <div className={styles.syncFieldGroup}>
+              <label htmlFor="sync-email" className={styles.syncLabel}>
+                Saisir une adresse email
+              </label>
+              <input
+                id="sync-email"
+                type="email"
+                required
+                className={styles.syncInput}
+                placeholder="contact@gmail.com"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                disabled={isSubmitting}
+              />
+            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              fullWidth
+              disabled={isSubmitting}
+            >
+              Valider
+            </Button>
+            {feedbackMessage && (
+              <p
+                className={styles.syncFeedback}
+                role={isErrorFeedback ? 'alert' : 'status'}
+              >
+                {feedbackMessage}
+              </p>
+            )}
+          </form>
+        </section>
+      )}
     </main>
   );
 };

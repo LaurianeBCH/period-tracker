@@ -76,3 +76,4 @@ test('PhaseInsightsCard and Calendar.module.css satisfy marker shadow, no-hover/
   // 3. Animates along the curve via requestAnimationFrame
   assert.match(cardTsx, /requestAnimationFrame/);
 });
+
