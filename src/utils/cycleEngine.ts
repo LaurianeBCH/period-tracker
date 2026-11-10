@@ -127,7 +127,7 @@ export function computeCycleMetrics(
  */
 export function getDayStatus(
   dateStr: string,
-  settings: UserSettings,
+  _settings: UserSettings,
   periodDatesOrLogs: string[] | CycleLog[],
   todayISO: string = getTodayISO()
 ): DayStatus {
@@ -143,8 +143,19 @@ export function getDayStatus(
   const isActualPeriod = dateSet.has(dateStr);
 
   const blocks = extractPeriodBlocks(dates);
-  const metrics = computeCycleMetrics(blocks, settings);
-  const periodLen = metrics.periodLength;
+
+  // If no period dates have been declared yet, stay in Neutral mode (Figma 4347:9297 & 4347:9168)
+  if (blocks.length === 0) {
+    return {
+      dateStr,
+      isToday,
+      phase: 'Neutral',
+      isActualPeriod: false,
+      isPredictedPeriod: false,
+      isOvulationDay: false,
+      isFertileWindow: false
+    };
+  }
 
   // If explicitly declared in periodDates:
   if (isActualPeriod) {
@@ -159,29 +170,18 @@ export function getDayStatus(
     };
   }
 
-  // Anchor selection
-  let anchorDate: string;
-  let anchorPeriodEnd: string;
-  let isSkippedOnboarding = false;
-
-  if (blocks.length === 0) {
-    // Onboarding skipped / no logs: anchor at todayISO as potential period
-    anchorDate = todayISO;
-    anchorPeriodEnd = addDays(todayISO, periodLen - 1);
-    isSkippedOnboarding = true;
-  } else {
-    // Find matching block for dateStr or use latest
-    let matchedBlock = blocks[blocks.length - 1];
-    for (let i = 0; i < blocks.length; i++) {
-      const nextStart = i < blocks.length - 1 ? blocks[i + 1].startDate : null;
-      if (dateStr >= blocks[i].startDate && (!nextStart || dateStr < nextStart)) {
-        matchedBlock = blocks[i];
-        break;
-      }
+  // Find matching block for dateStr or use latest
+  let matchedBlock = blocks[blocks.length - 1];
+  for (let i = 0; i < blocks.length; i++) {
+    const nextStart = i < blocks.length - 1 ? blocks[i + 1].startDate : null;
+    if (dateStr >= blocks[i].startDate && (!nextStart || dateStr < nextStart)) {
+      matchedBlock = blocks[i];
+      break;
     }
-    anchorDate = matchedBlock.startDate;
-    anchorPeriodEnd = matchedBlock.endDate;
   }
+  const anchorDate = matchedBlock.startDate;
+  const anchorPeriodEnd = matchedBlock.endDate;
+  const isSkippedOnboarding = false;
 
   // Phase durations configured to start sequentially after the last day of rules:
   // Phase 1 (Prise d'élan): 6 days

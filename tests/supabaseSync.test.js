@@ -92,7 +92,8 @@ test('Task 2: NavigationHeader removes Settings button and MyCycleView renders M
   );
   assert.match(cycleViewCode, /Saisir une adresse email/, 'MyCycleView must render email label');
   assert.match(cycleViewCode, /placeholder="contact@gmail\.com"/, 'MyCycleView must render contact@gmail.com placeholder');
-  assert.match(cycleViewCode, /Créer un compte/, 'MyCycleView must render Créer un compte button');
+  assert.match(cycleViewCode, /Valider/, 'MyCycleView must render Valider button');
+  assert.doesNotMatch(cycleViewCode, /Créer un compte/, 'MyCycleView must not render Créer un compte button');
   assert.match(cycleViewCode, /Données synchronisées/, 'MyCycleView must render synced title');
   assert.match(cycleViewCode, /Supprimer mon compte/, 'MyCycleView must render Supprimer mon compte button');
   assert.match(cycleViewCode, /Se déconnecter/, 'MyCycleView must render Se déconnecter button');
@@ -113,4 +114,28 @@ test('Task 2: NavigationHeader removes Settings button and MyCycleView renders M
     'MyCycleView.module.css must strictly use design tokens without hardcoded colors (AGENTS.md)'
   );
 });
+
+test('Neutral mode engine status, PWA manifest link scope, and getAuthRedirectUrl', async () => {
+  const { getDayStatus } = await import('../src/utils/cycleEngine.ts');
+  const { DEFAULT_SETTINGS } = await import('../src/services/storage.ts');
+  const { getAuthRedirectUrl } = await import('../src/services/syncService.ts');
+
+  const neutralToday = getDayStatus('2026-08-05', DEFAULT_SETTINGS, [], '2026-08-05');
+  assert.equal(neutralToday.phase, 'Neutral', 'Empty periodDates must return Neutral phase');
+  assert.equal(neutralToday.isToday, true, 'Today must still be marked isToday: true in Neutral mode');
+  assert.equal(neutralToday.isPredictedPeriod, false, 'Neutral mode must not predict unconfirmed period');
+  assert.equal(neutralToday.isActualPeriod, false);
+
+  assert.equal(
+    getAuthRedirectUrl('https://example.com', '/period-tracker/'),
+    'https://example.com/period-tracker/'
+  );
+
+  const viteConfig = fs.readFileSync(path.join(rootDir, 'vite.config.ts'), 'utf8');
+  assert.match(viteConfig, /start_url:\s*['"]\/period-tracker\/['"]/, 'Manifest must set start_url to /period-tracker/');
+  assert.match(viteConfig, /scope:\s*['"]\/period-tracker\/['"]/, 'Manifest must set scope to /period-tracker/');
+  assert.match(viteConfig, /handle_links:\s*['"]preferred['"]/, 'Manifest must set handle_links: preferred');
+  assert.match(viteConfig, /launch_handler/, 'Manifest must configure launch_handler');
+});
+
 

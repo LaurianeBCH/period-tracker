@@ -44,6 +44,18 @@ export function mergeCycleData(
 }
 
 /**
+ * Builds the full redirect URL within the PWA scope (e.g. https://.../period-tracker/)
+ * so clicking the Magic Link opens or focuses the installed PWA.
+ */
+export function getAuthRedirectUrl(
+  origin: string,
+  baseUrl: string = '/period-tracker/'
+): string {
+  const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  return new URL(normalizedBase, origin).href;
+}
+
+/**
  * Sends a Supabase Magic Link confirmation email to create or sign in to an account.
  */
 export async function sendMagicLink(email: string): Promise<{ error: string | null }> {
@@ -59,9 +71,11 @@ export async function sendMagicLink(email: string): Promise<{ error: string | nu
     };
   }
 
+  const metaEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
+  const baseUrl = metaEnv?.BASE_URL || '/period-tracker/';
   const redirectTo =
     typeof window !== 'undefined' && window.location?.origin
-      ? window.location.origin
+      ? getAuthRedirectUrl(window.location.origin, baseUrl)
       : undefined;
 
   const { error } = await supabase.auth.signInWithOtp({

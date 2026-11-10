@@ -386,7 +386,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
                 fullWidth
                 disabled={isSubmitting}
               >
-                Créer un compte
+                Valider
               </Button>
               {feedbackMessage && (
                 <p

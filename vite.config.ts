@@ -18,10 +18,16 @@ export default defineConfig({
         name: 'Suivi de Règles & Ovulation',
         short_name: 'CyclePWA',
         description: 'Application minimale et privée de suivi du cycle menstruel',
+        start_url: '/period-tracker/',
+        scope: '/period-tracker/',
         theme_color: '#fff0f3',
         background_color: '#fff0f3',
         display: 'standalone',
         orientation: 'portrait',
+        handle_links: 'preferred',
+        launch_handler: {
+          client_mode: ['navigate-existing', 'auto']
+        },
         icons: [
           {
             src: 'pwa-192x192.png',
