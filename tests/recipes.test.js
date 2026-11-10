@@ -42,3 +42,25 @@ test('RecommendationsView renders Idées de recettes using the Button atom (seco
   assert.doesNotMatch(recipesCssBlock, /#[0-9a-fA-F]{3,8}|rgba?\(/, 'New recipe CSS rules must only use design tokens (AGENTS.md)');
 });
 
+test('menuCard in RecommendationsView matches Figma 4348:10531 structure and states using design tokens', () => {
+  const viewCode = fs.readFileSync(path.resolve('src/components/Recommendations/RecommendationsView.tsx'), 'utf-8');
+  const cssCode = fs.readFileSync(path.resolve('src/components/Recommendations/RecommendationsView.module.css'), 'utf-8');
+
+  // Header contains avatar + badge on the left and chevron on the right, followed by title and subtitle
+  assert.match(viewCode, /menuCardHeaderLeft/, 'menuCardHeader must group avatar and currentBadge in menuCardHeaderLeft');
+  const headerIdx = viewCode.indexOf('styles.menuCardHeader');
+  const chevronIdx = viewCode.indexOf('styles.menuCardChevron');
+  const titleIdx = viewCode.indexOf('styles.phaseCardTitle');
+  const subtitleIdx = viewCode.indexOf('styles.phaseCardSubtitle');
+  assert.ok(headerIdx < chevronIdx && chevronIdx < titleIdx && titleIdx < subtitleIdx, 'Chevron must be inside menuCardHeader before phaseCardTitle and phaseCardSubtitle');
+
+  // CSS states: Default (--background-level-2), Active (--background-level-1 + --border), Hover (--background-level-3 + --border)
+  assert.match(cssCode, /\.menuCard\s*\{[\s\S]*?background-color:\s*var\(--background-level-2\)/);
+  assert.match(cssCode, /\.menuCardActive\s*\{[\s\S]*?background-color:\s*var\(--background-level-1\)/);
+  assert.match(cssCode, /\.menuCardActive\s*\{[\s\S]*?border:\s*1px\s+solid\s+var\(--border\)/);
+  assert.match(cssCode, /\.menuCard:hover\s*\{[\s\S]*?background-color:\s*var\(--background-level-3\)/);
+  assert.match(cssCode, /\.menuCard:hover\s*\{[\s\S]*?border:\s*1px\s+solid\s+var\(--border\)/);
+  assert.match(cssCode, /\.phaseCardSubtitle\s*\{[\s\S]*?color:\s*var\(--text-dark-secondary\)/);
+  assert.match(cssCode, /\.menuCard:hover\s+\.phaseCardSubtitle\s*\{[\s\S]*?color:\s*var\(--text-dark-primary\)/);
+});
+

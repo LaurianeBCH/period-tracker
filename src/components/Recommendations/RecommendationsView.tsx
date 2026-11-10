@@ -141,31 +141,33 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
                 aria-label={`Phase ${phase.id} : ${phase.title}`}
               >
                 <div className={styles.menuCardHeader}>
-                  <div className={styles.phaseAvatar} aria-hidden="true">
-                    {phase.id}
+                  <div className={styles.menuCardHeaderLeft}>
+                    <div className={styles.phaseAvatar} aria-hidden="true">
+                      {phase.id}
+                    </div>
+                    {isCurrent && (
+                      <span className={styles.currentBadge}>En ce moment</span>
+                    )}
                   </div>
-                  <h2 className={styles.phaseCardTitle}>{phase.title}</h2>
-                  {isCurrent && (
-                    <span className={styles.currentBadge}>En ce moment</span>
-                  )}
+                  <div className={styles.menuCardChevron} aria-hidden="true">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </div>
                 </div>
+
+                <h2 className={styles.phaseCardTitle}>{phase.title}</h2>
 
                 <p className={styles.phaseCardSubtitle}>{phase.menuSubtitle}</p>
-
-                <div className={styles.menuCardChevron} aria-hidden="true">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </div>
               </button>
             );
           })}

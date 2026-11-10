@@ -104,65 +104,64 @@
 
 .menuCard {
   width: 100%;
+  height: 150px;
   min-height: 150px;
-  border-radius: var(--radius-full, 20px);
-  padding: var(--spacing-lg, 16px);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: var(--spacing-sm, 8px);
+  align-items: flex-start;
+  gap: var(--spacing-sm);
   cursor: pointer;
   text-align: left;
   background-color: var(--background-level-2);
   color: var(--text-dark-primary);
   box-sizing: border-box;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  border: 2px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  border: 1px solid transparent;
   outline: none;
 }
 
-.menuCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 46, 44, 0.08);
-}
-
-/* Le menu actif a un border uniquement sur desktop (>= 992px) */
 .menuCardActive {
-  border: 2px solid transparent;
+  background-color: var(--background-level-1);
+  border: 1px solid var(--border);
 }
 
-@media (min-width: 992px) {
-  .menuCardActive {
-    border: 2px solid var(--border) !important;
-    box-shadow: 0 4px 14px rgba(0, 46, 44, 0.14);
-  }
+.menuCard:hover {
+  background-color: var(--background-level-3);
+  border: 1px solid var(--border);
 }
 
-@media (max-width: 991px) {
-  .menuCardActive {
-    border: 2px solid transparent !important;
-    box-shadow: none !important;
-  }
+.menuCard:hover .phaseCardSubtitle {
+  color: var(--text-dark-primary);
 }
 
 .menuCardHeader {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   width: 100%;
+}
+
+.menuCardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .phaseAvatar {
   width: 30px;
   height: 30px;
-  border-radius: var(--radius-full, 20px);
-  background-color: var(--text-white, white);
+  border-radius: var(--radius-full);
+  background-color: var(--text-white);
+  color: var(--text-dark-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-family);
   font-size: var(--typo-h3-size);
   font-weight: var(--typo-h3-weight);
+  line-height: var(--typo-h3-line-height);
   flex-shrink: 0;
 }
 
@@ -170,20 +169,21 @@
   font-family: var(--font-family);
   font-size: var(--typo-h2-size);
   font-weight: var(--typo-h2-weight);
+  line-height: var(--typo-h2-line-height);
+  color: var(--text-dark-primary);
   margin: 0;
-  flex: 1;
-  line-height: 1.2;
+  width: 100%;
 }
 
 .currentBadge {
-  background-color: var(--accent, #fbff24);
-  color: var(--text-dark-primary, #002e2c);
-  padding: 4px 8px;
-  border-radius: var(--spacing-sm, 8px);
+  background-color: var(--accent);
+  color: var(--text-dark-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
   font-family: var(--font-family);
-  font-size: var(--typo-caption-size);
-  font-weight: var(--typo-caption-weight);
-  line-height: 1.2;
+  font-size: var(--typo-body-default-bold-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-default-bold-line-height);
   white-space: nowrap;
 }
 
@@ -192,15 +192,19 @@
   font-size: var(--typo-body-default-size);
   font-weight: var(--typo-body-default-weight);
   line-height: var(--typo-body-default-line-height);
+  color: var(--text-dark-secondary);
   margin: 0;
   width: 100%;
 }
 
 .menuCardChevron {
+  width: 20px;
+  height: 20px;
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark-primary);
+  flex-shrink: 0;
 }
 
 /* ========================================================
