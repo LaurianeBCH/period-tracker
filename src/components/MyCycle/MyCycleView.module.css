@@ -436,11 +436,19 @@
   width: 100%;
 }
 
+.syncFormRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
 .syncFieldGroup {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
   width: 100%;
+  min-width: 0;
 }
 
 .syncLabel {
@@ -453,6 +461,7 @@
 
 .syncInput {
   width: 100%;
+  height: var(--size-button-height);
   box-sizing: border-box;
   background-color: var(--background-level-2);
   border: 1px solid var(--border);
@@ -464,6 +473,23 @@
   line-height: var(--typo-body-default-bold-line-height);
   color: var(--text-dark-primary);
   outline: none;
+}
+
+@media (min-width: 1024px) {
+  .syncFormRow {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: var(--spacing-lg);
+  }
+
+  .syncFieldGroup {
+    flex: 1;
+  }
+
+  .syncSubmitButton {
+    width: 284px;
+    flex-shrink: 0;
+  }
 }
 
 .syncInput::placeholder {

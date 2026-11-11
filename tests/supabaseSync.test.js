@@ -116,6 +116,11 @@ test('Task 2: NavigationHeader removes Settings button and MyCycleView renders M
     'MyCycleView.module.css .syncCard must span full width across both columns'
   );
   assert.match(cycleCss, /\.syncInput/, 'MyCycleView.module.css must define .syncInput');
+  assert.match(
+    cycleCss,
+    /\.syncFormRow\s*\{[\s\S]*?flex-direction:\s*row[\s\S]*?align-items:\s*flex-end/,
+    'MyCycleView.module.css must place email input and Valider button side-by-side aligned at the bottom on desktop per Figma 4349:7489'
+  );
   assert.doesNotMatch(
     cycleCss,
     /#[0-9a-fA-F]{3,8}|rgba?\(/,

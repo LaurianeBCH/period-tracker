@@ -371,29 +371,32 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
             Vos données sont actuellement enregistrées dans le cache de votre navigateur. Vous pouvez saisir une adresse email pour synchroniser vos données en ligne.
           </p>
           <form className={styles.syncForm} onSubmit={handleSubmitEmail}>
-            <div className={styles.syncFieldGroup}>
-              <label htmlFor="sync-email" className={styles.syncLabel}>
-                Saisir une adresse email
-              </label>
-              <input
-                id="sync-email"
-                type="email"
-                required
-                className={styles.syncInput}
-                placeholder="contact@gmail.com"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
+            <div className={styles.syncFormRow}>
+              <div className={styles.syncFieldGroup}>
+                <label htmlFor="sync-email" className={styles.syncLabel}>
+                  Saisir une adresse email
+                </label>
+                <input
+                  id="sync-email"
+                  type="email"
+                  required
+                  className={styles.syncInput}
+                  placeholder="contact@gmail.com"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  disabled={isSubmitting}
+                />
+              </div>
+              <Button
+                type="submit"
+                variant="primary"
+                fullWidth
+                className={styles.syncSubmitButton}
                 disabled={isSubmitting}
-              />
+              >
+                Valider
+              </Button>
             </div>
-            <Button
-              type="submit"
-              variant="primary"
-              fullWidth
-              disabled={isSubmitting}
-            >
-              Valider
-            </Button>
             {feedbackMessage && (
               <p
                 className={styles.syncFeedback}
