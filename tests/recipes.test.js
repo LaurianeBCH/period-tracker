@@ -48,6 +48,11 @@ test('menuCard in RecommendationsView matches Figma 4348:10531 structure and sta
 
   // Header contains avatar + badge on the left and chevron on the right, followed by title and subtitle
   assert.match(viewCode, /menuCardHeaderLeft/, 'menuCardHeader must group avatar and currentBadge in menuCardHeaderLeft');
+  assert.match(
+    viewCode,
+    /data-theme=\{`phase \$\{selectedPhaseId\}`\}/,
+    'All menuCard buttons must use the active selectedPhaseId theme'
+  );
   const headerIdx = viewCode.indexOf('styles.menuCardHeader');
   const chevronIdx = viewCode.indexOf('styles.menuCardChevron');
   const titleIdx = viewCode.indexOf('styles.phaseCardTitle');

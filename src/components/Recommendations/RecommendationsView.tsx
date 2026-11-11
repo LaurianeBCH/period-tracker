@@ -132,7 +132,7 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
               <button
                 key={phase.id}
                 type="button"
-                data-theme={`phase ${phase.id}`}
+                data-theme={`phase ${selectedPhaseId}`}
                 className={`${styles.menuCard} ${
                   isActive ? styles.menuCardActive : ''
                 }`}
