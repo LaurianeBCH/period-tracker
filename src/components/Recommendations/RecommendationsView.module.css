@@ -77,17 +77,17 @@
     max-height: calc(100vh - 160px);
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 46, 44, 0.2) transparent;
+    scrollbar-color: var(--border) transparent;
     padding-right: var(--spacing-xs);
   }
 
   .menuColumn::-webkit-scrollbar {
-    width: 4px;
+    width: var(--spacing-xs);
   }
 
   .menuColumn::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 46, 44, 0.2);
-    border-radius: 4px;
+    background-color: var(--border);
+    border-radius: var(--spacing-xs);
   }
 
   .menuColumn::-webkit-scrollbar-track {
@@ -176,13 +176,6 @@
 }
 
 .currentBadge {
-  background-color: var(--accent);
-  color: var(--text-dark-primary);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-family);
-  font-size: var(--typo-body-default-bold-size);
-  font-weight: var(--typo-body-default-bold-weight);
   line-height: var(--typo-body-default-bold-line-height);
   white-space: nowrap;
 }
@@ -214,14 +207,14 @@
 .detailsColumn {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2xl, 32px);
+  gap: var(--spacing-2xl);
   width: 100%;
 }
 
 .illustrationWrapper {
   width: 100%;
   height: 320px;
-  border-radius: var(--radius-full, 20px);
+  border-radius: var(--radius-full);
   overflow: hidden;
   background-color: var(--background-level-2);
   display: flex;
@@ -239,19 +232,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-full, 20px);
+  border-radius: var(--radius-full);
 }
 
 .detailsHeader {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 12px);
+  gap: var(--spacing-md);
   width: 100%;
 }
 
 .detailsTitle {
   font-family: var(--font-family);
-  font-size: var(--typo-h1-size, 22px);
+  font-size: var(--typo-h1-size);
   font-weight: var(--typo-h1-weight);
   color: var(--text-dark-primary);
   text-align: center;
@@ -263,7 +256,7 @@
   font-size: var(--typo-body-default-size);
   font-weight: var(--typo-body-default-weight);
   line-height: var(--typo-body-default-line-height);
-  color: var(--text-dark-secondary, #137051);
+  color: var(--text-dark-secondary);
   margin: 0;
 }
 
@@ -280,14 +273,14 @@
 .contentSection {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 16px);
+  gap: var(--spacing-lg);
   width: 100%;
 }
 
 .sectionHeaderRow {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm, 8px);
+  gap: var(--spacing-sm);
   color: var(--text-dark-primary);
 }
 
@@ -304,7 +297,7 @@
   font-size: var(--typo-body-default-size);
   font-weight: var(--typo-body-default-weight);
   line-height: var(--typo-body-default-line-height);
-  color: var(--text-dark-secondary, #137051);
+  color: var(--text-dark-secondary);
   margin: 0;
 }
 
@@ -312,7 +305,7 @@
 .nutritionGrid {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 16px);
+  gap: var(--spacing-lg);
   width: 100%;
 }
 
@@ -320,21 +313,21 @@
   .nutritionGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--spacing-lg, 16px);
+    gap: var(--spacing-lg);
   }
 }
 
 .nutritionCard {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm, 8px);
+  gap: var(--spacing-sm);
   width: 100%;
 }
 
 .nutritionBanner {
   width: 100%;
   height: 100px;
-  border-radius: var(--radius-full, 20px);
+  border-radius: var(--radius-full);
   background-color: var(--background-level-2);
   overflow: hidden;
   display: flex;
@@ -362,7 +355,7 @@
   font-size: var(--typo-body-default-size);
   font-weight: var(--typo-body-default-weight);
   line-height: var(--typo-body-default-line-height);
-  color: var(--text-dark-secondary, #137051);
+  color: var(--text-dark-secondary);
   margin: 0;
 }
 
@@ -411,13 +404,13 @@
 .mindsetList {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 16px);
+  gap: var(--spacing-lg);
   width: 100%;
 }
 
 .mindsetItem {
   display: flex;
-  gap: var(--spacing-lg, 16px);
+  gap: var(--spacing-lg);
   align-items: flex-start;
   width: 100%;
 }
@@ -425,7 +418,7 @@
 .mindsetThumbnail {
   width: 60px;
   height: 60px;
-  border-radius: var(--radius-md, 16px);
+  border-radius: var(--radius-md);
   background-color: var(--background-level-2);
   overflow: hidden;
   flex-shrink: 0;
@@ -443,10 +436,10 @@
 .mindsetTextBlock {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs, 4px);
+  gap: var(--spacing-xs);
   flex: 1;
   min-width: 0;
-  padding-top: var(--spacing-xs, 4px);
+  padding-top: var(--spacing-xs);
 }
 
 /* --- Utilities --- */

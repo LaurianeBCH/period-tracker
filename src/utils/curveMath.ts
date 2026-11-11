@@ -157,22 +157,3 @@ export function getCurvePointAtProgress(globalProgress: number): Point {
 
   return getAnalyticalCurvePoint(segmentKey, localProgress);
 }
-
-/**
- * Calculates day progress [0..1] and (x, y) point for today's status
- */
-export function calculateTodayCurvePosition(
-  phase: string,
-  phaseDay: number = 1,
-  phaseTotalDays: number = 1
-): { segmentKey: CycleSegmentKey; progress: number; point: Point } {
-  const segmentKey = getSegmentKeyFromPhase(phase);
-  const total = Math.max(1, phaseTotalDays);
-  const day = Math.max(1, Math.min(total, phaseDay));
-
-  // Equidistant day advancement: day 1 is at 0.5/total, day N is at (N - 0.5)/total
-  const progress = (day - 0.5) / total;
-  const point = getAnalyticalCurvePoint(segmentKey, progress);
-
-  return { segmentKey, progress, point };
-}

@@ -160,13 +160,6 @@
 }
 
 .cyclesBadge {
-  background-color: var(--accent);
-  color: var(--text-dark-primary);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--spacing-sm);
-  font-family: var(--font-family);
-  font-size: var(--typo-body-default-bold-size);
-  font-weight: var(--typo-body-default-bold-weight);
   line-height: var(--typo-body-default-bold-line-height);
   white-space: nowrap;
 }

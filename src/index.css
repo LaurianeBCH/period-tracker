@@ -91,36 +91,6 @@
   --typo-body-sm-size: 14px;
   --typo-body-sm-weight: 500;
   --typo-body-sm-line-height: 18px;
-
-  /* --- Backward Compatibility Aliases for Legacy Code --- */
-  --color-text-primary: var(--text-dark-primary);
-  --color-text-secondary: var(--text-dark-secondary);
-  --color-text-muted: var(--text-dark-secondary);
-  --color-text-on-dark: var(--text-white);
-  --color-background-white: var(--background-level-1);
-  --color-surface-phase-1: var(--background-level-3);
-  --color-surface-phase-2: var(--background-level-2);
-  --color-surface-phase-3: var(--background-level-3);
-  --color-surface-phase-4: var(--text-dark-primary);
-  --color-stroke-primary: var(--border);
-  --color-background-primary: var(--text-dark-primary);
-  --color-background-secondary: var(--background-level-2);
-  --color-background-muted: var(--background-level-3);
-  --color-background-actived: var(--background-level-2);
-
-  --spacing-spacing-xs: var(--spacing-xs);
-  --spacing-spacing-sm: var(--spacing-sm);
-  --spacing-spacing-md: var(--spacing-md);
-  --spacing-spacing-lg: var(--spacing-lg);
-  --spacing-spacing-xl: var(--spacing-xl);
-  --spacing-spacing-2xl: var(--spacing-2xl);
-  --spacing-size-icon-button: var(--size-icon-button);
-  --spacing-size-button-height: var(--size-button-height);
-  --spacing-size-calendar-cell: var(--size-calendar-cell);
-
-  --radius-radius-sm: var(--radius-sm);
-  --radius-radius-md: var(--radius-md);
-  --radius-radius-full: var(--radius-full);
 }
 
 /* Collection: Color - Mode: Phase 2 */

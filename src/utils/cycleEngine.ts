@@ -157,19 +157,6 @@ export function getDayStatus(
     };
   }
 
-  // If explicitly declared in periodDates:
-  if (isActualPeriod) {
-    return {
-      dateStr,
-      isToday,
-      phase: 'Phase4-Menstrual',
-      isActualPeriod: true,
-      isPredictedPeriod: false,
-      isOvulationDay: false,
-      isFertileWindow: false
-    };
-  }
-
   // Find matching block for dateStr or use latest
   let matchedBlock = blocks[blocks.length - 1];
   for (let i = 0; i < blocks.length; i++) {
@@ -181,7 +168,6 @@ export function getDayStatus(
   }
   const anchorDate = matchedBlock.startDate;
   const anchorPeriodEnd = matchedBlock.endDate;
-  const isSkippedOnboarding = false;
 
   // Phase durations configured to start sequentially after the last day of rules:
   // Phase 1 (Prise d'élan): 6 days
@@ -205,25 +191,6 @@ export function getDayStatus(
       phase: 'Phase4-Menstrual',
       isActualPeriod: true,
       isPredictedPeriod: false,
-      isOvulationDay: false,
-      isFertileWindow: false,
-      cycleDay,
-      totalCycleDays: totalCycleLen,
-      phaseDay: periodDay,
-      phaseTotalDays: currentPeriodDuration
-    };
-  }
-
-  // If during skipped onboarding unconfirmed period:
-  if (isSkippedOnboarding && dateStr >= anchorDate && dateStr <= anchorPeriodEnd) {
-    const periodDay = Math.max(1, Math.min(currentPeriodDuration, diffDays(anchorDate, dateStr) + 1));
-    const cycleDay = cycleAfterPeriod + periodDay;
-    return {
-      dateStr,
-      isToday,
-      phase: 'Phase4-Menstrual-Unconfirmed',
-      isActualPeriod: false,
-      isPredictedPeriod: true,
       isOvulationDay: false,
       isFertileWindow: false,
       cycleDay,

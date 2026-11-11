@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from 'react';
 import { CyclePhase } from '../../types/cycle';
 import { RECOMMENDATIONS_DATA, PhaseRecommendation } from '../../data/recommendationsData';
 import { getRecipesForPhase } from '../../data/recipesData';
-import { Button } from '../atoms';
+import { Badge, Button } from '../atoms';
 import styles from './RecommendationsView.module.css';
 
 interface RecommendationsViewProps {
@@ -146,7 +146,9 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
                       {phase.id}
                     </div>
                     {isCurrent && (
-                      <span className={styles.currentBadge}>En ce moment</span>
+                      <Badge variant="badge" className={styles.currentBadge}>
+                        En ce moment
+                      </Badge>
                     )}
                   </div>
                   <div className={styles.menuCardChevron} aria-hidden="true">
@@ -227,6 +229,7 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
                   <img
                     src={selectedPhase.imageSrc}
                     alt=""
+                    loading="lazy"
                     aria-hidden="true"
                     onError={(e) => {
                       (e.target as HTMLElement).style.display = 'none';
@@ -291,6 +294,7 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
                   <img
                     src={selectedPhase.imageSrc}
                     alt=""
+                    loading="lazy"
                     aria-hidden="true"
                     onError={(e) => {
                       (e.target as HTMLElement).style.display = 'none';

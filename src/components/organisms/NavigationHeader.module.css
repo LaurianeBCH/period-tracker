@@ -28,26 +28,3 @@
   line-height: var(--typo-h1-line-height);
   color: var(--text-dark-primary);
 }
-
-.headerIconButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--text-dark-primary);
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.15s ease;
-}
-
-.headerIconButton:hover {
-  opacity: 0.75;
-  transform: rotate(15deg);
-}
-
-.headerIconButton:active {
-  transform: scale(0.95);
-}

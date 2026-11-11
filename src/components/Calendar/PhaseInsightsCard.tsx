@@ -1,7 +1,7 @@
 import { FC, useState, useRef, useEffect } from 'react';
 import { PhaseInsight } from '../../data/phaseInsights';
 import { DayStatus } from '../../types/cycle';
-import { WaterDropIcon } from '../atoms';
+import { Badge, Button, WaterDropIcon } from '../atoms';
 import {
   CURVE_SEGMENTS,
   SEGMENT_ORDER,
@@ -130,7 +130,9 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
             Aucune information pour le moment. Renseignez vos dernières règles
           </p>
         ) : (
-          <p className={styles.insightsPhaseSubtitle}>{insight.title}</p>
+          <Badge variant="badge" className={styles.insightsPhaseSubtitle}>
+            {insight.title}
+          </Badge>
         )}
       </div>
 
@@ -324,8 +326,10 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
       </div>
 
       {/* Button Secondary Figma: "En savoir plus" with right chevron -> navigates to recommendations */}
-      <button
+      <Button
         type="button"
+        variant="secondary"
+        fullWidth
         className={styles.moreButton}
         onClick={onNavigateToRecommendations}
       >
@@ -344,7 +348,7 @@ export const PhaseInsightsCard: FC<PhaseInsightsCardProps> = ({
         >
           <polyline points="9 18 15 12 9 6" />
         </svg>
-      </button>
+      </Button>
     </div>
   );
 };

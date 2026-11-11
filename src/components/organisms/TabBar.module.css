@@ -58,14 +58,14 @@
 
 .tabIconActive {
   background-color: var(--background-level-2);
-  fill: var(--text-dark-primary, #002E2C);
-  color: var(--text-dark-primary, #002E2C);
+  fill: var(--text-dark-primary);
+  color: var(--text-dark-primary);
 }
 
 .tabIconInactive {
   background-color: transparent;
-  fill: var(--text-dark-secondary, #137051);
-  color: var(--text-dark-secondary, #137051);
+  fill: var(--text-dark-secondary);
+  color: var(--text-dark-secondary);
 }
 
 .tabLabel {

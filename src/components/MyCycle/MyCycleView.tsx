@@ -1,7 +1,7 @@
 import { FC, FormEvent, useMemo, useState } from 'react';
 import { UserSettings } from '../../types/cycle';
 import { extractPeriodBlocks, diffDays, parseDateISO } from '../../utils/cycleEngine';
-import { Button, WaterDropIcon } from '../atoms';
+import { Badge, Button, WaterDropIcon } from '../atoms';
 import styles from './MyCycleView.module.css';
 
 interface MyCycleViewProps {
@@ -202,9 +202,9 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
                 <p className={styles.unitText}>jours</p>
               </div>
               {cycleStats.hasData && (
-                <div className={styles.cyclesBadge}>
+                <Badge variant="badge" className={styles.cyclesBadge}>
                   {cycleStats.frequentFraction}
-                </div>
+                </Badge>
               )}
             </div>
           </div>

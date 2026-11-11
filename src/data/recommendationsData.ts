@@ -1,15 +1,8 @@
 import { CyclePhase } from '../types/cycle';
 
-export interface NutritionItem {
+export interface RecommendationItem {
   title: string;
   subtitle: string;
-  iconType?: string;
-}
-
-export interface MindsetItem {
-  title: string;
-  subtitle: string;
-  iconType?: string;
 }
 
 export interface PhaseRecommendation {
@@ -17,14 +10,12 @@ export interface PhaseRecommendation {
   phaseKey: CyclePhase;
   title: string;
   menuSubtitle: string;
-  menuBgColor: string;
-  menuTextColor: string;
   imageSrc: string;
   description: string;
   nutritionIntro: string;
-  nutritionItems: NutritionItem[];
+  nutritionItems: RecommendationItem[];
   mindsetIntro: string;
-  mindsetItems: MindsetItem[];
+  mindsetItems: RecommendationItem[];
 }
 
 export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
@@ -33,8 +24,6 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     phaseKey: 'Phase1-Follicular',
     title: 'Prise d’élan',
     menuSubtitle: 'Notre énergie explose et notre confiance en soie aussi !',
-    menuBgColor: 'var(--background-level-2, #9ce2c0)',
-    menuTextColor: 'var(--text-dark-primary, #002e2c)',
     imageSrc: '/illustrations/phase1-follicular.png',
     description:
       'Nous prenons notre élan pour la nouvelle vague. Notre énergie explose et notre confiance en soie aussi ! C’est le moment où on arrive à faire mille choses en même temps mais la lenteur des autres peut nous rendre impatiente.',
@@ -42,18 +31,15 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     nutritionItems: [
       {
         title: 'Protéines',
-        subtitle: 'Viande, tofu, fromage, pois chiche',
-        iconType: 'protein'
+        subtitle: 'Viande, tofu, fromage, pois chiche'
       },
       {
         title: 'Fer, lipide et magnésium',
-        subtitle: 'Chocolat noir, noix, céréales complètes, avocat',
-        iconType: 'minerals'
+        subtitle: 'Chocolat noir, noix, céréales complètes, avocat'
       },
       {
         title: 'Légumes verts à feuilles',
-        subtitle: 'Chou vert, chou kale (frisé), épinards, blettes',
-        iconType: 'greens'
+        subtitle: 'Chou vert, chou kale (frisé), épinards, blettes'
       }
     ],
     mindsetIntro:
@@ -74,8 +60,6 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     phaseKey: 'Phase2-Ovulation',
     title: 'Debout sur la planche',
     menuSubtitle: 'Notre corps est dans son pic d’ovulation.',
-    menuBgColor: '#f0e486',
-    menuTextColor: '#583500',
     imageSrc: '/illustrations/phase2-ovulation.png',
     description:
       'Nous surfons sur la vague ! Notre corps est dans son pic d’ovulation. Nous sommes rayonnantes. Notre visage est harmonieux. Nous ressentons plus d’empathie envers les autres.',
@@ -83,18 +67,15 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     nutritionItems: [
       {
         title: 'Zinc et antioxydants',
-        subtitle: 'Huîtres, graines de courge, fruits rouges',
-        iconType: 'protein'
+        subtitle: 'Huîtres, graines de courge, fruits rouges'
       },
       {
         title: 'Hydratation & fibres',
-        subtitle: 'Concombre, baies fraîches, salades légères',
-        iconType: 'greens'
+        subtitle: 'Concombre, baies fraîches, salades légères'
       },
       {
         title: 'Moins de sucres rapides',
-        subtitle: 'Privilégier les sucres lents pour stabiliser l’énergie',
-        iconType: 'minerals'
+        subtitle: 'Privilégier les sucres lents pour stabiliser l’énergie'
       }
     ],
     mindsetIntro:
@@ -115,8 +96,6 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     phaseKey: 'Phase3-Luteal',
     title: 'Dans le tube de la vague',
     menuSubtitle: 'Notre énergie diminue doucement. Notre esprit est plus clairvoyant.',
-    menuBgColor: '#c0e0f2',
-    menuTextColor: '#081f45',
     imageSrc: '/illustrations/phase3-luteal.png',
     description:
       'Le jour s’est assombri. Nous traversons une période inconfortable avec parfois des douleurs prémenstruelles. Notre énergie diminue doucement. Notre esprit est plus clairvoyant. Nous voyons les moindres failles et les imperfections qui nous entourent.',
@@ -124,18 +103,15 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     nutritionItems: [
       {
         title: 'Vitamines B et magnésium',
-        subtitle: 'Lentilles, graines, noix, banane',
-        iconType: 'minerals'
+        subtitle: 'Lentilles, graines, noix, banane'
       },
       {
         title: 'Oméga-3 et 6',
-        subtitle: 'Poissons gras (saumon, sardines), huile de colza',
-        iconType: 'protein'
+        subtitle: 'Poissons gras (saumon, sardines), huile de colza'
       },
       {
         title: 'Légumes soufrés',
-        subtitle: 'Brocolis, choux de Bruxelles, poireaux',
-        iconType: 'greens'
+        subtitle: 'Brocolis, choux de Bruxelles, poireaux'
       }
     ],
     mindsetIntro:
@@ -156,8 +132,6 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     phaseKey: 'Phase4-Menstrual',
     title: 'Repos avant la prochaine vague',
     menuSubtitle: 'Nos émotions sont stables et propices à l’apaisement.',
-    menuBgColor: '#eeb8b0',
-    menuTextColor: '#321310',
     imageSrc: '/illustrations/phase4-menstrual.png',
     description:
       'Nos hormones sont au plus bas. Nos émotions sont stables et propices à l’apaisement. Notre corps demande beaucoup d’énergie avant de repartir sur un nouveau cycle.',
@@ -166,18 +140,15 @@ export const RECOMMENDATIONS_DATA: PhaseRecommendation[] = [
     nutritionItems: [
       {
         title: 'Repas chauds et digestes',
-        subtitle: 'Soupes réconfortantes, purées, bouillons',
-        iconType: 'greens'
+        subtitle: 'Soupes réconfortantes, purées, bouillons'
       },
       {
         title: 'Fer et minéraux',
-        subtitle: 'Légumineuses, fruits secs, riz complet',
-        iconType: 'minerals'
+        subtitle: 'Légumineuses, fruits secs, riz complet'
       },
       {
         title: 'Infusions apaisantes',
-        subtitle: 'Camomille, framboisier, tisanes chaudes',
-        iconType: 'protein'
+        subtitle: 'Camomille, framboisier, tisanes chaudes'
       }
     ],
     mindsetIntro:

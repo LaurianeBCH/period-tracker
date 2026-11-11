@@ -12,10 +12,10 @@
   box-sizing: border-box;
 }
 
-/* Fond blanc sur la vue calendrier annuel */
+/* Fond sur la vue calendrier annuel */
 .yearViewWrapper {
-  background: var(--color-background-white) !important;
-  background-color: var(--color-background-white) !important;
+  background: var(--background-level-1) !important;
+  background-color: var(--background-level-1) !important;
   height: 100vh;
   overflow: hidden;
 }
@@ -153,22 +153,8 @@
 }
 
 .navButton {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-pill);
-  border: none;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--text-dark-primary);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.navButton:hover {
-  opacity: 0.75;
-  transform: scale(1.08);
+  width: var(--size-calendar-cell);
+  height: var(--size-calendar-cell);
 }
 
 .monthHeading {
@@ -189,7 +175,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 6px 12px;
+  padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
@@ -199,7 +185,7 @@
 
 .monthTitle:hover {
   opacity: 0.85;
-  background-color: rgba(0, 46, 44, 0.06);
+  background-color: var(--background-level-2);
 }
 
 .monthTitle:active {
@@ -337,13 +323,13 @@
 /* Pastille indicatrice du jour actuel */
 .todayDot {
   position: absolute;
-  top: 4px;
-  right: 4.5px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  width: var(--spacing-sm);
+  height: var(--spacing-sm);
+  border-radius: var(--radius-pill);
   background-color: var(--accent);
-  box-shadow: 0 0 6px rgba(251, 255, 36, 0.7);
+  box-shadow: 0 0 var(--spacing-xs) var(--accent);
 }
 
 /* ========================================================
@@ -391,24 +377,9 @@
 }
 
 .insightsPhaseSubtitle {
-  /*font-family: var(--font-family);
-  font-size: var(--typo-h3-size);
-  font-weight: var(--typo-h3-weight);
-  color: var(--text-dark-primary);
-  text-align: center;
-  margin: 0;
-  line-height: normal;*/
-  background-color: var(--accent);
-  color: var(--text-dark-primary);
-  padding: 4px 8px;
-  border-radius: var(--spacing-sm);
-  font-family: var(--font-family);
-  font-size: var(--typo-body-default-bold-size);
-  font-weight: var(--typo-body-default-bold-weight);
   line-height: var(--typo-body-default-bold-line-height);
   white-space: nowrap;
 }
-
 
 .curveContainer {
   width: 100%;
@@ -440,138 +411,17 @@
   pointer-events: none;
 }
 
-
-
-.waterDropBadge {
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.legendList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  width: 100%;
-}
-
-.legendRow {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  font-family: var(--font-family);
-  font-size: var(--typo-body-sm-size);
-  font-weight: var(--typo-body-sm-weight);
-  line-height: var(--typo-body-sm-line-height);
-  color: var(--text-dark-primary);
-}
-
-.phase3Number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
-  min-height: 18px;
-  font-family: var(--font-family);
-  font-size: var(--typo-body-sm-size);
-  font-weight: var(--typo-body-sm-weight);
-  line-height: var(--typo-body-sm-line-height);
-  color: var(--text-dark-primary);
-  text-align: center;
-}
-
 .moreButton {
-  width: 100%;
-  box-sizing: border-box;
-  background-color: var(--background-level-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-lg);
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  cursor: pointer;
-  transition: opacity 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
-}
-
-.moreButton:hover {
-  opacity: 0.85;
-  background-color: rgba(0, 46, 44, 0.04);
-}
-
-.moreButton:active {
-  transform: scale(0.99);
 }
 
 .moreButtonText {
-  font-family: var(--font-family);
-  font-size: var(--typo-body-default-bold-size);
-  font-weight: var(--typo-body-default-bold-weight);
-  line-height: var(--typo-body-default-bold-line-height);
-  color: var(--text-dark-primary);
   margin: 0;
 }
 
 .moreButtonChevron {
   color: var(--text-dark-primary);
   flex-shrink: 0;
-}
-
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 46, 44, 0.4);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  padding: var(--spacing-lg);
-}
-
-.modalContent {
-  background-color: var(--background-level-1);
-  border-radius: var(--radius-full);
-  padding: var(--spacing-2xl);
-  max-width: 440px;
-  width: 100%;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-.modalPhaseItem {
-  background-color: var(--background-level-2);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.modalPhaseTitle {
-  font-family: var(--font-family);
-  font-size: var(--typo-body-default-bold-size);
-  font-weight: var(--typo-body-default-bold-weight);
-  color: var(--text-dark-primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.modalPhaseDesc {
-  font-family: var(--font-family);
-  font-size: var(--typo-body-sm-size);
-  font-weight: var(--typo-body-sm-weight);
-  color: var(--text-dark-secondary);
-  line-height: 1.4;
 }
 
 /* ========================================================
@@ -637,7 +487,7 @@
   justify-content: center;
   box-sizing: border-box;
   z-index: 100;
-  border-top: 1px solid rgba(0, 46, 44, 0.08);
+  border-top: 1px solid var(--border);
 }
 
 .yearFooter>button {
