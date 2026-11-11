@@ -40,6 +40,9 @@ jobs:
 
       - name: Build project
         run: pnpm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://hpdxgcqdyfgxexmmvfwi.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'sb_publishable_Zkez3FClS5RAZsXXACP-SA_bi1acc1O' }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
