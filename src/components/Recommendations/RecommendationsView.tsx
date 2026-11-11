@@ -105,9 +105,8 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
   return (
     <div className={styles.pageLayout}>
       <div
-        className={`${styles.pageTitleRow} ${
-          mobileView === 'details' ? styles.hideOnMobile : ''
-        }`}
+        className={`${styles.pageTitleRow} ${mobileView === 'details' ? styles.hideOnMobile : ''
+          }`}
       >
         <h1 className={styles.pageTitle}>Recommandations</h1>
       </div>
@@ -118,9 +117,8 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
           Toujours visible sur desktop (>= 992px)
           ======================================================== */}
       <nav
-        className={`${styles.menuColumn} ${
-          mobileView === 'details' ? styles.hideOnMobile : ''
-        }`}
+        className={`${styles.menuColumn} ${mobileView === 'details' ? styles.hideOnMobile : ''
+          }`}
         aria-label="Sélection des phases"
       >
         <div className={styles.phaseMenuList}>
@@ -133,9 +131,8 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
                 key={phase.id}
                 type="button"
                 data-theme={`phase ${selectedPhaseId}`}
-                className={`${styles.menuCard} ${
-                  isActive ? styles.menuCardActive : ''
-                }`}
+                className={`${styles.menuCard} ${isActive ? styles.menuCardActive : ''
+                  }`}
                 onClick={() => handleSelectPhase(phase.id)}
                 aria-current={isActive ? 'true' : undefined}
                 aria-label={`Phase ${phase.id} : ${phase.title}`}
@@ -182,9 +179,8 @@ export const RecommendationsView: FC<RecommendationsViewProps> = ({
           Toujours visible sur desktop (>= 992px)
           ======================================================== */}
       <article
-        className={`${styles.detailsColumn} ${
-          mobileView === 'menu' ? styles.hideOnMobile : ''
-        }`}
+        className={`${styles.detailsColumn} ${mobileView === 'menu' ? styles.hideOnMobile : ''
+          }`}
         aria-labelledby="details-phase-title"
       >
         {/* Illustration Principale de la Phase */}

@@ -1,4 +1,4 @@
-import { FC, FormEvent, useMemo, useState } from 'react';
+import { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 import { UserSettings } from '../../types/cycle';
 import { extractPeriodBlocks, diffDays, parseDateISO } from '../../utils/cycleEngine';
 import { Badge, Button, WaterDropIcon } from '../atoms';
@@ -8,6 +8,7 @@ interface MyCycleViewProps {
   settings: UserSettings;
   periodDates?: string[];
   userEmail?: string | null;
+  initialError?: string | null;
   onSendMagicLink?: (email: string) => Promise<{ error: string | null }>;
   onSignOut?: () => Promise<void>;
   onDeleteAccount?: () => Promise<{ error: string | null }>;
@@ -23,14 +24,22 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
   settings,
   periodDates = [],
   userEmail = null,
+  initialError = null,
   onSendMagicLink,
   onSignOut,
   onDeleteAccount
 }) => {
   const [emailInput, setEmailInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-  const [isErrorFeedback, setIsErrorFeedback] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(initialError);
+  const [isErrorFeedback, setIsErrorFeedback] = useState(Boolean(initialError));
+
+  useEffect(() => {
+    if (initialError) {
+      setIsErrorFeedback(true);
+      setFeedbackMessage(initialError);
+    }
+  }, [initialError]);
 
   // Compute metrics from user's logged period dates, strictly filtering out unlogged gaps (>50 days)
   const cycleStats = useMemo(() => {

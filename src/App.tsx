@@ -12,6 +12,7 @@ import {
 import { supabase } from './services/supabaseClient';
 import {
   sendMagicLink,
+  processAuthRedirectUrl,
   pullAndMergeCloudData,
   pushCloudData,
   signOutAccount,
@@ -45,6 +46,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('calendar');
   const [recMobileView, setRecMobileView] = useState<'menu' | 'details'>('menu');
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [authRedirectError, setAuthRedirectError] = useState<string | null>(null);
   const isHydratingFromCloudRef = useRef(false);
 
   useEffect(() => {
@@ -74,10 +76,25 @@ export default function App() {
       }
     };
 
+    void processAuthRedirectUrl().then(({ isAuthRedirect, authError }) => {
+      if (!isMounted) return;
+      if (isAuthRedirect) {
+        setActiveTab('cycle');
+        setCurrentView('home');
+      }
+      if (authError) {
+        setAuthRedirectError(authError);
+      }
+    });
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!isMounted) return;
       if (session?.user?.id && session.user.email) {
         setSessionUser({ id: session.user.id, email: session.user.email });
+        setAuthRedirectError(null);
+        if (window.location.hash.includes('access_token=')) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
         void syncForUser(session.user.id);
       } else {
         setSessionUser(null);
@@ -90,6 +107,10 @@ export default function App() {
       if (!isMounted) return;
       if (session?.user?.id && session.user.email) {
         setSessionUser({ id: session.user.id, email: session.user.email });
+        setAuthRedirectError(null);
+        if (window.location.hash.includes('access_token=')) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
         void syncForUser(session.user.id);
       } else {
         setSessionUser(null);
@@ -182,6 +203,7 @@ export default function App() {
               settings={settings}
               periodDates={periodDates}
               userEmail={sessionUser?.email ?? null}
+              initialError={authRedirectError}
               onSendMagicLink={sendMagicLink}
               onSignOut={handleSignOut}
               onDeleteAccount={handleDeleteAccount}

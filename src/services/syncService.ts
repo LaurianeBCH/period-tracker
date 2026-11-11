@@ -1,3 +1,4 @@
+import type { EmailOtpType } from '@supabase/supabase-js';
 import type { UserSettings } from '../types/cycle.ts';
 import { DEFAULT_SETTINGS } from './storage.ts';
 import { supabase } from './supabaseClient.ts';
@@ -53,6 +54,90 @@ export function getAuthRedirectUrl(
 ): string {
   const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
   return new URL(normalizedBase, origin).href;
+}
+
+/**
+ * Inspects URL query/hash parameters after a Supabase email redirect:
+ * - Translates `#error=...` / `otp_expired` into a user-friendly French message.
+ * - Verifies `?token_hash=...&type=...` or exchanges `?code=...` when present.
+ * - Cleans auth parameters from the browser address bar.
+ */
+export async function processAuthRedirectUrl(): Promise<{
+  isAuthRedirect: boolean;
+  authError: string | null;
+}> {
+  if (typeof window === 'undefined') {
+    return { isAuthRedirect: false, authError: null };
+  }
+
+  const hash = window.location.hash.startsWith('#')
+    ? window.location.hash.slice(1)
+    : window.location.hash;
+  const hashParams = new URLSearchParams(hash);
+  const searchParams = new URLSearchParams(window.location.search);
+
+  const errorCode = hashParams.get('error_code') || searchParams.get('error_code');
+  const errorDesc = hashParams.get('error_description') || searchParams.get('error_description');
+  const errorParam = hashParams.get('error') || searchParams.get('error');
+
+  const cleanUrlBar = () => {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  };
+
+  if (errorCode || errorParam) {
+    cleanUrlBar();
+    if (errorCode === 'otp_expired') {
+      return {
+        isAuthRedirect: true,
+        authError:
+          'Ce lien de confirmation a expiré ou a déjà été utilisé. Veuillez saisir à nouveau votre adresse email pour recevoir un nouveau lien.'
+      };
+    }
+    return {
+      isAuthRedirect: true,
+      authError: errorDesc
+        ? decodeURIComponent(errorDesc.replace(/\+/g, ' '))
+        : 'La validation du lien de connexion a échoué. Veuillez réessayer.'
+    };
+  }
+
+  const tokenHash = searchParams.get('token_hash');
+  const otpType = (searchParams.get('type') as EmailOtpType | null) || 'magiclink';
+  if (tokenHash) {
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: otpType
+    });
+    cleanUrlBar();
+    if (error) {
+      return {
+        isAuthRedirect: true,
+        authError:
+          'Ce lien de confirmation a expiré ou a déjà été utilisé. Veuillez saisir à nouveau votre adresse email pour recevoir un nouveau lien.'
+      };
+    }
+    return { isAuthRedirect: true, authError: null };
+  }
+
+  const code = searchParams.get('code');
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    cleanUrlBar();
+    if (error) {
+      return {
+        isAuthRedirect: true,
+        authError:
+          'Ce lien de confirmation a expiré ou a déjà été utilisé. Veuillez saisir à nouveau votre adresse email pour recevoir un nouveau lien.'
+      };
+    }
+    return { isAuthRedirect: true, authError: null };
+  }
+
+  if (hashParams.has('access_token')) {
+    return { isAuthRedirect: true, authError: null };
+  }
+
+  return { isAuthRedirect: false, authError: null };
 }
 
 /**
