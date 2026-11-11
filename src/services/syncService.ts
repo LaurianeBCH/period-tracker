@@ -1,6 +1,6 @@
 import type { UserSettings } from '../types/cycle.ts';
 import { DEFAULT_SETTINGS } from './storage.ts';
-import { supabase, isSupabaseConfigured } from './supabaseClient.ts';
+import { supabase } from './supabaseClient.ts';
 
 export interface CloudCyclePayload {
   settings: Partial<UserSettings>;
@@ -62,13 +62,6 @@ export async function sendMagicLink(email: string): Promise<{ error: string | nu
   const cleanEmail = email.trim();
   if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
     return { error: 'Veuillez saisir une adresse email valide.' };
-  }
-
-  if (!isSupabaseConfigured() || !supabase) {
-    return {
-      error:
-        'La synchronisation Supabase n’est pas encore configurée (variables VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY manquantes).'
-    };
   }
 
   const metaEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
