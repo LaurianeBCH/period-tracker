@@ -33,6 +33,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(initialError);
   const [isErrorFeedback, setIsErrorFeedback] = useState(Boolean(initialError));
+  const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (initialError) {
@@ -41,15 +42,39 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
     }
   }, [initialError]);
 
-  // Compute metrics from user's logged period dates, strictly filtering out unlogged gaps (>50 days)
-  const cycleStats = useMemo(() => {
-    const blocks = extractPeriodBlocks(periodDates);
+  useEffect(() => {
+    if (activeTooltipIndex === null) return;
+    const handleOutsideClick = () => {
+      setActiveTooltipIndex(null);
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, [activeTooltipIndex]);
 
-    // Period length for each declared block
+  // Compute metrics from user's logged period dates, strictly filtering out unlogged gaps (>60 days)
+  const cycleStats = useMemo(() => {
+    const rawBlocks = extractPeriodBlocks(periodDates);
+
+    // Filter out accidental stray blocks closer than 15 days to a valid period start
+    const blocks = rawBlocks.reduce<typeof rawBlocks>((acc, block) => {
+      if (acc.length === 0) {
+        acc.push(block);
+      } else {
+        const prev = acc[acc.length - 1];
+        if (diffDays(prev.startDate, block.startDate) >= 15) {
+          acc.push(block);
+        }
+      }
+      return acc;
+    }, []);
+
+    // Period length for each valid declared block
     const periodLengths = blocks.map((b) => b.duration);
 
-    // Calculate cycle intervals ONLY between consecutive declared blocks within physiological range (18 to 50 days).
-    // Gaps > 50 days represent missed/untracked months and must NOT be considered as long cycles.
+    // Calculate cycle intervals ONLY between consecutive declared blocks within physiological range (15 to 60 days).
+    // Gaps > 60 days represent missed/untracked months and must NOT be considered as long cycles.
     const validCycleIntervals: number[] = [];
     const validCycleBars: CycleBarData[] = [];
 
@@ -58,10 +83,10 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
       const curr = blocks[i];
       const intervalDays = diffDays(prev.startDate, curr.startDate);
 
-      if (intervalDays >= 18 && intervalDays <= 50) {
+      if (intervalDays >= 15 && intervalDays <= 60) {
         validCycleIntervals.push(intervalDays);
 
-        const d = parseDateISO(curr.startDate);
+        const d = parseDateISO(prev.startDate);
         const dayStr = String(d.getDate()).padStart(2, '0');
         const monthStr = String(d.getMonth() + 1).padStart(2, '0');
         validCycleBars.push({
@@ -72,14 +97,15 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
       }
     }
 
-    // Average period length across all declared period blocks
+    // Average period length across all valid declared period blocks
     const avgPeriodVal =
       periodLengths.length > 0
         ? periodLengths.reduce((sum, v) => sum + v, 0) / periodLengths.length
-        : settings.defaultPeriodLength || 5;
+        : settings.defaultPeriodLength || 4;
 
-    const isWholeNumber = Math.round(avgPeriodVal * 10) % 10 === 0;
-    const formattedAvgPeriod = avgPeriodVal.toLocaleString('fr-FR', {
+    const roundedAvgPeriod = Math.round(avgPeriodVal * 10) / 10;
+    const isWholeNumber = roundedAvgPeriod % 1 === 0;
+    const formattedAvgPeriod = roundedAvgPeriod.toLocaleString('fr-FR', {
       minimumFractionDigits: isWholeNumber ? 0 : 1,
       maximumFractionDigits: 1
     });
@@ -87,13 +113,27 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
     if (validCycleIntervals.length > 0) {
       // Find most frequent cycle length (mode)
       const freqMap: Record<number, number> = {};
-      let mostFreq = validCycleIntervals[0];
       let maxCount = 0;
       for (const len of validCycleIntervals) {
         freqMap[len] = (freqMap[len] || 0) + 1;
         if (freqMap[len] > maxCount) {
           maxCount = freqMap[len];
-          mostFreq = len;
+        }
+      }
+
+      const meanCycle =
+        validCycleIntervals.reduce((sum, v) => sum + v, 0) / validCycleIntervals.length;
+
+      // Among cycle lengths with highest frequency, pick the one closest to mean (most recent on tie)
+      let mostFreq = validCycleIntervals[0];
+      let bestDiff = Infinity;
+      for (const len of validCycleIntervals) {
+        if (freqMap[len] === maxCount) {
+          const diff = Math.abs(len - meanCycle);
+          if (diff <= bestDiff) {
+            bestDiff = diff;
+            mostFreq = len;
+          }
         }
       }
 
@@ -303,17 +343,66 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
 
                   const topOfTotalBarPx = 160 - totalHeightPx;
                   const topOfPeriodPx = 160 - periodHeightPx;
+                  const isTooltipActive = activeTooltipIndex === idx;
 
                   return (
-                    <div key={`${cycle.dateLabel}-${idx}`} className={styles.barColumn}>
+                    <div
+                      key={`${cycle.dateLabel}-${idx}`}
+                      className={styles.barColumn}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Cycle du ${cycle.dateLabel} : ${cycle.cycleDays} jours de cycle, ${cycle.periodDays} jours de règles`}
+                      aria-expanded={isTooltipActive}
+                      onPointerEnter={(e) => {
+                        if (e.pointerType === 'mouse') {
+                          setActiveTooltipIndex(idx);
+                        }
+                      }}
+                      onPointerLeave={(e) => {
+                        if (e.pointerType === 'mouse') {
+                          setActiveTooltipIndex((prev) => (prev === idx ? null : prev));
+                        }
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveTooltipIndex((prev) => (prev === idx ? null : idx));
+                      }}
+                      onFocus={() => setActiveTooltipIndex(idx)}
+                      onBlur={() =>
+                        setActiveTooltipIndex((prev) => (prev === idx ? null : prev))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setActiveTooltipIndex((prev) => (prev === idx ? null : idx));
+                        }
+                      }}
+                    >
                       <div className={styles.barStack}>
+                        {isTooltipActive && (
+                          <div
+                            className={styles.barTooltip}
+                            role="tooltip"
+                            style={{
+                              bottom: `${Math.min(Math.max(totalHeightPx + 6, 24), 130)}px`
+                            }}
+                          >
+                            <span className={styles.tooltipRow}>
+                              <span className={styles.tooltipDotCycle} aria-hidden="true" />
+                              Cycle : {cycle.cycleDays} j
+                            </span>
+                            <span className={styles.tooltipRow}>
+                              <span className={styles.tooltipDotPeriod} aria-hidden="true" />
+                              Règles : {cycle.periodDays} j
+                            </span>
+                          </div>
+                        )}
                         <div
                           className={styles.barCyclePart}
                           style={{
                             top: `${topOfTotalBarPx}px`,
                             height: `${cycleHeightPx}px`
                           }}
-                          title={`Cycle total : ${cycle.cycleDays} jours`}
                         />
                         <div
                           className={styles.barPeriodPart}
@@ -321,7 +410,6 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
                             top: `${topOfPeriodPx}px`,
                             height: `${periodHeightPx}px`
                           }}
-                          title={`Règles : ${cycle.periodDays} jours`}
                         />
                       </div>
                       <span className={styles.xAxisLabel}>{cycle.dateLabel}</span>

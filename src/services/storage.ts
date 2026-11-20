@@ -1,5 +1,5 @@
 import type { UserSettings, CycleLog } from '../types/cycle.ts';
-import { addDays, extractPeriodBlocks } from '../utils/cycleEngine.ts';
+import { addDays, diffDays, extractPeriodBlocks } from '../utils/cycleEngine.ts';
 
 const SETTINGS_KEY = 'period_tracker_settings';
 const PERIOD_DATES_KEY = 'period_tracker_dates';
@@ -130,11 +130,8 @@ export function togglePeriodDate(dateStr: string, autofillLength: number = 4): s
     }
   } else {
     // Determine whether this click is isolated / new cycle start
-    // Check if there is an existing date within 10 days
-    const hasNearby = current.some((d) => {
-      const diff = Math.abs((new Date(d).getTime() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
-      return diff <= 10;
-    });
+    // Check if there is an existing date within 3 days (matching extractPeriodBlocks gap <= 3)
+    const hasNearby = current.some((d) => Math.abs(diffDays(d, dateStr)) <= 3);
 
     if (!hasNearby && autofillLength > 1) {
       // Auto-fill the period duration

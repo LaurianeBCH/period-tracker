@@ -331,12 +331,75 @@
   gap: var(--spacing-xs);
   flex: 1;
   min-width: 0;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.barColumn:focus-visible .barStack {
+  outline: 2px solid var(--text-dark-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .barStack {
   position: relative;
   width: 30px;
   height: 160px;
+}
+
+.barTooltip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  background-color: var(--background-level-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.barColumn:first-child .barTooltip {
+  left: 0;
+  transform: none;
+}
+
+.barColumn:last-child .barTooltip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.tooltipRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-family: var(--font-family);
+  font-size: var(--typo-body-sm-size);
+  font-weight: var(--typo-body-default-bold-weight);
+  line-height: var(--typo-body-sm-line-height);
+  color: var(--text-dark-primary);
+}
+
+.tooltipDotCycle {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--text-dark-primary);
+  flex-shrink: 0;
+}
+
+.tooltipDotPeriod {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--accent);
+  flex-shrink: 0;
 }
 
 .barCyclePart {

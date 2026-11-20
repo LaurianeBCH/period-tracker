@@ -19,9 +19,11 @@ export function addDays(dateStr: string, days: number): string {
 }
 
 export function diffDays(startDateStr: string, endDateStr: string): number {
-  const start = parseDateISO(startDateStr).getTime();
-  const end = parseDateISO(endDateStr).getTime();
-  return Math.round((end - start) / (1000 * 60 * 60 * 24));
+  const [y1, m1, d1] = startDateStr.split('-').map(Number);
+  const [y2, m2, d2] = endDateStr.split('-').map(Number);
+  const startUtc = Date.UTC(y1, m1 - 1, d1);
+  const endUtc = Date.UTC(y2, m2 - 1, d2);
+  return Math.round((endUtc - startUtc) / (1000 * 60 * 60 * 24));
 }
 
 export function getTodayISO(): string {
@@ -30,7 +32,8 @@ export function getTodayISO(): string {
 
 /**
  * Groups declared period dates into continuous period blocks.
- * Dates with a gap <= 3 days are merged into the same block.
+ * Dates with a gap <= 3 days are merged into the same block, and duration
+ * reflects the exact number of declared period days in that block.
  */
 export function extractPeriodBlocks(dates: string[]): PeriodBlock[] {
   if (!dates || dates.length === 0) return [];
@@ -39,27 +42,30 @@ export function extractPeriodBlocks(dates: string[]): PeriodBlock[] {
 
   let currentStart = sorted[0];
   let currentEnd = sorted[0];
+  let currentCount = 1;
 
   for (let i = 1; i < sorted.length; i++) {
     const d = sorted[i];
     const gap = diffDays(currentEnd, d);
     if (gap <= 3) {
       currentEnd = d;
+      currentCount += 1;
     } else {
       blocks.push({
         startDate: currentStart,
         endDate: currentEnd,
-        duration: diffDays(currentStart, currentEnd) + 1
+        duration: currentCount
       });
       currentStart = d;
       currentEnd = d;
+      currentCount = 1;
     }
   }
 
   blocks.push({
     startDate: currentStart,
     endDate: currentEnd,
-    duration: diffDays(currentStart, currentEnd) + 1
+    duration: currentCount
   });
 
   return blocks;
@@ -74,8 +80,8 @@ export interface CycleMetrics {
 
 /**
  * Computes dynamic cycle metrics:
- * - cycleLength: gap between previous cycle startDate and latest cycle startDate (if >= 2 blocks), else default 28.
- * - periodLength: duration of previous cycle if available, else latest block duration, else default 4.
+ * - cycleLength: mode/central valid cycle interval across declared blocks (if >= 2 blocks), else default 28.
+ * - periodLength: rounded average period duration across declared blocks, else default 4.
  */
 export function computeCycleMetrics(
   blocks: PeriodBlock[],
@@ -96,20 +102,21 @@ export function computeCycleMetrics(
   const latestBlock = blocks[blocks.length - 1];
   const previousBlock = blocks.length >= 2 ? blocks[blocks.length - 2] : null;
 
-  let cycleLength = defaultCycleLen;
-  if (previousBlock && latestBlock) {
-    const gap = diffDays(previousBlock.startDate, latestBlock.startDate);
+  const validIntervals: number[] = [];
+  for (let i = 1; i < blocks.length; i++) {
+    const gap = diffDays(blocks[i - 1].startDate, blocks[i].startDate);
     if (gap >= 15 && gap <= 60) {
-      cycleLength = gap;
+      validIntervals.push(gap);
     }
   }
 
-  let periodLength = defaultPeriodLen;
-  if (previousBlock) {
-    periodLength = Math.max(1, previousBlock.duration);
-  } else if (latestBlock) {
-    periodLength = Math.max(1, latestBlock.duration);
+  let cycleLength = defaultCycleLen;
+  if (validIntervals.length > 0) {
+    cycleLength = validIntervals[validIntervals.length - 1];
   }
+
+  const totalPeriodDays = blocks.reduce((sum, b) => sum + Math.max(1, b.duration), 0);
+  const periodLength = Math.max(1, Math.round(totalPeriodDays / blocks.length));
 
   return {
     cycleLength,

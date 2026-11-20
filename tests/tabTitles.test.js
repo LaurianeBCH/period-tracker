@@ -2,6 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  diffDays,
+  extractPeriodBlocks,
+  computeCycleMetrics
+} from '../src/utils/cycleEngine.ts';
 
 test('All 3 tabs hide the Title pill on mobile and keep it sticky at the top on desktop using design tokens', () => {
   const indexCss = fs.readFileSync(path.resolve('src/index.css'), 'utf-8');
@@ -62,4 +67,48 @@ test('All 3 tabs hide the Title pill on mobile and keep it sticky at the top on 
       `${cssFile} .pageTitle must use var(--typo-h0-size)`
     );
   }
+});
+
+test('extractPeriodBlocks counts exact declared days and MyCycleView renders hover/click tooltip with design tokens', () => {
+  // Exact day count even if 1 day is skipped inside a <=3 day merge window
+  const blocksWithGap = extractPeriodBlocks([
+    '2026-07-01',
+    '2026-07-02',
+    '2026-07-04',
+    '2026-07-29',
+    '2026-07-30',
+    '2026-07-31',
+    '2026-08-01'
+  ]);
+  assert.equal(blocksWithGap.length, 2);
+  assert.equal(blocksWithGap[0].duration, 3);
+  assert.equal(blocksWithGap[1].duration, 4);
+  assert.equal(diffDays(blocksWithGap[0].startDate, blocksWithGap[1].startDate), 28);
+
+  const metrics = computeCycleMetrics(blocksWithGap, {
+    defaultCycleLength: 28,
+    defaultPeriodLength: 4,
+    lutealPhaseLength: 14,
+    isOnboarded: true
+  });
+  assert.equal(metrics.cycleLength, 28);
+  assert.equal(metrics.periodLength, 4);
+
+  const cycleTsx = fs.readFileSync(
+    path.resolve('src/components/MyCycle/MyCycleView.tsx'),
+    'utf-8'
+  );
+  // Uses prev.startDate for cycle bar dateLabel
+  assert.match(cycleTsx, /parseDateISO\(prev\.startDate\)/);
+  // Supports hover on desktop (onPointerEnter) and click on mobile (onClick) for chart tooltip
+  assert.match(cycleTsx, /onPointerEnter=/);
+  assert.match(cycleTsx, /onClick=/);
+  assert.match(cycleTsx, /role="tooltip"/);
+
+  const cycleCss = fs.readFileSync(
+    path.resolve('src/components/MyCycle/MyCycleView.module.css'),
+    'utf-8'
+  );
+  assert.match(cycleCss, /\.barTooltip\s*\{[\s\S]*?background-color:\s*var\(--background-level-1\)/);
+  assert.match(cycleCss, /\.barTooltip\s*\{[\s\S]*?border:\s*1px solid var\(--border\)/);
 });
