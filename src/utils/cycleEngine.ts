@@ -127,6 +127,22 @@ export function computeCycleMetrics(
 }
 
 /**
+ * Computes cycle regularity as a percentage (0–100) from valid cycle intervals.
+ * Uses Mean Absolute Deviation (MAD) around the mean cycle length, calibrated so
+ * 0 days average deviation = 100% and >= 7 days average deviation = 0%.
+ * Returns null if fewer than 2 completed cycles are available.
+ */
+export function computeCycleRegularity(intervals: number[]): number | null {
+  if (intervals.length < 2) return null;
+  const mean = intervals.reduce((sum, v) => sum + v, 0) / intervals.length;
+  const meanAbsDev =
+    intervals.reduce((sum, v) => sum + Math.abs(v - mean), 0) / intervals.length;
+  const maxExpectedDeviation = 7;
+  const score = (1 - meanAbsDev / maxExpectedDeviation) * 100;
+  return Math.round(Math.max(0, Math.min(100, score)));
+}
+
+/**
  * Calculates day status and cycle phase for any dateStr:
  * - Phase 4 (Menstrual) for actual declared period dates.
  * - All subsequent phases (Phase 1, Phase 2, Phase 3, and potential next period)

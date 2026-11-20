@@ -1,6 +1,11 @@
 import { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 import { UserSettings } from '../../types/cycle';
-import { extractPeriodBlocks, diffDays, parseDateISO } from '../../utils/cycleEngine';
+import {
+  extractPeriodBlocks,
+  diffDays,
+  parseDateISO,
+  computeCycleRegularity
+} from '../../utils/cycleEngine';
 import { Badge, Button, WaterDropIcon } from '../atoms';
 import styles from './MyCycleView.module.css';
 
@@ -139,13 +144,14 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
 
       const shortest = Math.min(...validCycleIntervals);
       const longest = Math.max(...validCycleIntervals);
+      const regularity = computeCycleRegularity(validCycleIntervals);
+      const regularityLabel =
+        regularity !== null ? `${regularity} % régulier` : '1 cycle';
 
       return {
         hasData: true,
         mostFrequent: mostFreq,
-        frequentFraction: `${maxCount} / ${validCycleIntervals.length} ${
-          validCycleIntervals.length > 1 ? 'cycles' : 'cycle'
-        }`,
+        regularityLabel,
         shortest: String(shortest),
         longest: String(longest),
         averagePeriod: formattedAvgPeriod,
@@ -158,7 +164,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
     return {
       hasData: false,
       mostFrequent: fallbackCycle,
-      frequentFraction: '',
+      regularityLabel: '',
       shortest: '-',
       longest: '-',
       averagePeriod: formattedAvgPeriod,
@@ -250,9 +256,9 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
                 <p className={styles.bigStatNumber}>{cycleStats.mostFrequent}</p>
                 <p className={styles.unitText}>jours</p>
               </div>
-              {cycleStats.hasData && (
+              {cycleStats.hasData && cycleStats.regularityLabel && (
                 <Badge variant="badge" className={styles.cyclesBadge}>
-                  {cycleStats.frequentFraction}
+                  {cycleStats.regularityLabel}
                 </Badge>
               )}
             </div>
@@ -450,7 +456,7 @@ export const MyCycleView: FC<MyCycleViewProps> = ({
               Supprimer mon compte
             </Button>
             <Button
-              variant="secondary"
+              variant="primary"
               fullWidth
               disabled={isSubmitting}
               onClick={handleSignOutClick}

@@ -5,7 +5,8 @@ import path from 'node:path';
 import {
   diffDays,
   extractPeriodBlocks,
-  computeCycleMetrics
+  computeCycleMetrics,
+  computeCycleRegularity
 } from '../src/utils/cycleEngine.ts';
 
 test('All 3 tabs hide the Title pill on mobile and keep it sticky at the top on desktop using design tokens', () => {
@@ -111,4 +112,11 @@ test('extractPeriodBlocks counts exact declared days and MyCycleView renders hov
   );
   assert.match(cycleCss, /\.barTooltip\s*\{[\s\S]*?background-color:\s*var\(--background-level-1\)/);
   assert.match(cycleCss, /\.barTooltip\s*\{[\s\S]*?border:\s*1px solid var\(--border\)/);
+
+  // Regularity percentage calculation
+  assert.equal(computeCycleRegularity([28]), null);
+  assert.equal(computeCycleRegularity([28, 28, 28, 28]), 100);
+  assert.equal(computeCycleRegularity([27, 28, 29, 30]), 86);
+  assert.equal(computeCycleRegularity([21, 35, 22, 36]), 0);
+  assert.match(cycleTsx, /computeCycleRegularity/);
 });
